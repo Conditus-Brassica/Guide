@@ -1,0 +1,30 @@
+.button{
+    display: inline-block;
+    height: min-content;
+}
+
+.content{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.content:hover{
+    cursor: pointer;
+}
+
+.button img{
+    background: #000;
+    border-radius: 100%;
+    border: #000;
+    height: 2em;
+    width: 2em;
+    padding: .5em;
+}
+
+.button span{
+    text-align: center;
+    padding: .5em;
+    font-size: smaller;
+}

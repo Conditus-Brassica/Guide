@@ -1,0 +1,29 @@
+.button{
+    transition-duration: 0.5s;
+    padding: 0.5em 3em 0.5em 3em;
+    width: max-content;
+    display: block;
+    font-size: larger;
+    background-color: #001A76;
+    border-radius: 34px;
+    margin: 0.5em;
+    border: #001A76 solid 3px;
+    color: white;
+}
+
+.button:hover{
+    transition-duration: 0.5s;
+    cursor:grab;
+    color: #001A76;
+    background-color: transparent;
+}
+/* 
+body {
+	background: url(../image/patterns/SUST3.jpg) fixed;
+    background: url(../image/data/background.jpg) fixed;
+	background-size: 1160px;
+	color: #000000;
+	font-family: 'Roboto', sans-serif;
+	margin: 0px;
+	padding: 0;
+} */

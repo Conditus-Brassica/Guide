@@ -1,0 +1,14 @@
+*.idea
+venv
+agents/cache
+*.pyc
+
+*.cypher
+
+backend/agents/crud_agent/test_crud.py
+backend/agents/crud_agent/basic_login.json
+
+./export_data.py
+
+backend/agents/crud_agent/create_scripts
+backend/agents/crud_agent/read_queries

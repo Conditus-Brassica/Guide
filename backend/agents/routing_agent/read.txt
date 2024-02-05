@@ -1,0 +1,28 @@
+Для существования этого чуда небходимо поставить OpenRouteService (OSR)
+на локальную машину. Чтобы сделать это необходимо
+    1. Перейти в этот репозиторий:
+       https://github.com/GIScience/openrouteservice.git
+    2. Сделать git clone на локальную машину.
+    3. Затем следуя инструкции репозиотрия выполнить:
+        # For example for the latest release
+            git clone https://github.com/GIScience/openrouteservice.git
+            cd openrouteservice
+            # Checkout latest version
+            export LATEST_ORS_RELEASE=$(git describe --tags --abbrev=0);
+            git checkout $LATEST_ORS_RELEASE
+            # If the docker folder exists cd into it
+            cd docker || echo "No docker folder found. Continue with next step."
+            # Now change the version the docker-compose.yml uses
+            sed -i='' "s/openrouteservice\/openrouteservice:nightly/openrouteservice\/openrouteservice:$LATEST_ORS_RELEASE/g" docker-compose.yml
+            sed -i='' "s/openrouteservice\/openrouteservice:latest/openrouteservice\/openrouteservice:$LATEST_ORS_RELEASE/g" docker-compose.yml
+            # Run docker compose with
+            docker compose up -d
+    4.  Необходимо остановить контейнер. В дириктории с OSR появится папка doceker
+        необходимо перейти в неё. Затем необходимо удалить содержимое
+        папки elevation_cache, data, а также удалить папку car в graphs
+    5.  Затем с геоданными (.pbf) размещаем в дириктории docker
+    6.  Затем открываем docker-compose.yml и раскоментируем последнюю строку в volumes
+        она содержит что-то вроде your-data.pbf меняем это на название своего pbf
+            - ./belarus-latest.osm.pbf:/home/ors/ors-core/data/osm_file.pbf
+    7.  В conf/ors-config.json меняем все 10000 на 1000000.
+    8.  Можно работать

@@ -1,0 +1,21 @@
+.panel{
+    z-index: 99;
+    position: absolute;
+    width: 21em;
+    padding: 2em;
+    margin-left: 78%;
+    height: 56em;
+    background-color: rgb(238, 238, 238);
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    /* justify-content:; */
+    flex-wrap: wrap;
+}
+
+
+.search{
+    margin-bottom: 2em;
+}

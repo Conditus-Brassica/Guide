@@ -1,0 +1,25 @@
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.name {
+    text-align: center;
+}
+
+.number {
+    display: flex;
+    min-width: 2em;
+    height: 2em;
+    background-color: #001A76;
+    color: white;
+    border-radius: 100%;
+    justify-content: center;
+    align-items: center;
+    min-width: 2em
+}
+
+.row p {
+    margin-left: 1em;
+}

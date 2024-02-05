@@ -1,0 +1,25 @@
+.popup {
+    color: #6A8559;
+    background-color: white;
+    position: fixed;
+    font-size: large;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 1em;
+    padding: 20px;
+    display: none;
+    width: 50%;
+    min-width: 300px;
+    min-height: 300px;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+}
+
+.cat{
+    display: flex;
+    flex-wrap: wrap;
+}

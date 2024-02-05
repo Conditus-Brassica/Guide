@@ -1,0 +1,20 @@
+.main_page {
+    background-image: url("/back.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: #001A76;
+    flex-grow: 1;
+}
+
+.welcome_block{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15%;
+}
+
+.welcome_block h3{
+    text-align: center;
+    margin: 1em;
+    margin-bottom: 5em;
+}
