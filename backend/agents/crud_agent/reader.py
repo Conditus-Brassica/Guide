@@ -308,7 +308,7 @@ class Reader(PureReader):
             OPTIONAL MATCH
                 (category:LandmarkCategory)<-[current_landmark_category_ref:REFERS]-(current_landmark)
                     -[:LOCATED]->
-                (:Region)((:Region&!State)-[:INCLUDE|NEIGHBOUR]-(:Region&!State)){0,4}(:Region)
+                (:Region)((:Region&!State)-[:INCLUDE|NEIGHBOUR_REGION]-(:Region&!State)){0,4}(:Region)
                     <-[:LOCATED]-
                 (recommendation:Landmark)-[recommendation_landmark_category_ref:REFERS]->(category)
             OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login = $user_login)
@@ -550,14 +550,13 @@ class Reader(PureReader):
             categories_names: List[str],
             user_login: str,
             amount_of_recommendations_for_point: int,
-            amount_of_additional_recommendations_for_point: int,
             optional_limit: int | None
     ):
         """Transaction handler for read_recommendations_by_coordinates_and_categories"""
         result = await tx.run(
             """
             OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login = $user_login)
-            
+                        
             UNWIND $coordinates_of_points AS coordinates_of_point
             CALL {
                 WITH coordinates_of_point, userAccount
@@ -583,7 +582,7 @@ class Reader(PureReader):
                 }
                 
                 OPTIONAL MATCH
-                    (mapSector)
+                    (mapSector) ((:MapSector)-[:NEIGHBOUR_SECTOR]-(:MapSector)){0,1} (recommendationSector: MapSector)
                         <-[:IN_SECTOR]-
                     (recommendedLandmark:Landmark)
                         -[recommendation_landmark_category_ref:REFERS]->
@@ -637,78 +636,24 @@ class Reader(PureReader):
                 subcategories_names,
                 distance,
                 wish_to_visit,
-                visited_amount,
-                COLLECT {
-                        WITH recommendation AS current_landmark, userAccount
-                        OPTIONAL MATCH 
-                            (category:LandmarkCategory)<-[current_landmark_category_ref:REFERS]-(current_landmark)
-                                -[:LOCATED]->
-                            (:Region)((:Region&!State)-[:INCLUDE|NEIGHBOUR]-(:Region&!State)){2,3}(:Region)
-                                <-[:LOCATED]-
-                            (additionalRecommendedLandmark:Landmark)-[additional_recommendation_landmark_category_ref:REFERS]->(category)
-                        
-                        OPTIONAL MATCH (userAccount)-[additional_wish_ref:WISH_TO_VISIT]->(additionalRecommendedLandmark)
-                        OPTIONAL MATCH (userAccount)-[additional_visited_ref:VISITED]->(additionalRecommendedLandmark)
-                        
-                        WITH
-                            additionalRecommendedLandmark AS additional_recommendation,
-                            additional_recommendation_landmark_category_ref.main_category_flag AS additional_category_is_main,
-                            point.distance(
-                                point({latitude: current_landmark.latitude, longitude: current_landmark.longitude}),
-                                point({latitude: additionalRecommendedLandmark.latitude, longitude: additionalRecommendedLandmark.longitude})
-                            ) AS additional_distance,
-                            additional_wish_ref,
-                            additional_visited_ref,
-                            current_landmark_category_ref
-                        ORDER BY
-                            current_landmark_category_ref.main_category_flag DESC,
-                            additional_category_is_main DESC,
-                            additional_distance ASC
-                        LIMIT $amount_of_additional_recommendations_for_point
-                        
-                        RETURN DISTINCT {
-                            recommendation: additional_recommendation,
-                            distance: additional_distance,
-                            main_categories_names: COLLECT {
-                                MATCH (additional_recommendation)
-                                    -[main_category_refer:REFERS WHERE main_category_refer.main_category_flag = True]->
-                                (main_category:LandmarkCategory)
-                                RETURN main_category.name AS main_category_name
-                            },
-                            subcategories_names: COLLECT {
-                                MATCH (additional_recommendation)
-                                    -[subcategory_refer:REFERS WHERE subcategory_refer.main_category_flag = False]->
-                                (subcategory:LandmarkCategory)
-                                RETURN subcategory.name AS subcategory_name
-                            },
-                            wish_to_visit: CASE
-                                WHEN additional_wish_ref IS NULL THEN False
-                                ELSE True
-                            END,
-                            visited_amount: CASE
-                                WHEN additional_visited_ref.amount IS NULL THEN 0
-                                ELSE additional_visited_ref.amount
-                            END
-                        }
-                    } AS additional_recommendations
+                visited_amount
             """,
             coordinates_of_points=coordinates_of_points, categories_names=categories_names, user_login=user_login,
-            amount_of_recommendations_for_point=amount_of_recommendations_for_point,
-            amount_of_additional_recommendations_for_point=amount_of_additional_recommendations_for_point
+            amount_of_recommendations_for_point=amount_of_recommendations_for_point
         )
         try:
             if optional_limit:
                 result_values = [
                     record.data(
                         "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
-                        "visited_amount", "additional_recommendations"
+                        "visited_amount"
                     ) for record in await result.fetch(optional_limit)
                 ]
             else:
                 result_values = [
                     record.data(
                         "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
-                        "visited_amount", "additional_recommendations"
+                        "visited_amount"
                     ) async for record in result
                 ]
         except IndexError as ex:
@@ -727,14 +672,13 @@ class Reader(PureReader):
             categories_names: List[str],
             user_login: str,
             amount_of_recommendations_for_point: int,
-            amount_of_additional_recommendations_for_point: int,
             optional_limit: int | None
     ):
         result = await session.execute_read(
             Reader._read_recommendations_by_coordinates_and_categories, coordinates_of_points, categories_names,
-            user_login, amount_of_recommendations_for_point, amount_of_additional_recommendations_for_point,
-            optional_limit
+            user_login, amount_of_recommendations_for_point, optional_limit
         )
         await logger.debug(f"method:\tread_recommendations_by_coordinates_and_categories,\nresult:\t{result}")
         return result
+
 

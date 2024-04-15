@@ -287,13 +287,12 @@ class CRUDAgent(PureCRUDAgent):
                 categories_names: List[str],
                 user_login: str,
                 amount_of_recommendations_for_point: int,
-                amount_of_additional_recommendations_for_point: int,
                 optional_limit: int | None
         ):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
                 return await cls._reader.read_recommendations_by_coordinates_and_categories(
                     session, coordinates_of_points, categories_names, user_login, amount_of_recommendations_for_point,
-                    amount_of_additional_recommendations_for_point, optional_limit
+                    optional_limit
                 )
 
         try:
@@ -304,8 +303,7 @@ class CRUDAgent(PureCRUDAgent):
             return await asyncio.shield(
                 session_runner(
                     json_params["coordinates_of_points"], json_params["categories_names"], json_params["user_login"],
-                    json_params["amount_of_recommendations_for_point"],
-                    json_params["amount_of_additional_recommendations_for_point"], json_params["optional_limit"]
+                    json_params["amount_of_recommendations_for_point"], json_params["optional_limit"]
                 )
             )
         except ValidationError as ex:
