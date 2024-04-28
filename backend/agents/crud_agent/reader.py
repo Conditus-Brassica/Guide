@@ -596,7 +596,10 @@ class Reader(PureReader):
         """Transaction handler for read_recommendations_by_coordinates_and_categories"""
         result = await tx.run(
             """
-            OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login = $user_login)
+            OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
+            WITH userAccount
+                ORDER BY user_account.login ASC
+                LIMIT 1
                         
             UNWIND $coordinates_of_points AS coordinates_of_point
             CALL {
