@@ -209,9 +209,9 @@ INDEXES_QUERIES = [
     );
     """,
     """
-    CREATE FULLTEXT INDEX user_account_login_fulltext_index IF NOT EXISTS
+    CREATE TEXT INDEX user_account_login_text_index IF NOT EXISTS
     FOR (userAccount: UserAccount)
-    ON EACH [userAccount.login];
+    ON (userAccount.login);
     """,
     """
     CREATE FULLTEXT INDEX note_category_name_fulltext_index IF NOT EXISTS
