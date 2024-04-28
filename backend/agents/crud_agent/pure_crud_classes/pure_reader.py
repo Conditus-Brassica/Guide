@@ -5,7 +5,7 @@ from typing import List, Dict
 
 class PureReader(ABC):
     """
-        Pure abstract class of knowledge base reader. Provides queries for CRUD agent.
+        Pure abstract class of knowledge base reader. Provides read queries for CRUD agent.
         All read queries for kb provided by child classes of this class.
 
         All methods work asynchronously.
