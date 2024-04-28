@@ -201,6 +201,20 @@ get_map_sectors_of_points = \
     }
 
 """
+get_map_sectors_structure_of_region
+"""
+get_map_sectors_structure_of_region = \
+    {
+        "type": "object",
+        "properties": {
+            "region_name": {"type": "string"}
+        },
+        "required": ["region_name"],
+        "maxProperties": 1,
+        "additionalProperties": False
+    }
+
+"""
 get_landmarks_of_categories_in_map_sectors
 """
 get_landmarks_of_categories_in_map_sectors = \

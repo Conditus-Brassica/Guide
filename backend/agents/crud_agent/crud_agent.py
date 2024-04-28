@@ -256,6 +256,22 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
+    async def get_map_sectors_structure_of_region(cls, json_params: Dict):
+        async def session_runner(region_name: str):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._reader.read_map_sectors_of_points(session, region_name)
+
+        try:
+            validate(json_params, get_map_sectors_structure_of_region)
+            return await asyncio.shield(
+                session_runner(json_params["region_name"])
+            )
+        except ValidationError as ex:
+            await logger.error(f"get_map_sectors_structure_of_region. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
     async def get_landmarks_of_categories_in_map_sectors(cls, json_params: Dict):
         async def session_runner(map_sectors_names: List[str], categories_names: List[str], optional_limit: int = None):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:

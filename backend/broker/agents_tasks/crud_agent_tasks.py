@@ -233,6 +233,31 @@ async def map_sectors_of_points_task(json_params: Dict):
 
 
 @BROKER.task
+async def map_sectors_structure_of_region(json_params: Dict):
+    """
+    Task to get map sectors structure of the given region.
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    Params for target function of agent Dict in form {
+        "region_name": str
+    }
+    :return: Coroutine
+    List[
+        Dict[
+            "map_sector_name": str | None,
+            "tl_latitude": float | None,
+            "tl_longitude": float | None,
+            "br_latitude": float | None,
+            "br_longitude: float | None"
+            "neighbour_map_sector_names": List[str] | (empty list)
+        ]
+    ]
+    """
+    return await CRUD_AGENT.get_map_sectors_structure_of_region(json_params)
+
+
+@BROKER.task
 async def landmarks_of_categories_in_map_sectors_task(json_params: Dict):
     """
     Task to get landmarks that refer to the given categories and are located in the given map sectors.

@@ -480,6 +480,47 @@ class Reader(PureReader):
         return result
 
     @staticmethod
+    async def _read_map_sectors_structure_of_region(tx, region_name: str):
+        """Transaction handler for read_map_sectors_structure_of_region"""
+
+        result = await tx.run(
+            """
+            CALL db.index.fulltext.queryNodes('region_name_fulltext_index', $region_name)
+                YIELD score, node AS region
+            MATCH (region)-[:DIVIDED_ON_SECTORS]->(:CountryMapSectors)-[:INCLUDE_SECTOR]->(mapSector:MapSector)
+            RETURN 
+                mapSector.name AS name,
+                mapSector.tl_latitude AS tl_latitude,
+                mapSector.tl_longitude AS tl_longitude,
+                mapSector.br_latitude AS br_latitude,
+                mapSector.br_longitude AS br_longitude,
+                COLLECT {
+                    MATCH (mapSector)-[:NEIGHBOUR_SECTOR]-(neighbour_map_sector:MapSector)
+                    RETURN neighbour_map_sector.name AS neighbour_map_sector_name
+                } AS neighbour_map_sector_names
+            """,
+            region_name=region_name
+        )
+        try:
+            result_values = [
+                record.data(
+                    "name", "tl_latitude", "tl_longitude", "br_latitude", "br_longitude", "neighbour_map_sector_names"
+                ) async for record in result
+            ]
+        except IndexError as ex:
+            await logger.error(f"Index error, args: {ex.args[0]}")
+            result_values = []
+
+        await logger.debug(f"method:\t_read_map_sectors_structure_of_region,\nresult:\t{await result.consume()}")
+        return result_values
+
+    @staticmethod
+    async def read_map_sectors_structure_of_region(session: AsyncSession, region_name: str):
+        result = await session.execute_read(Reader._read_map_sectors_structure_of_region, region_name)
+        await logger.debug(f"method:\tread_map_sectors_structure_of_region,\nresult:\t{result}")
+        return result
+
+    @staticmethod
     async def _read_landmarks_of_categories_in_map_sectors(
             tx, map_sectors_names: List[str], categories_names: List[str], optional_limit: int = None
     ):
@@ -672,7 +713,7 @@ class Reader(PureReader):
             categories_names: List[str],
             user_login: str,
             amount_of_recommendations_for_point: int,
-            optional_limit: int | None
+            optional_limit: int = None
     ):
         result = await session.execute_read(
             Reader._read_recommendations_by_coordinates_and_categories, coordinates_of_points, categories_names,

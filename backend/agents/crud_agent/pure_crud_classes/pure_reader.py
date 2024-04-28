@@ -212,10 +212,33 @@ class PureReader(ABC):
         :return: Coroutine
             List[
                 Dict[
-                    "landmark": Dict,
-                    "located_at": Dict
+                    "of_point": Dict ["longitude": float, "latitude": float],
+                    "map_sector": Dict | None
                 ]
-            ], where "located_at" is the region, where landmark is located
+            ]
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
+    async def read_map_sectors_structure_of_region(session, region_name: str):
+        """
+        Returns from kb map sectors structure of the given region.
+        Works asynchronously.
+
+        :param session: async session of knowledge base driver
+        :param region_name: str name of region, which map sectors structure will be returned.
+        :return: Coroutine
+            List[
+                Dict[
+                    "map_sector_name": str | None,
+                    "tl_latitude": float | None,
+                    "tl_longitude": float | None,
+                    "br_latitude": float | None,
+                    "br_longitude: float | None"
+                    "neighbour_map_sector_names": List[str] | (empty list)
+                ]
+            ]
         """
         raise NotImplementedError
 
@@ -251,7 +274,7 @@ class PureReader(ABC):
             categories_names: List[str],
             user_login: str,
             amount_of_recommendations_for_point: int,
-            optional_limit: int | None
+            optional_limit: int = None
     ):
         """
             Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark

@@ -260,6 +260,31 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
+    async def get_map_sectors_structure_of_region(cls, json_params: Dict):
+        """
+            Returns map sectors structure of the given region.
+            Works asynchronously.
+
+
+            :param json_params: Dict in form {
+                "region_name": str
+            }
+            :return: Coroutine
+            List[
+                Dict[
+                    "map_sector_name": str | None,
+                    "tl_latitude": float | None,
+                    "tl_longitude": float | None,
+                    "br_latitude": float | None,
+                    "br_longitude: float | None"
+                    "neighbour_map_sector_names": List[str] | (empty list)
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
     async def get_landmarks_of_categories_in_map_sectors(cls, json_params: Dict):
         """
             Returns landmarks that refer to the given categories and are located in the given map sectors.
