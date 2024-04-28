@@ -2,7 +2,7 @@
 from typing import List, Dict
 from aiologger.loggers.json import JsonLogger
 from neo4j import AsyncSession
-from .pure_crud_classes.pure_reader import PureReader
+from backend.agents.crud_agent.pure_crud_classes.pure_reader import PureReader
 
 
 logger = JsonLogger.with_default_handlers(
