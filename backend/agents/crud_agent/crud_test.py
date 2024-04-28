@@ -127,7 +127,6 @@ if __name__ == '__main__':
                     # ["историко-культурные ценности республики беларусь", "озёра поставского района"],
                     "user_login": "user",
                     "amount_of_recommendations_for_point": 3,
-                    "amount_of_additional_recommendations_for_point": 3,
                     "optional_limit": 6
                 }
             )
@@ -144,7 +143,6 @@ if __name__ == '__main__':
                     # ["историко-культурные ценности республики беларусь", "озёра поставского района"],
                     "user_login": "user",
                     "amount_of_recommendations_for_point": 3,
-                    "amount_of_additional_recommendations_for_point": 3,
                     "optional_limit": 6
                 }
             )
@@ -170,7 +168,7 @@ if __name__ == '__main__':
         # Taking and printing the result of broker tasks
         pprint(res11.return_value)
         pprint(res11_2.return_value)
-
+        res12_return_value = res12.return_value
         pprint(res1.return_value)
         pprint(res2.return_value)
         pprint(res3.return_value)
@@ -181,7 +179,8 @@ if __name__ == '__main__':
         pprint(res8.return_value)
         pprint(res9.return_value)
         pprint(res10.return_value)
-        pprint(res12.return_value)
+        pprint(res12_return_value)
+        pprint(len(res12_return_value))
 
 
         # Closing Broker listeting (Such code will be located in main, not in agent)
