@@ -259,7 +259,7 @@ class CRUDAgent(PureCRUDAgent):
     async def get_map_sectors_structure_of_region(cls, json_params: Dict):
         async def session_runner(region_name: str):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
-                return await cls._reader.read_map_sectors_of_points(session, region_name)
+                return await cls._reader.read_map_sectors_structure_of_region(session, region_name)
 
         try:
             validate(json_params, get_map_sectors_structure_of_region)
