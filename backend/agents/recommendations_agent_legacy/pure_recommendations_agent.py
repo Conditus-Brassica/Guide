@@ -40,9 +40,11 @@ class PureRecommendationsAgent(ABC):
             ],
             "categories_names": List[str],
             "user_login": str,
-            "amount_of_recommendations_for_point": int,z
+            "amount_of_recommendations_for_point": int,
+            "amount_of_additional_recommendations_for_point": int,
             "maximum_amount_of_recommendations": int,
-            "optional_limit": int | None
+            "maximum_amount_of_additional_recommendations": int,
+            "optional_limit": int | None,
         }, where current_name is the name of given landmark
         :return: Coroutine
             List[

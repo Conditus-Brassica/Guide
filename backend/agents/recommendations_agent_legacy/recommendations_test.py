@@ -30,7 +30,9 @@ if __name__ == '__main__':
                     # ["историко-культурные ценности республики беларусь", "озёра поставского района"],
                     "user_login": "user",
                     "amount_of_recommendations_for_point": 3,
+                    "amount_of_additional_recommendations_for_point": 3,
                     "optional_limit": 6,
+                    "maximum_amount_of_additional_recommendations": 1,
                     "maximum_amount_of_recommendations": 1
                 }
             )

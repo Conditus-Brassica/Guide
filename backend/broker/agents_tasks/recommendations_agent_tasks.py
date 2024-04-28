@@ -26,9 +26,7 @@ async def find_recommendations_for_coordinates_and_categories_task(json_params: 
         "categories_names": List[str],
         "user_login": str,
         "amount_of_recommendations_for_point": int,
-        "amount_of_additional_recommendations_for_point": int,
         "maximum_amount_of_recommendations": int,
-        "maximum_amount_of_additional_recommendations": int,
         "optional_limit": int | None,
     }, where current_name is the name of given landmark
     :return: Coroutine
