@@ -151,7 +151,13 @@ CONSTRAINTS_QUERIES = [
     """CREATE CONSTRAINT map_sector_name_uniqueness IF NOT EXISTS
             FOR (mapSector: MapSector) REQUIRE mapSector.name IS UNIQUE;""",
     """CREATE CONSTRAINT user_account_login_uniqueness IF NOT EXISTS
-            FOR (userAccount: UserAccount) REQUIRE userAccount.login IS UNIQUE;"""
+            FOR (userAccount: UserAccount) REQUIRE userAccount.login IS UNIQUE;""",
+    """CREATE CONSTRAINT guide_id_code_uniqueness IF NOT EXISTS
+            FOR (guideAccount: GuideAccount) REQUIRE guideAccount.id_code IS UNIQUE;""",
+    """CREATE CONSTRAINT note_category_name_uniqueness IF NOT EXISTS
+            FOR (noteCategory: NoteCategory) REQUIRE noteCategory.name IS UNIQUE;""",
+    """CREATE CONSTRAINT note_title_uniqueness IF NOT EXISTS
+            FOR (note: Note) REQUIRE note.title IS UNIQUE;"""
 ]
 
 
@@ -206,6 +212,16 @@ INDEXES_QUERIES = [
     CREATE FULLTEXT INDEX user_account_login_fulltext_index IF NOT EXISTS
     FOR (userAccount: UserAccount)
     ON EACH [userAccount.login];
+    """,
+    """
+    CREATE FULLTEXT INDEX note_category_name_fulltext_index IF NOT EXISTS
+    FOR (noteCategory: NoteCategory)
+    ON EACH [noteCategory.name];
+    """,
+    """
+    CREATE FULLTEXT INDEX note_title_fulltext_index IF NOT EXISTS
+    FOR (note: Note)
+    ON EACH [note.title];
     """
 ]
 
