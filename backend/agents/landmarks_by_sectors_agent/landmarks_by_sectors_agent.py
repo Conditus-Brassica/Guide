@@ -4,6 +4,8 @@ import json
 from aiologger.loggers.json import JsonLogger
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
+
+from backend.agents.crud_agent.crud_json_validation import get_map_sectors_structure_of_region
 from backend.agents.landmarks_by_sectors_agent.pure_landmarks_by_sectors_agent import PURELandmarksBySectorsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import landmarks_of_categories_in_map_sectors_task, landmarks_in_map_sectors_task
@@ -26,11 +28,19 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     def __init__(self):
         self._cache = {"map_sectors_names": set(), "categories_names": set()}
         self._result = {}
+        region_sectors_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                get_map_sectors_structure_of_region,
+                {"region_name": "Беларусь"}
+            )
+        )
+        result_task = region_sectors_async_task.result()
+        self.sectors = result_task.return_value
 
-    async def get_landmarks_in_sector(self, jsom_params: dict):
+    async def get_landmarks_in_sector(self, json_params: dict):
         # Check if format of dictionary is right using validator
-        await self._coords_of_square_validation(jsom_params)
-        squares_in_sector = self._get_sectors_in_sector(jsom_params)
+        await self._coords_of_square_validation(json_params)
+        squares_in_sector = await self.get_necessary_sectors(json_params)
         # Comparing with cache, then updating cache
         squares_in_sector["map_sectors_names"] = [
             i for i in squares_in_sector["map_sectors_names"] if i not in self._cache["map_sectors_names"]
@@ -49,7 +59,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
 
     async def get_landmarks_by_categories_in_sector(self, jsom_params: dict):
         await self._coords_of_square_with_categories_validation(jsom_params)
-        squares_in_sector = self._get_sectors_in_sector(jsom_params)
+        squares_in_sector = await self.get_necessary_sectors(jsom_params)
         squares_in_sector["categories_names"] = jsom_params["categories_names"]
         squares_in_sector["map_sectors_names"] = [
             i for i in squares_in_sector["map_sectors_names"] if i not in self._cache["map_sectors_names"]
@@ -91,10 +101,9 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
                 self._cache["categories_names"].pop()
                 i += 1
 
-    def _get_sectors_in_sector(self, coords_of_sector: dict):
-        data = json.load(open("backend/agents/landmarks_by_sectors_agent/new_squares.json"))
+    async def get_necessary_sectors(self, coords_of_sector: dict):
         squares_in_sector = {"map_sectors_names": []}
-        for element in data:
+        for element in self.sectors:
             if (coords_of_sector["TL"]["longitude"] - self.LONG_DIFFERENCE <= element["TL"]["longitude"] <
                 element["BR"]["longitude"] <=
                 coords_of_sector["BR"]["longitude"] + self.LONG_DIFFERENCE) and (
