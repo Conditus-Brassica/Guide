@@ -1,11 +1,8 @@
-import asyncio
-
 import openrouteservice as ors
 
 from typing import Dict
 from aiologger.loggers.json import JsonLogger
 
-from backend.agents.routing_agent import api_key
 from backend.agents.routing_agent.pure_routing_agent import PureRoutingAgent
 
 logger = JsonLogger.with_default_handlers(

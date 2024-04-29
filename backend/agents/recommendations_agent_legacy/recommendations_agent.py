@@ -2,7 +2,6 @@
 import asyncio
 import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
 from typing import Dict, List, Tuple
-from enum import Enum
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
