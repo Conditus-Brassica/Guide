@@ -1,5 +1,7 @@
 #Author: Vodohleb04
 import asyncio
+import datetime
+
 import backend.broker.agents_tasks.crud_agent_tasks as crud_tasks
 from pprint import pprint
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
@@ -148,10 +150,47 @@ if __name__ == '__main__':
             )
         )
 
+        recommendations_by_coordinates_and_categories_asyncio_task_3 = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.crud_recommendations_by_coordinates_and_categories_task,
+                {
+                    'user_login': '',
+                    'coordinates_of_points': [
+                        {'latitude': 53.9124414, 'longitude': 27.5951789}
+                    ],
+                    'categories_names': ['историко-культурные ценности республики беларусь',
+                         'историко-культурные ценности республики беларусь', 'памятники истории белоруссии',
+                         'памятники истории белоруссии', 'исторические музеи белоруссии',
+                         'исторические музеи белоруссии', 'художественные музеи белоруссии',
+                         'художественные музеи белоруссии', 'дома-музеи белоруссии', 'дома-музеи белоруссии',
+                         'музеи-квартиры белоруссии', 'музеи-квартиры белоруссии',
+                         'персональные музеи белоруссии', 'персональные музеи белоруссии',
+                         'национальные музеи белоруссии', 'национальные музеи белоруссии',
+                         'железнодорожные музеи белоруссии', 'железнодорожные музеи белоруссии',
+                         'музеи брестской области', 'музеи брестской области', 'музеи витебской области',
+                         'музеи витебской области', 'музеи гомельской области', 'музеи гомельской области',
+                         'музеи гродненской области', 'музеи гродненской области', 'музеи могилёвской области',
+                         'музеи могилёвской области', 'театры минска', 'театры минска', 'театры гомеля',
+                         'театры гомеля', 'театры витебска', 'театры витебска', 'театры бреста',
+                         'театры бреста', 'театры белоруссии', 'театры белоруссии', 'сады и парки белоруссии',
+                         'сады и парки белоруссии', 'сады и парки минска', 'сады и парки минска',
+                         'сады и парки могилёва', 'сады и парки могилёва', 'скверы белоруссии',
+                         'скверы белоруссии', 'памятники садово-паркового искусства белоруссии',
+                         'памятники садово-паркового искусства белоруссии'],
+                    "amount_of_recommendations_for_point": 50,
+                    "optional_limit": 40
+                }
+            )
+        )
+
 
         # Async tasks running
         res11 = await recommendations_by_coordinates_and_categories_asyncio_task_1
         res11_2 = await recommendations_by_coordinates_and_categories_asyncio_task_2
+
+        start = datetime.datetime.now()
+        res11_3 = await recommendations_by_coordinates_and_categories_asyncio_task_3
+        print(datetime.datetime.now() - start)
 
         res1 = await categories_of_region_asyncio_task
         res2 = await landmarks_in_map_sectors_asyncio_task
@@ -168,6 +207,11 @@ if __name__ == '__main__':
         # Taking and printing the result of broker tasks
         pprint(res11.return_value)
         pprint(res11_2.return_value)
+
+        print("Hard task\n###")
+        pprint(res11_3.return_value)
+        print("###")
+
         res12_return_value = res12.return_value
         pprint(res1.return_value)
         pprint(res2.return_value)
@@ -181,6 +225,7 @@ if __name__ == '__main__':
         pprint(res10.return_value)
         pprint(res12_return_value)
         pprint(len(res12_return_value))
+
 
 
         # Closing Broker listeting (Such code will be located in main, not in agent)

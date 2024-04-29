@@ -598,7 +598,7 @@ class Reader(PureReader):
             """
             OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
             WITH userAccount
-                ORDER BY user_account.login ASC
+                ORDER BY userAccount.login ASC
                 LIMIT 1
                         
             UNWIND $coordinates_of_points AS coordinates_of_point
@@ -635,7 +635,7 @@ class Reader(PureReader):
                 OPTIONAL MATCH (userAccount)-[wish_ref:WISH_TO_VISIT]->(recommendedLandmark)
                 OPTIONAL MATCH (userAccount)-[visited_ref:VISITED]->(recommendedLandmark)
                 
-                WITH
+                WITH DISTINCT
                     coordinates_of_point,
                     recommendedLandmark AS recommendation,
                     recommendation_landmark_category_ref,
@@ -650,7 +650,7 @@ class Reader(PureReader):
                 ORDER BY distance ASC
                 LIMIT $amount_of_recommendations_for_point
                 
-                RETURN DISTINCT
+                RETURN
                     recommendation,
                     COLLECT {
                         MATCH (recommendation)
