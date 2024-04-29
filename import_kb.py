@@ -221,7 +221,7 @@ INDEXES_QUERIES = [
     """
     CREATE TEXT INDEX note_title_text_index IF NOT EXISTS
     FOR (note: Note)
-    ON EACH (note.title);
+    ON (note.title);
     """
 ]
 
