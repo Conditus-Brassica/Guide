@@ -44,9 +44,9 @@ class Reader(PureReader):
         )
         try:
             if optional_limit:
-                result_values = [record.sectors("category", "located_at") for record in await result.fetch(optional_limit)]
+                result_values = [record.data("category", "located_at") for record in await result.fetch(optional_limit)]
             else:
-                result_values = [record.sectors("category", "located_at") async for record in result]
+                result_values = [record.data("category", "located_at") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -88,11 +88,11 @@ class Reader(PureReader):
         try:
             if optional_limit:
                 result_values = [
-                    record.sectors("landmark", "categories_names", "sector")
+                    record.data("landmark", "categories_names", "sector")
                     for record in await result.fetch(optional_limit)
                 ]
             else:
-                result_values = [record.sectors("landmark", "categories_names", "sector") async for record in result]
+                result_values = [record.data("landmark", "categories_names", "sector") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -130,10 +130,10 @@ class Reader(PureReader):
         try:
             if optional_limit:
                 result_values = [
-                    record.sectors("landmark", "categories_names") for record in await result.fetch(optional_limit)
+                    record.data("landmark", "categories_names") for record in await result.fetch(optional_limit)
                 ]
             else:
-                result_values = [record.sectors("landmark", "categories_names") async for record in result]
+                result_values = [record.data("landmark", "categories_names") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -171,9 +171,9 @@ class Reader(PureReader):
         )
         try:
             if optional_limit:
-                result_values = [record.sectors("landmark", "category") for record in await result.fetch(optional_limit)]
+                result_values = [record.data("landmark", "category") for record in await result.fetch(optional_limit)]
             else:
-                result_values = [record.sectors("landmark", "category") async for record in result]
+                result_values = [record.data("landmark", "category") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -217,10 +217,10 @@ class Reader(PureReader):
         try:
             if optional_limit:
                 result_values = [
-                    record.sectors("landmark", "categories_names") for record in await result.fetch(optional_limit)
+                    record.data("landmark", "categories_names") for record in await result.fetch(optional_limit)
                 ]
             else:
-                result_values = [record.sectors("landmark", "categories_names") async for record in result]
+                result_values = [record.data("landmark", "categories_names") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -271,10 +271,10 @@ class Reader(PureReader):
         try:
             if optional_limit:
                 result_values = [
-                    record.sectors("landmark", "located_at", "category") for record in await result.fetch(optional_limit)
+                    record.data("landmark", "located_at", "category") for record in await result.fetch(optional_limit)
                 ]
             else:
-                result_values = [record.sectors("landmark", "located_at", "category") async for record in result]
+                result_values = [record.data("landmark", "located_at", "category") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -362,7 +362,7 @@ class Reader(PureReader):
             result_values = []
             async for record in result:
                 result_values.append(
-                    record.sectors(
+                    record.data(
                         "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
                         "visited_amount"
                     )
@@ -415,12 +415,12 @@ class Reader(PureReader):
         try:
             if optional_limit:
                 result_values = [
-                    record.sectors("landmark", "categories_names", "located_at")
+                    record.data("landmark", "categories_names", "located_at")
                     for record in await result.fetch(optional_limit)
                 ]
             else:
                 result_values = [
-                    record.sectors("landmark", "categories_names", "located_at") async for record in result
+                    record.data("landmark", "categories_names", "located_at") async for record in result
                 ]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
@@ -459,9 +459,9 @@ class Reader(PureReader):
         )
         try:
             if optional_limit:
-                result_values = [record.sectors("map_sector", "of_point") for record in await result.fetch(optional_limit)]
+                result_values = [record.data("map_sector", "of_point") for record in await result.fetch(optional_limit)]
             else:
-                result_values = [record.sectors("map_sector", "of_point") async for record in result]
+                result_values = [record.data("map_sector", "of_point") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -503,7 +503,7 @@ class Reader(PureReader):
         )
         try:
             result_values = [
-                record.sectors(
+                record.data(
                     "name", "tl_latitude", "tl_longitude", "br_latitude", "br_longitude", "neighbour_map_sector_names"
                 ) async for record in result
             ]
@@ -560,10 +560,10 @@ class Reader(PureReader):
         try:
             if optional_limit:
                 result_values = [
-                    record.sectors("landmark", "map_sector", "category") for record in await result.fetch(optional_limit)
+                    record.data("landmark", "map_sector", "category") for record in await result.fetch(optional_limit)
                 ]
             else:
-                result_values = [record.sectors("landmark", "map_sector", "category") async for record in result]
+                result_values = [record.data("landmark", "map_sector", "category") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -688,14 +688,14 @@ class Reader(PureReader):
         try:
             if optional_limit:
                 result_values = [
-                    record.sectors(
+                    record.data(
                         "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
                         "visited_amount"
                     ) for record in await result.fetch(optional_limit)
                 ]
             else:
                 result_values = [
-                    record.sectors(
+                    record.data(
                         "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
                         "visited_amount"
                     ) async for record in result

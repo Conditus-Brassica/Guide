@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict
 
+import taskiq
 from taskiq_redis import ListQueueBroker
 
 
