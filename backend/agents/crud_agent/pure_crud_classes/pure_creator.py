@@ -1,6 +1,6 @@
 # Author: Vodohleb04
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Dict
 
 
 class PureCreator(ABC):
@@ -43,14 +43,15 @@ class PureCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    async def write_route_for_note(session, note_title: str, landmarks_names: List[str]):
+    async def write_route_for_note(session, note_title: str, landmarks_name_position_pair: List[Dict[str, str | int]]):
         """
         Try to write the route, that is connected with note.
 
         :param session: async session of the knowledge base.
         :param note_title: str title of the note that is connected with the route.
-        :param landmarks_names: List[str] names of the landmarks that are included in the route. Order of the landmarks
-            names does matter on the order of the route
+        :param landmarks_name_position_pair: List [ Dict["name": <landmark_name>, "position": <int_position_in_route>] ]
+            <int_position_in_route> starts from 0
+            pairs of name of the landmark and its position in the route that are included in the route.
 
         return: Coroutine
         """
