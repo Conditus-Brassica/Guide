@@ -219,9 +219,9 @@ INDEXES_QUERIES = [
     ON EACH [noteCategory.name];
     """,
     """
-    CREATE TEXT INDEX note_title_text_index IF NOT EXISTS
+    CREATE FULLTEXT INDEX note_title_text_index IF NOT EXISTS
     FOR (note: Note)
-    ON (note.title);
+    ON EACH [note.title];
     """
 ]
 
