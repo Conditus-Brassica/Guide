@@ -1,3 +1,4 @@
+# Read validation
 """
 get_categories_of_region
 """
@@ -278,3 +279,6 @@ get_recommendations_by_coordinates_and_categories = \
         "maxProperties": 5,
         "additionalProperties": False
     }
+
+# Write validation
+
