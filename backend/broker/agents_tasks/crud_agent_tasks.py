@@ -5,6 +5,8 @@ from ..broker_initializer import BROKER
 from backend.agents.crud_agent.crud_initializer import CRUD_AGENT
 
 
+# Read tasks
+
 @BROKER.task
 async def categories_of_region_task(json_params: Dict):
     """
@@ -323,3 +325,100 @@ async def crud_recommendations_by_coordinates_and_categories_task(json_params: D
     ]
     """
     return await CRUD_AGENT.get_recommendations_by_coordinates_and_categories(json_params)
+
+
+# Write tasks
+@BROKER.task
+async def post_user_task(json_params: Dict):
+    """
+    Task to put user to kb. Returns True if everything fine, else returns False.
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Dict in form {"user_login": str}
+    :return: Coroutine bool
+    """
+    return await CRUD_AGENT.put_user(json_params)
+
+
+@BROKER.task
+async def post_note_task(json_params: Dict):
+    """
+    Task to put note created by guide to kb. Returns True if everything fine, returns False otherwise.
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Dict in form {
+        "guide_login": str,
+        "country_names": List[str],
+        "title": str,
+        "category_names": List[str]
+    }
+    :return: Coroutine bool
+    """
+    return await CRUD_AGENT.put_note(json_params)
+
+
+@BROKER.task
+async def post_route_for_note_task(json_params: Dict):
+    """
+    Task to put route for the corresponding note to kb. Returns True if everything fine, returns False otherwise.
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Dict in form {
+        "note_title": str,
+        "landmarks_name_position_pair": List[
+            Dict [
+                "name": str,
+                "position": int
+            ]
+        ], where name is name of landmark and position is position in route of corresponding landmark
+    }
+
+    :return: Coroutine bool
+    """
+    return await CRUD_AGENT.put_route_for_note(json_params)
+
+
+@BROKER.task
+async def post_route_saved_by_user_task(json_params: Dict):
+    """
+    Task to put route saved by user to kb. Returns True if everything fine, returns False otherwise.
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Dict in form {
+        "user_login": str,
+        "landmarks_name_position_pair": List[
+            Dict [
+                "name": str,
+                "position": int
+            ]
+        ], where name is name of landmark and position is position in route of corresponding landmark
+    }
+    :return: Coroutine bool
+    """
+    return await CRUD_AGENT.put_route_saved_by_user(json_params)
+
+
+@BROKER.task
+async def post_saved_route_from_note_relationship_task(json_params: Dict):
+    """
+    Task to mark route, corresponding to note, as saved by user. Returns True if everything fine,
+        returns False otherwise.
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Dict in form {
+        "user_login": str,
+        "note_title": str
+    }
+    :return: Coroutine bool
+    """
+    return await CRUD_AGENT.put_saved_route_from_note_relationship(json_params)
