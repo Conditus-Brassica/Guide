@@ -23,6 +23,7 @@ logger = JsonLogger.with_default_handlers(
 class CRUDAgent(PureCRUDAgent):
     _single_crud = None
     _reader = None
+    _creator = None
     _kb_driver = None
     _knowledgebase_name = None
 
@@ -333,5 +334,107 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     # Write queries
+    @classmethod
+    async def put_user(cls, json_params: Dict):
+        async def session_runner(user_login: str):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._creator.write_user(session, user_login)
 
-    # TODO write queries
+        try:
+            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            return await asyncio.shield(
+                session_runner(json_params["user_login"])
+            )
+        except ValidationError as ex:
+            await logger.error(f"put_user. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
+    async def put_note(cls, json_params: Dict):
+        async def session_runner(
+                guide_login: str, country_names: List[str], title: str, category_names: List[str]
+        ):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._creator.write_note(
+                    session, guide_login, country_names, title, category_names
+                )
+
+        try:
+            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            return await asyncio.shield(
+                session_runner(
+                    json_params["guide_login"],
+                    json_params["country_names"],
+                    json_params["title"],
+                    json_params["category_names"]
+                )
+            )
+        except ValidationError as ex:
+            await logger.error(f"put_note. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
+    async def put_route_for_note(cls, json_params: Dict):
+        async def session_runner(
+                note_title: str,
+                landmarks_name_position_pair: List[Dict[str, str | int]],
+                title: str,
+                category_names: List[str]
+        ):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._creator.write_route_for_note(
+                    session, note_title, landmarks_name_position_pair, title, category_names
+                )
+
+        try:
+            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            return await asyncio.shield(
+                session_runner(
+                    json_params["note_title"],
+                    json_params["landmarks_name_position_pair"],
+                    json_params["title"],
+                    json_params["category_names"]
+                )
+            )
+        except ValidationError as ex:
+            await logger.error(f"put_route_for_note. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
+    async def put_route_saved_by_user(cls, json_params: Dict):
+        async def session_runner(user_login: str, landmarks_name_position_pair: List[Dict[str, str | int]]):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._creator.write_route_saved_by_user(session, user_login, landmarks_name_position_pair)
+
+        try:
+            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            return await asyncio.shield(
+                session_runner(
+                    json_params["user_login"], json_params["landmarks_name_position_pair"]
+                )
+            )
+        except ValidationError as ex:
+            await logger.error(f"put_route_saved_by_user. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
+    async def put_saved_route_from_note_relationship(cls, json_params: Dict):
+        async def session_runner(user_login: str, note_title: str):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._creator.write_saved_route_from_note_relationship(
+                    session, user_login, note_title
+                )
+
+        try:
+            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            return await asyncio.shield(
+                session_runner(json_params["user_login"], json_params["note_title"])
+            )
+        except ValidationError as ex:
+            await logger.error(f"put_saved_route_from_note_relationship. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
