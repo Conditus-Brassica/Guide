@@ -70,7 +70,7 @@ class CRUDAgent(PureCRUDAgent):
         :param knowledgebase_name: name of knowledgebase to query
         """
         if not self._single_crud:
-            self._class_init(reader, async_kb_driver, knowledgebase_name)
+            self._class_init(reader, creator, async_kb_driver, knowledgebase_name)
             self._single_crud = self
         else:
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
