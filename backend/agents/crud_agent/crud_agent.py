@@ -10,6 +10,7 @@ from neo4j import AsyncDriver
 from aiologger.loggers.json import JsonLogger
 from backend.agents.crud_agent.pure_crud_classes.pure_crud_agent import PureCRUDAgent
 from backend.agents.crud_agent.pure_crud_classes.pure_reader import PureReader
+from backend.agents.crud_agent.pure_crud_classes.pure_creator import PureCreator
 from backend.agents.crud_agent.crud_json_validation import *
 
 
@@ -48,17 +49,20 @@ class CRUDAgent(PureCRUDAgent):
             return False
 
     @classmethod
-    def _class_init(cls, reader: PureReader, async_kb_driver: AsyncDriver, knowledgebase_name: str):
+    def _class_init(
+            cls, reader: PureReader, creator: PureCreator, async_kb_driver: AsyncDriver, knowledgebase_name: str
+    ):
         """
         :param reader: reader for agent
         :param async_kb_driver: async driver of knowledge base
         :param knowledgebase_name: name of knowledgebase to query
         """
         cls._reader = reader
+        cls._creator = creator
         cls._kb_driver = async_kb_driver
         cls._knowledgebase_name = knowledgebase_name
 
-    def __init__(self, reader: PureReader, async_kb_driver: AsyncDriver, knowledgebase_name: str):
+    def __init__(self, reader: PureReader, creator: PureCreator, async_kb_driver: AsyncDriver, knowledgebase_name: str):
         """
         :param reader: reader for agent
         :param async_kb_driver: async driver of knowledge base
@@ -70,6 +74,7 @@ class CRUDAgent(PureCRUDAgent):
         else:
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
 
+    # Read queries
     @classmethod
     async def get_categories_of_region(cls, json_params: Dict):
         async def session_runner(region_name: str, optional_limit: int = None):
@@ -326,3 +331,7 @@ class CRUDAgent(PureCRUDAgent):
             await logger.error(f"get_recommendations_by_coordinates_and_categories. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
             return []  # raise ValidationError
+
+    # Write queries
+
+    # TODO write queries

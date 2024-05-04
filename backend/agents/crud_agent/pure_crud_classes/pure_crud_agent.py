@@ -38,11 +38,8 @@ class PureCRUDAgent(ABC):
     def crud_exists(cls) -> bool:
         """Method to check if crud object already exists"""
         raise NotImplementedError
-        # if cls._single_crud:
-        #     return True
-        # else:
-        #     return False
 
+    # Read queries
     @classmethod
     @abstractmethod
     async def get_categories_of_region(cls, json_params: Dict):
@@ -343,5 +340,92 @@ class PureCRUDAgent(ABC):
                     ]
                 ]
             ]
+        """
+        raise NotImplementedError
+
+    # Write queries
+
+    @classmethod
+    @abstractmethod
+    async def put_user(cls, json_params: Dict):
+        """
+            Puts user to kb.
+            Works asynchronously.
+
+            :param json_params: Dict in form {"user_login": str}
+            :return: Coroutine bool True if everything is fine, False otherwise
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
+    async def put_note(cls, json_params: Dict):
+        """
+            Puts note, created by guide to kb.
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "guide_login": str,
+                "country_names": List[str],
+                "title": str,
+                "category_names": List[str]
+            }
+            :return: Coroutine bool True if everything is fine, False otherwise
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
+    async def put_route_for_note(cls, json_params: Dict):
+        """
+            Puts route corresponding to the given note to kb.
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "note_title": str,
+                "landmarks_name_position_pair": List[
+                    Dict [
+                        "name": str
+                    ]
+                ], where name is name of landmark and position is position in route of corresponding landmark
+            }
+
+            :return: Coroutine bool True if everything is fine, False otherwise
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
+    async def put_route_saved_by_user(cls, json_params: Dict):
+        """
+            Puts route saved by user to kb.
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "user_login": str,
+                "landmarks_name_position_pair": List[
+                    Dict [
+                        "name": str
+                    ]
+                ], where name is name of landmark and position is position in route of corresponding landmark
+            }
+
+            :return: Coroutine bool True if everything is fine, False otherwise
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
+    async def put_saved_route_from_note_relationship(cls, json_params: Dict):
+        """
+            Marks route, corresponding to note, as saved by user.
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "user_login": str,
+                "note_title": str
+            }
+
+            :return: Coroutine bool True if everything is fine, False otherwise
         """
         raise NotImplementedError
