@@ -12,3 +12,4 @@ backend/agents/crud_agent/basic_login.json
 
 backend/agents/crud_agent/create_scripts
 backend/agents/crud_agent/read_queries
+/.venv

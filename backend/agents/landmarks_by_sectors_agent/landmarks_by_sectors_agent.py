@@ -5,10 +5,10 @@ from aiologger.loggers.json import JsonLogger
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-from backend.agents.crud_agent.crud_json_validation import get_map_sectors_structure_of_region
 from backend.agents.landmarks_by_sectors_agent.pure_landmarks_by_sectors_agent import PURELandmarksBySectorsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
-from backend.broker.agents_tasks.crud_agent_tasks import landmarks_of_categories_in_map_sectors_task, landmarks_in_map_sectors_task
+from backend.broker.agents_tasks.crud_agent_tasks import landmarks_of_categories_in_map_sectors_task, \
+    landmarks_in_map_sectors_task, map_sectors_structure_of_region
 from backend.agents.landmarks_by_sectors_agent.squares_params_json_validation import *
 
 logger = JsonLogger.with_default_handlers(
@@ -18,34 +18,61 @@ logger = JsonLogger.with_default_handlers(
 
 
 class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
+    _cache = None
+    _result = None
+    _sectors = None
+
     LAT_DIFFERENCE = 0.312
     LONG_DIFFERENCE = 0.611
     CACHE_SECTORS_MAX_SIZE = 60
     CACHE_CATEGORIES_MAX_SIZE = 10
 
-    single_landmarks_agent = None
+    _single_landmarks_agent = None
 
-    def __init__(self):
+    def __init__(self, result_task):
         self._cache = {"map_sectors_names": set(), "categories_names": set()}
         self._result = {}
-        region_sectors_async_task = asyncio.create_task(
+        self._sectors = {}
+        self._sectors = result_task.return_value
+
+    @classmethod
+    def get_landmarks_by_sectors_agent(cls):
+        """
+        Method to take crud agent object. Returns None in case when crud is not exists.
+        :return: None | pure_landmarks_by_sectors_agent
+        """
+        return cls._single_landmarks_agent
+
+    @classmethod
+    def landmarks_by_sectors_agent_exists(cls) -> bool:
+        """Method to check if crud object already exists"""
+        if cls._single_landmarks_agent:
+            return True
+        else:
+            return False
+
+    @classmethod
+    async def create(cls):
+        _region_sectors_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                get_map_sectors_structure_of_region,
+                map_sectors_structure_of_region,
                 {"region_name": "Беларусь"}
             )
         )
-        result_task = region_sectors_async_task.result()
-        self.sectors = result_task.return_value
+        result_task = await _region_sectors_async_task
+        cls._single_landmarks_agent = LandmarksBySectorsAgent(result_task)
+        return cls._single_landmarks_agent
 
-    async def get_landmarks_in_sector(self, json_params: dict):
+    @classmethod
+    async def get_landmarks_in_sector(cls, json_params: dict):
         # Check if format of dictionary is right using validator
-        await self._coords_of_square_validation(json_params)
-        squares_in_sector = await self.get_necessary_sectors(json_params)
+        await cls._coords_of_square_validation(json_params)
+        squares_in_sector = await cls.get_necessary_sectors(json_params)
         # Comparing with cache, then updating cache
         squares_in_sector["map_sectors_names"] = [
-            i for i in squares_in_sector["map_sectors_names"] if i not in self._cache["map_sectors_names"]
+            i for i in squares_in_sector["map_sectors_names"] if i not in cls._cache["map_sectors_names"]
         ]
-        self._set_cache(squares_in_sector)
+        cls._set_cache(squares_in_sector)
         if len(squares_in_sector["map_sectors_names"]) != 0:
             landmarks_sectors_async_task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(
@@ -54,8 +81,8 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
                 )
             )
             result_task = await landmarks_sectors_async_task
-            self._result = result_task.return_value
-        return self._result
+            cls._result = result_task.return_value
+        return cls._result
 
     async def get_landmarks_by_categories_in_sector(self, jsom_params: dict):
         await self._coords_of_square_with_categories_validation(jsom_params)
@@ -78,38 +105,40 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
             self._result = result_task.return_value
         return self._result
 
-    def _set_cache(self, squares_in_sector: dict):
+    @classmethod
+    def _set_cache(cls, squares_in_sector: dict):
         """
         self._cache is set to prevent repeated elements in cache
         """
         for sector_name in squares_in_sector["map_sectors_names"]:
-            self._cache["map_sectors_names"].add(sector_name)
+            cls._cache["map_sectors_names"].add(sector_name)
         if "categories_names" in squares_in_sector.keys():
             for category in squares_in_sector["categories_names"]:
-                self._cache["categories_names"].add(category)
+                cls._cache["categories_names"].add(category)
         """
         Shorten cache to the desired size.
         """
-        if len(self._cache.get("map_sectors_names", [])) > self.CACHE_SECTORS_MAX_SIZE:
+        if len(cls._cache.get("map_sectors_names", [])) > cls.CACHE_SECTORS_MAX_SIZE:
             i = 0
-            while i <= (len(self._cache["map_sectors_names"]) - self.CACHE_SECTORS_MAX_SIZE):
-                self._cache["map_sectors_names"].pop()
+            while i <= (len(cls._cache["map_sectors_names"]) - cls.CACHE_SECTORS_MAX_SIZE):
+                cls._cache["map_sectors_names"].pop()
                 i += 1
-        if len(self._cache.get("categories_names", [])) > self.CACHE_CATEGORIES_MAX_SIZE:
+        if len(cls._cache.get("categories_names", [])) > cls.CACHE_CATEGORIES_MAX_SIZE:
             i = 0
-            while i <= (len(self._cache["categories_names"]) - self.CACHE_CATEGORIES_MAX_SIZE):
-                self._cache["categories_names"].pop()
+            while i <= (len(cls._cache["categories_names"]) - cls.CACHE_CATEGORIES_MAX_SIZE):
+                cls._cache["categories_names"].pop()
                 i += 1
 
-    async def get_necessary_sectors(self, coords_of_sector: dict):
+    @classmethod
+    async def get_necessary_sectors(cls, coords_of_sector: dict):
         squares_in_sector = {"map_sectors_names": []}
-        for element in self.sectors:
-            if (coords_of_sector["TL"]["longitude"] - self.LONG_DIFFERENCE <= element["TL"]["longitude"] <
+        for element in cls._sectors:
+            if (coords_of_sector["TL"]["longitude"] - cls.LONG_DIFFERENCE <= element["TL"]["longitude"] <
                 element["BR"]["longitude"] <=
-                coords_of_sector["BR"]["longitude"] + self.LONG_DIFFERENCE) and (
-                    coords_of_sector["BR"]["latitude"] - self.LAT_DIFFERENCE <= element["BR"]["latitude"] <
+                coords_of_sector["BR"]["longitude"] + cls.LONG_DIFFERENCE) and (
+                    coords_of_sector["BR"]["latitude"] - cls.LAT_DIFFERENCE <= element["BR"]["latitude"] <
                     element["TL"]["latitude"] <=
-                    coords_of_sector["TL"]["latitude"] + self.LAT_DIFFERENCE):
+                    coords_of_sector["TL"]["latitude"] + cls.LAT_DIFFERENCE):
                 squares_in_sector["map_sectors_names"].append(element["name"])
         return squares_in_sector
 
