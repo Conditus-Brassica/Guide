@@ -157,7 +157,10 @@ CONSTRAINTS_QUERIES = [
     """CREATE CONSTRAINT note_category_name_uniqueness IF NOT EXISTS
             FOR (noteCategory: NoteCategory) REQUIRE noteCategory.name IS UNIQUE;""",
     """CREATE CONSTRAINT note_title_uniqueness IF NOT EXISTS
-            FOR (note: Note) REQUIRE note.title IS UNIQUE;"""
+            FOR (note: Note) REQUIRE note.title IS UNIQUE;""",
+    """CREATE CONSTRAINT route_index_id_uniqueness IF NOT EXISTS
+            FOR (route: Route) REQUIRE route.index_id IS UNIQUE;
+    """
 ]
 
 
@@ -222,6 +225,11 @@ INDEXES_QUERIES = [
     CREATE FULLTEXT INDEX note_title_fulltext_index IF NOT EXISTS
     FOR (note: Note)
     ON EACH [note.title];
+    """,
+    """  
+    CREATE INDEX route_index_id_range_index IF NOT EXISTS
+    FOR (route: Route)
+    ON (route.index_id);
     """
 ]
 

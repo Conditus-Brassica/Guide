@@ -126,8 +126,20 @@ class Creator(PureCreator):
                 ORDER BY score DESC
                 LIMIT 1
             
-            CREATE (route: Route)<-[:ROUTE_FOR_NOTE]-(note)
+            OPTIONAL MATCH (route: Route)
             WITH note, route
+                ORDER BY route.index_id DESC
+                LIMIT 1
+            WITH 
+                note,
+                CASE 
+                    WHEN route IS null THEN 0
+                    WHEN route.index_id IS null THEN 0
+                    ELSE route.index_id
+                END AS last_route_index_id
+            
+            CREATE (route: Route {index_id: last_route_index_id + 1})<-[:ROUTE_FOR_NOTE]-(note)
+            WITH route
             
             UNWIND $landmarks_name_position_pairs AS landmark_name_position_pair
                 CALL {
@@ -150,7 +162,7 @@ class Creator(PureCreator):
             raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
         if counters.relationships_created != len(landmarks_name_position_pairs) + 1:  # Note -> Route and Route -> its Landmarks
             raise exceptions.Neo4jError("Unexpected behaviour: Wrong amount of relationships, that were created.")
-        if counters.properties_set != len(landmarks_name_position_pairs):
+        if counters.properties_set != len(landmarks_name_position_pairs) + 1:  # index_id and position
             raise exceptions.Neo4jError(
                 "Unexpected behaviour: Wrong amount properties that were set. Probably some of the given countries aren\'t exist"
             )
@@ -177,10 +189,22 @@ class Creator(PureCreator):
             WITH userAccount
                 ORDER BY userAccount.login ASC
                 LIMIT 1
-
-            CREATE (route: Route)<-[:ROUTE_SAVED_BY_USER]-(userAccount)
+            
+            OPTIONAL MATCH (route: Route)
+            WITH userAccount, route
+                ORDER BY route.index_id DESC
+                LIMIT 1
+            WITH 
+                userAccount,
+                CASE 
+                    WHEN route IS null THEN 0
+                    WHEN route.index_id IS null THEN 0
+                    ELSE route.index_id
+                END AS last_route_index_id
+            
+            CREATE (route: Route {index_id: last_route_index_id + 1})<-[:ROUTE_SAVED_BY_USER]-(userAccount)
             WITH route
-
+            
             UNWIND $landmarks_name_position_pairs AS landmark_name_position_pair
                 CALL {
                     WITH landmark_name_position_pair
@@ -202,7 +226,7 @@ class Creator(PureCreator):
             raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
         if counters.relationships_created != len(landmarks_name_position_pairs) + 1:  # User -> Route and Route -> its Landmarks
             raise exceptions.Neo4jError("Unexpected behaviour: Wrong amount of relationships, that were created.")
-        if counters.properties_set != len(landmarks_name_position_pairs):
+        if counters.properties_set != len(landmarks_name_position_pairs) + 1:  # index_id and position
             raise exceptions.Neo4jError(
                 "Unexpected behaviour: Wrong amount properties that were set. Probably some of the given countries aren\'t exist"
             )
