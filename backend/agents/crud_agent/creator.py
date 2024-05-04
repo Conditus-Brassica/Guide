@@ -29,6 +29,10 @@ class Creator(PureCreator):
             """,
             user_login=user_login
         )
+        result_summary = await (result.consume())
+        counters = result_summary.counters
+        if counters.nodes_created != 1:
+            raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
 
     @staticmethod
     async def write_user(session: AsyncSession, user_login: str) -> bool:
@@ -91,7 +95,7 @@ class Creator(PureCreator):
         path_list_size = 0
         async for record in result:
             path_list_size = record.data("path_list_size")["path_list_size"]
-        result_summary = await result.consume()
+        result_summary = await (result.consume())
         counters = result_summary.counters
         if counters.nodes_created != 1:
             raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
@@ -155,7 +159,7 @@ class Creator(PureCreator):
             note_title=note_title,
             landmarks_name_position_pairs=landmarks_name_position_pairs
         )
-        result_summary = await result.consume()
+        result_summary = await (result.consume())
         counters = result_summary.counters
 
         if counters.nodes_created != 1:
@@ -219,7 +223,7 @@ class Creator(PureCreator):
             user_login=user_login,
             landmarks_name_position_pairs=landmarks_name_position_pairs
         )
-        result_summary = await result.consume()
+        result_summary = await (result.consume())
         counters = result_summary.counters
 
         if counters.nodes_created != 1:
@@ -247,7 +251,7 @@ class Creator(PureCreator):
 
     @staticmethod
     async def _write_saved_route_from_note_relationship(tx, user_login: str, note_title: str):
-        result = tx.run(
+        result = await tx.run(
             """
             OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
             WITH userAccount
@@ -267,7 +271,7 @@ class Creator(PureCreator):
             user_login=user_login,
             note_title=note_title
         )
-        result_summary = await result.consume()
+        result_summary = await (result.consume())
         counters = result_summary.counters
 
         if counters.relationships_created != 1:

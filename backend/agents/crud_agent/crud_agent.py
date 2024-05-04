@@ -377,15 +377,10 @@ class CRUDAgent(PureCRUDAgent):
 
     @classmethod
     async def put_route_for_note(cls, json_params: Dict):
-        async def session_runner(
-                note_title: str,
-                landmarks_name_position_pair: List[Dict[str, str | int]],
-                title: str,
-                category_names: List[str]
-        ):
+        async def session_runner(note_title: str, landmarks_name_position_pair: List[Dict[str, str | int]]):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
                 return await cls._creator.write_route_for_note(
-                    session, note_title, landmarks_name_position_pair, title, category_names
+                    session, note_title, landmarks_name_position_pair
                 )
 
         try:
@@ -393,9 +388,7 @@ class CRUDAgent(PureCRUDAgent):
             return await asyncio.shield(
                 session_runner(
                     json_params["note_title"],
-                    json_params["landmarks_name_position_pair"],
-                    json_params["title"],
-                    json_params["category_names"]
+                    json_params["landmarks_name_position_pair"]
                 )
             )
         except ValidationError as ex:
