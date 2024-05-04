@@ -268,6 +268,24 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
+    async def read_route_landmarks_by_index_id(session, index_id: int):
+        """
+            Returns landmarks of the route with the given index_id (unique id). Returns landmarks in the order that
+                corresponds to the order of appearance of landmarks in the route.
+
+            :param session: async session of knowledge base driver
+            :param index_id: int - unique id of the route
+            :return: Coroutine
+            List[
+                Dict[
+                    "landmark": Dict | None,
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
     async def read_recommendations_by_coordinates_and_categories(
             session,
             coordinates_of_points: List[Dict[str, float]],
@@ -308,5 +326,3 @@ class PureReader(ABC):
             ]
         """
         raise NotImplementedError
-
-

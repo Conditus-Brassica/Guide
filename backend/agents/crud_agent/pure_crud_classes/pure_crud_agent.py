@@ -306,6 +306,26 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
+    async def get_route_landmarks_by_index_id(cls, json_params: Dict):
+        """
+            Returns list landmarks of the route with the given index_id (unique id of route). Landmarks are returned in
+            the order that corresponds to the order of appearance of landmarks in the route.
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "index_id": int
+            }
+            :return: Coroutine
+            List[
+                Dict[
+                    "landmark": Dict | None,
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
     async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
         """
             Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark

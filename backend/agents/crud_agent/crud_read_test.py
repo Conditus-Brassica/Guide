@@ -183,6 +183,13 @@ if __name__ == '__main__':
             )
         )
 
+        route_landmarks_by_index_id_task_asyncio_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.route_landmarks_by_index_id_task,
+                {'index_id': 6}
+            )
+        )
+
 
         # Async tasks running
         res11 = await recommendations_by_coordinates_and_categories_asyncio_task_1
@@ -203,6 +210,8 @@ if __name__ == '__main__':
         res9 = await map_sectors_of_points_asyncio_task
         res10 = await landmarks_of_categories_in_map_sectors_asyncio_task
         res12 = await map_sectors_structure_of_region_task
+
+        res13 = await route_landmarks_by_index_id_task_asyncio_task
 
         # Taking and printing the result of broker tasks
         pprint(res11.return_value)
@@ -225,6 +234,8 @@ if __name__ == '__main__':
         pprint(res10.return_value)
         pprint(res12_return_value)
         pprint(len(res12_return_value))
+
+        pprint(res13.return_value)
 
 
 

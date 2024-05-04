@@ -303,6 +303,22 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
+    async def get_route_landmarks_by_index_id(cls, json_params: Dict):
+        async def session_runner(index_id: int):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._reader.read_route_landmarks_by_index_id(session, index_id)
+
+        try:
+            # TODO validate(json_params, get_landmarks_of_categories_in_map_sectors)
+            return await asyncio.shield(
+                session_runner(json_params["index_id"])
+            )
+        except ValidationError as ex:
+            await logger.error(f"get_route_landmarks_by_index_id. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
     async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
         async def session_runner(
                 coordinates_of_points: List[Dict[str, float]],

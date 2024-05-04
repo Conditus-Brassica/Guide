@@ -585,6 +585,35 @@ class Reader(PureReader):
         return result
 
     @staticmethod
+    async def _read_route_landmarks_by_index_id(tx, index_id: int):
+        """Transaction handler for read_landmarks_of_categories_in_map_sectors"""
+        result = await tx.run(
+            """    
+            MATCH (route: Route) WHERE route.index_id = $index_id
+            MATCH (landmark: Landmark)<-[part_of_route: PART_OF_ROUTE]-(route) 
+            RETURN landmark
+                ORDER BY part_of_route.position ASC
+            """,
+            index_id=index_id
+        )
+        try:
+            result_values = [record.data("landmark") async for record in result]
+        except IndexError as ex:
+            await logger.error(f"Index error, args: {ex.args[0]}")
+            result_values = []
+
+        await logger.debug(f"method:\t_read_route_landmarks_by_index_id,\nresult:\t{await result.consume()}")
+        return result_values
+
+    @staticmethod
+    async def read_route_landmarks_by_index_id(session, index_id: int):
+        result = await session.execute_read(
+            Reader._read_route_landmarks_by_index_id, index_id
+        )
+        await logger.debug(f"method:\tread_route_landmarks_by_index_id,\nresult:\t{result}")
+        return result
+
+    @staticmethod
     async def _read_recommendations_by_coordinates_and_categories(
             tx,
             coordinates_of_points: List[Dict[str, float]],
@@ -724,5 +753,4 @@ class Reader(PureReader):
         )
         await logger.debug(f"method:\tread_recommendations_by_coordinates_and_categories,\nresult:\t{result}")
         return result
-
 

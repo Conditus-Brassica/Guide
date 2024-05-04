@@ -192,17 +192,17 @@ async def crud_recommendations_for_landmark_by_region_task(json_params: Dict):
         "amount_of_recommendations": int
     }, where current_name is the name of given landmark
     :return: Coroutine
-    List[
-        Dict[
-            "recommendation": Dict | None,
-            "main_categories_names": List[str] | [] (empty list),
-            "subcategories_names": List[str] | [] (empty list),
-            "distance": float | None,
-            "user_account": Dict | None,
-            "wish_to_visit": bool | None,
-            "visited_amount": int | None
+        List[
+            Dict[
+                "recommendation": Dict | None,
+                "main_categories_names": List[str] | [] (empty list),
+                "subcategories_names": List[str] | [] (empty list),
+                "distance": float | None,
+                "user_account": Dict | None,
+                "wish_to_visit": bool | None,
+                "visited_amount": int | None
+            ]
         ]
-    ]
     """
     return await CRUD_AGENT.get_recommendations_for_landmark_by_region(json_params)
 
@@ -224,12 +224,12 @@ async def map_sectors_of_points_task(json_params: Dict):
         "optional_limit": int | None
     }
     :return: Coroutine
-    List[
-        Dict[
-            "of_point": Dict ["longitude": float, "latitude": float]
-            "map_sector": Dict | None,
+        List[
+            Dict[
+                "of_point": Dict ["longitude": float, "latitude": float]
+                "map_sector": Dict | None,
+            ]
         ]
-    ]
     """
     return await CRUD_AGENT.get_map_sectors_of_points(json_params)
 
@@ -245,16 +245,16 @@ async def map_sectors_structure_of_region(json_params: Dict):
         "region_name": str
     }
     :return: Coroutine
-    List[
-        Dict[
-            "map_sector_name": str | None,
-            "tl_latitude": float | None,
-            "tl_longitude": float | None,
-            "br_latitude": float | None,
-            "br_longitude: float | None"
-            "neighbour_map_sector_names": List[str] | (empty list)
+        List[
+            Dict[
+                "map_sector_name": str | None,
+                "tl_latitude": float | None,
+                "tl_longitude": float | None,
+                "br_latitude": float | None,
+                "br_longitude: float | None"
+                "neighbour_map_sector_names": List[str] | (empty list)
+            ]
         ]
-    ]
     """
     return await CRUD_AGENT.get_map_sectors_structure_of_region(json_params)
 
@@ -276,15 +276,37 @@ async def landmarks_of_categories_in_map_sectors_task(json_params: Dict):
         "optional_limit": int | None
     }
     :return: Coroutine
-    List[
-        Dict[
-            "landmark": Dict | None,
-            "map_sector": Dict | None,
-            "category": Dict | None
+        List[
+            Dict[
+                "landmark": Dict | None,
+                "map_sector": Dict | None,
+                "category": Dict | None
+            ]
         ]
-    ]
     """
     return await CRUD_AGENT.get_landmarks_of_categories_in_map_sectors(json_params)
+
+
+@BROKER.task
+async def route_landmarks_by_index_id_task(json_params: Dict):
+    """
+    Task to get list landmarks of the route with the given index_id (unique id of route). Landmarks are returned in the
+        order that corresponds to the order of appearance of landmarks in the route.
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Params for target function of agent Dict in form {
+        "index_id": int
+    }
+    :return: Coroutine
+        List[
+            Dict[
+                "landmark": Dict | None,
+            ]
+        ]
+    """
+    return await CRUD_AGENT.get_route_landmarks_by_index_id(json_params)
 
 
 @BROKER.task
