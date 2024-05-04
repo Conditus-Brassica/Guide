@@ -14,7 +14,7 @@ class PureCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    async def write_user(session, user_login: str):
+    async def write_user(session, user_login: str) -> bool:
         """
         Try to write the user to the kb.
 
@@ -27,7 +27,9 @@ class PureCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    async def write_note(session, guide_login: str, country_names: List[int], title: str, category_names: List[str]):
+    async def write_note(
+            session, guide_login: str, country_names: List[int], title: str, category_names: List[str]
+    ) -> bool:
         """
         Try to write the note to the kb.
 
@@ -43,7 +45,9 @@ class PureCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    async def write_route_for_note(session, note_title: str, landmarks_name_position_pair: List[Dict[str, str | int]]):
+    async def write_route_for_note(
+            session, note_title: str, landmarks_name_position_pair: List[Dict[str, str | int]]
+    ) -> bool:
         """
         Try to write the route, that is connected with note.
 
@@ -59,14 +63,17 @@ class PureCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    async def write_route_saved_by_user(session, user_login: str, landmarks_names: List[str]):
+    async def write_route_saved_by_user(
+            session, user_login: str, landmarks_name_position_pair: List[Dict[str, str | int]]
+    ) -> bool:
         """
         Try to write the route, that is saved by the user.
 
         :param session: async session of the knowledge base.
         :param user_login: str login of the user, who saved the route.
-        :param landmarks_names: List[str] names of the landmarks that are included in the route. Order of the landmarks
-            names does matter on the order of the route
+        :param landmarks_name_position_pair: List [ Dict["name": <landmark_name>, "position": <int_position_in_route>] ]
+            <int_position_in_route> starts from 0
+            pairs of name of the landmark and its position in the route that are included in the route.
 
         return: Coroutine
         """
@@ -74,7 +81,7 @@ class PureCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    async def write_saved_note_relationship(session, user_login: str, note_title: str):
+    async def write_saved_route_from_note_relationship(session, user_login: str, note_title: str) -> bool:
         """
         Try to write the route, that is connected with note.
 
