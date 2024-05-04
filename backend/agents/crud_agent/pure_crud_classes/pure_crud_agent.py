@@ -385,7 +385,8 @@ class PureCRUDAgent(ABC):
                 "note_title": str,
                 "landmarks_name_position_pair": List[
                     Dict [
-                        "name": str
+                        "name": str,
+                        "position": int
                     ]
                 ], where name is name of landmark and position is position in route of corresponding landmark
             }
@@ -405,7 +406,8 @@ class PureCRUDAgent(ABC):
                 "user_login": str,
                 "landmarks_name_position_pair": List[
                     Dict [
-                        "name": str
+                        "name": str,
+                        "position": int
                     ]
                 ], where name is name of landmark and position is position in route of corresponding landmark
             }
