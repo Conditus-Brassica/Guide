@@ -324,9 +324,9 @@ class RecommendationsAgent(PureRecommendationsAgent):
             maximum_amount_of_recommendations,
             maximum_amount_of_additional_recommendations
     ):
-        user_categories_preference = {"озёра поставского района": 1}  # TODO cash request
-        # TODO Cash request
-        # TODO check cash on None values
+        user_categories_preference = {"озёра поставского района": 1}  # cash request
+        # Cash request
+        # check cash on None values
         unifiers = self._find_params_unifiers(user_categories_preference, recommendations)
 
         recommended_indexes = self._find_indexes_of_recommendations(

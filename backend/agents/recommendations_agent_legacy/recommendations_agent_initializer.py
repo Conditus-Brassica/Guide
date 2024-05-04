@@ -3,7 +3,7 @@ from backend.agents.recommendations_agent.recommendations_agent import Recommend
 
 if RecommendationsAgent.recommendations_agent_exists():
     RECOMMENDATIONS_AGENT = RecommendationsAgent.get_recommendations_agent()
-    print("Recommendations agent wasn't created")  # TODO remove
+    print("Recommendations agent wasn't created")  # remove
 else:
 
     test_recommendations_agent_coefficients = {
@@ -15,4 +15,4 @@ else:
     }
 
     RECOMMENDATIONS_AGENT = RecommendationsAgent(test_recommendations_agent_coefficients)
-    print("Recommendations agent was created")  # TODO remove
+    print("Recommendations agent was created")  # remove
