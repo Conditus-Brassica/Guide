@@ -586,7 +586,7 @@ class Reader(PureReader):
 
     @staticmethod
     async def _read_route_landmarks_by_index_id(tx, index_id: int):
-        """Transaction handler for read_landmarks_of_categories_in_map_sectors"""
+        """Transaction handler for read_route_landmarks_by_index_id"""
         result = await tx.run(
             """    
             MATCH (route: Route) WHERE route.index_id = $index_id
@@ -611,6 +611,86 @@ class Reader(PureReader):
             Reader._read_route_landmarks_by_index_id, index_id
         )
         await logger.debug(f"method:\tread_route_landmarks_by_index_id,\nresult:\t{result}")
+        return result
+
+    @staticmethod
+    async def _read_routes_saved_by_user(tx, user_login: str):
+        """Transaction handler for read_routes_saved_by_user"""
+        result = await tx.run(
+            """    
+            OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
+            WITH userAccount
+                ORDER BY userAccount.login ASC
+                LIMIT 1
+            
+            OPTIONAL MATCH (route: Route)<-[:ROUTE_SAVED_BY_USER]-(userAccount)
+            
+            RETURN 
+                route,
+                COLLECT {
+                    OPTIONAL MATCH (landmark: Landmark)<-[part_of_route: PART_OF_ROUTE]-(route)
+                    RETURN landmark
+                        ORDER BY part_of_route.position ASC
+                } AS route_landmarks
+                    ORDER BY route.index_id
+            """,
+            user_login=user_login
+        )
+        try:
+            result_values = [record.data("route", "route_landmarks") async for record in result]
+        except IndexError as ex:
+            await logger.error(f"Index error, args: {ex.args[0]}")
+            result_values = []
+
+        await logger.debug(f"method:\t_read_routes_saved_by_user,\nresult:\t{await result.consume()}")
+        return result_values
+
+    @staticmethod
+    async def read_routes_saved_by_user(session, user_login: str):
+        result = await session.execute_read(Reader._read_routes_saved_by_user, user_login)
+        await logger.debug(f"method:\tread_routes_saved_by_user,\nresult:\t{result}")
+        return result
+
+    @staticmethod
+    async def _read_range_of_routes_saved_by_user(tx, user_login: str, skip: int, limit: int):
+        """Transaction handler for read_range_of_routes_saved_by_user"""
+        result = await tx.run(
+            """    
+            OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
+            WITH userAccount
+                ORDER BY userAccount.login ASC
+                LIMIT 1
+
+            OPTIONAL MATCH (route: Route)<-[:ROUTE_SAVED_BY_USER]-(userAccount)
+
+            RETURN 
+                route,
+                COLLECT {
+                    OPTIONAL MATCH (landmark: Landmark)<-[part_of_route: PART_OF_ROUTE]-(route)
+                    RETURN landmark
+                        ORDER BY part_of_route.position ASC
+                } AS route_landmarks
+                    ORDER BY route.index_id
+                    SKIP $skip
+                    LIMIT $limit
+            """,
+            user_login=user_login,
+            skip=skip,
+            limit=limit
+        )
+        try:
+            result_values = [record.data("route", "route_landmarks") async for record in result]
+        except IndexError as ex:
+            await logger.error(f"Index error, args: {ex.args[0]}")
+            result_values = []
+
+        await logger.debug(f"method:\t_read_range_of_routes_saved_by_user,\nresult:\t{await result.consume()}")
+        return result_values
+
+    @staticmethod
+    async def read_range_of_routes_saved_by_user(session, user_login: str, skip: int, limit: int):
+        result = await session.execute_read(Reader._read_range_of_routes_saved_by_user, user_login, skip, limit)
+        await logger.debug(f"method:\tread_range_of_routes_saved_by_user,\nresult:\t{result}")
         return result
 
     @staticmethod

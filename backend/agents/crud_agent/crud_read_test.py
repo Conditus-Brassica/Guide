@@ -183,10 +183,27 @@ if __name__ == '__main__':
             )
         )
 
-        route_landmarks_by_index_id_task_asyncio_task = asyncio.create_task(
+        route_landmarks_by_index_id_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.route_landmarks_by_index_id_task,
                 {'index_id': 6}
+            )
+        )
+
+        routes_saved_by_user_asyncio_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.routes_saved_by_user,
+                {"user_login": 'Test'}
+            )
+        )
+        range_of_routes_saved_by_user_asyncio_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.range_of_routes_saved_by_user,
+                {
+                    "user_login": 'Test',
+                    "skip": 1,
+                    "limit": 3
+                }
             )
         )
 
@@ -211,7 +228,10 @@ if __name__ == '__main__':
         res10 = await landmarks_of_categories_in_map_sectors_asyncio_task
         res12 = await map_sectors_structure_of_region_task
 
-        res13 = await route_landmarks_by_index_id_task_asyncio_task
+        res13 = await route_landmarks_by_index_id_asyncio_task
+        res14 = await routes_saved_by_user_asyncio_task
+        res15 = await range_of_routes_saved_by_user_asyncio_task
+
 
         # Taking and printing the result of broker tasks
         pprint(res11.return_value)
@@ -236,6 +256,8 @@ if __name__ == '__main__':
         pprint(len(res12_return_value))
 
         pprint(res13.return_value)
+        pprint(res14.return_value)
+        pprint(res15.return_value)
 
 
 

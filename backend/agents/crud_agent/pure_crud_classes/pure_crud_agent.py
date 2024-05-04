@@ -326,6 +326,51 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
+    async def get_routes_saved_by_user(cls, json_params: Dict):
+        """
+            Returns routes with its landmarks (returns landmarks in the order that corresponds to the order of
+            appearance of landmarks in the route).
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "user_login": str
+            }
+            :return: Coroutine
+            List[
+                Dict[
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
+    async def get_range_of_routes_saved_by_user(cls, json_params: Dict):
+        """
+            Returns range of routes with its landmarks (returns landmarks in the order that corresponds to the order of
+            appearance of landmarks in the route). Range looks like (skip, skip + limit].
+            skip=0 return result from the very beginning.
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "user_login": str,
+                "skip": int,
+                "limit": int
+            }
+            :return: Coroutine
+            List[
+                Dict[
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
     async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
         """
             Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark

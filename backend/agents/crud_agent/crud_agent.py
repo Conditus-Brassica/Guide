@@ -309,12 +309,52 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._reader.read_route_landmarks_by_index_id(session, index_id)
 
         try:
-            # TODO validate(json_params, get_landmarks_of_categories_in_map_sectors)
+            # TODO validate(json_params, get_route_landmarks_by_index_id)
             return await asyncio.shield(
                 session_runner(json_params["index_id"])
             )
         except ValidationError as ex:
             await logger.error(f"get_route_landmarks_by_index_id. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
+    async def get_routes_saved_by_user(cls, json_params: Dict):
+        async def session_runner(user_login: str):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._reader.read_routes_saved_by_user(session, user_login)
+
+        try:
+            # TODO validate(json_params, get_routes_saved_by_user)
+            return await asyncio.shield(
+                session_runner(json_params["user_login"])
+            )
+        except ValidationError as ex:
+            await logger.error(f"get_routes_saved_by_user. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
+    async def get_range_of_routes_saved_by_user(cls, json_params: Dict):
+        async def session_runner(user_login: str, skip: int, limit: int):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._reader.read_range_of_routes_saved_by_user(session, user_login, skip, limit)
+
+        try:
+            # TODO validate(json_params, get_range_of_routes_saved_by_user)
+            if json_params["skip"] < 0:
+                raise ValidationError("skip can\'t be less than zero")
+            if json_params["limit"] <= 0:
+                raise ValidationError("limit can\'t be less or equal to zero")
+            return await asyncio.shield(
+                session_runner(
+                    json_params["user_login"],
+                    json_params["skip"],
+                    json_params["limit"]
+                )
+            )
+        except ValidationError as ex:
+            await logger.error(f"get_range_of_routes_saved_by_user. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
             return []  # raise ValidationError
 
@@ -357,7 +397,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._creator.write_user(session, user_login)
 
         try:
-            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            # TODO validate(json_params, put_user)
             return await asyncio.shield(
                 session_runner(json_params["user_login"])
             )
@@ -377,7 +417,7 @@ class CRUDAgent(PureCRUDAgent):
                 )
 
         try:
-            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            # TODO validate(json_params, put_note)
             return await asyncio.shield(
                 session_runner(
                     json_params["guide_login"],
@@ -400,7 +440,7 @@ class CRUDAgent(PureCRUDAgent):
                 )
 
         try:
-            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            # TODO validate(json_params, put_route_for_note)
             return await asyncio.shield(
                 session_runner(
                     json_params["note_title"],
@@ -419,7 +459,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._creator.write_route_saved_by_user(session, user_login, landmarks_name_position_pair)
 
         try:
-            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            # TODO validate(json_params, put_route_saved_by_user)
             return await asyncio.shield(
                 session_runner(
                     json_params["user_login"], json_params["landmarks_name_position_pair"]
@@ -439,7 +479,7 @@ class CRUDAgent(PureCRUDAgent):
                 )
 
         try:
-            # TODO validate(json_params, get_recommendations_by_coordinates_and_categories)
+            # TODO validate(json_params, put_saved_route_from_note_relationship)
             return await asyncio.shield(
                 session_runner(json_params["user_login"], json_params["note_title"])
             )

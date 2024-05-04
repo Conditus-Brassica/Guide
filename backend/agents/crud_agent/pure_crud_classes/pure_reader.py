@@ -13,7 +13,7 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_categories_of_region(session, region_name: str, optional_limit: int = None):
+    async def read_categories_of_region(session, region_name: str, optional_limit: int | None = None):
         """
         Returns from kb categories of region with included regions. Finds region by its name.
         Works asynchronously.
@@ -30,7 +30,7 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_landmarks_in_map_sectors(session, map_sectors_names: List[str], optional_limit: int = None):
+    async def read_landmarks_in_map_sectors(session, map_sectors_names: List[str], optional_limit: int | None = None):
         """
         Returns from kb landmarks, located in passed map sectors. Finds map sectors by their names.
         Works asynchronously.
@@ -51,7 +51,9 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_landmarks_by_coordinates(session, coordinates: List[Dict[str, float]], optional_limit: int = None):
+    async def read_landmarks_by_coordinates(
+            session, coordinates: List[Dict[str, float]], optional_limit: int | None = None
+    ):
         """
         Returns from kb landmarks with given coordinates.
         Works asynchronously.
@@ -77,7 +79,9 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_landmarks_refers_to_categories(session, categories_names: List[str], optional_limit: int = None):
+    async def read_landmarks_refers_to_categories(
+            session, categories_names: List[str], optional_limit: int | None = None
+    ):
         """
         Returns from kb landmarks, that refers to given categories. Finds categories by their names
         Works asynchronously.
@@ -94,7 +98,7 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_landmarks_by_names(session, landmark_names: List[str], optional_limit: int = None):
+    async def read_landmarks_by_names(session, landmark_names: List[str], optional_limit: int | None = None):
         """
         Returns from kb landmarks with given names.
         Works asynchronously.
@@ -115,7 +119,7 @@ class PureReader(ABC):
     @staticmethod
     @abstractmethod
     async def read_landmarks_of_categories_in_region(
-            session, region_name: str, categories_names: List[str], optional_limit: int  = None
+            session, region_name: str, categories_names: List[str], optional_limit: int | None = None
     ):
         """
         Returns from kb landmarks, located in given region, that refer to given categories.
@@ -177,7 +181,7 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_landmarks_by_region(session, region_name: str, optional_limit: int = None):
+    async def read_landmarks_by_region(session, region_name: str, optional_limit: int | None = None):
         """
         Returns from kb landmarks, located in region. Finds region by its name.
         Works asynchronously.
@@ -199,7 +203,7 @@ class PureReader(ABC):
     @staticmethod
     @abstractmethod
     async def read_map_sectors_of_points(
-            session, coordinates_of_points: List[Dict[str, float]], optional_limit: int = None
+            session, coordinates_of_points: List[Dict[str, float]], optional_limit: int | None = None
     ):
         """
         Returns from kb map sectors where given points are located.
@@ -245,7 +249,7 @@ class PureReader(ABC):
     @staticmethod
     @abstractmethod
     async def read_landmarks_of_categories_in_map_sectors(
-            session, map_sectors_names: List[str], categories_names: List[str], optional_limit: int = None
+            session, map_sectors_names: List[str], categories_names: List[str], optional_limit: int | None = None
     ):
         """
         Returns from kb landmarks, that\'re located in the given map sectors and refer to the given categories.
@@ -272,6 +276,7 @@ class PureReader(ABC):
         """
             Returns landmarks of the route with the given index_id (unique id). Returns landmarks in the order that
                 corresponds to the order of appearance of landmarks in the route.
+            Works asynchronously.
 
             :param session: async session of knowledge base driver
             :param index_id: int - unique id of the route
@@ -286,13 +291,55 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
+    async def read_routes_saved_by_user(session, user_login: str):
+        """
+            Returns routes with its landmarks (returns landmarks in the order that corresponds to the order of
+            appearance of landmarks in the route).
+            Works asynchronously.
+
+            :param session: async session of knowledge base driver
+            :param user_login: str - login of user, who saved the routes.
+            :return: Coroutine
+            List[
+                Dict[
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
+    async def read_range_of_routes_saved_by_user(session, user_login: str, skip: int, limit: int):
+        """
+            Returns range of routes with its landmarks (returns landmarks in the order that corresponds to the order of
+            appearance of landmarks in the route). Range looks like (skip, skip + limit]
+            Works asynchronously.
+
+            :param session: async session of knowledge base driver
+            :param user_login: str - login of user, who saved the routes.
+            :param skip: int - amount of records that will be skipped from the start.
+            :param limit: int - the maximum number of returning records.
+            :return: Coroutine
+            List[
+                Dict[
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
     async def read_recommendations_by_coordinates_and_categories(
             session,
             coordinates_of_points: List[Dict[str, float]],
             categories_names: List[str],
             user_login: str,
             amount_of_recommendations_for_point: int,
-            optional_limit: int = None
+            optional_limit: int | None = None
     ):
         """
             Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark
@@ -326,3 +373,5 @@ class PureReader(ABC):
             ]
         """
         raise NotImplementedError
+
+
