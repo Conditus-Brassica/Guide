@@ -23,6 +23,7 @@ class Creator(PureCreator):
 
     @staticmethod
     async def _write_user(tx, user_login: str) -> bool:
+        """Transaction handler for write_user"""
         result = await tx.run(
             """
             CREATE (newUserAccount: UserAccount {login: $user_login})
@@ -46,6 +47,7 @@ class Creator(PureCreator):
 
     @staticmethod
     async def _write_note(tx, guide_login: str, country_names: List[str], title, category_names):
+        """Transaction handler for write_note"""
         result = await tx.run(
             """
             MATCH (guideAccount: UserAccount&GuideAccount WHERE guideAccount.login STARTS WITH $guide_login)
@@ -122,6 +124,7 @@ class Creator(PureCreator):
 
     @staticmethod
     async def _write_route_for_note(tx, note_title: str, landmarks_name_position_pairs: List[Dict[str, str | int]]):
+        """Transaction handler for write_route_for_note"""
         result = await tx.run(
             """
             CALL db.index.fulltext.queryNodes('note_title_fulltext_index', $note_title)
@@ -187,6 +190,7 @@ class Creator(PureCreator):
 
     @staticmethod
     async def _write_route_saved_by_user(tx, user_login: str, landmarks_name_position_pairs: List[Dict[str, str | int]]):
+        """Transaction handler for write_route_saved_by_user"""
         result = await tx.run(
             """
             OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
@@ -251,6 +255,7 @@ class Creator(PureCreator):
 
     @staticmethod
     async def _write_saved_route_from_note_relationship(tx, user_login: str, note_title: str):
+        """Transaction handler for write_saved_route_from_note_relationship"""
         result = await tx.run(
             """
             OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
