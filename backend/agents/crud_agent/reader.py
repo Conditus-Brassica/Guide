@@ -694,11 +694,11 @@ class Reader(PureReader):
         return result
 
     @staticmethod
-    async def _read_note_by_title(tx, title: str):
+    async def _read_note_by_title(tx, note_title: str):
         """Transaction handler for read_note_by_title"""
         result = await tx.run(
             """    
-            CALL db.index.fulltext.queryNodes('note_title_fulltext_index', $title)
+            CALL db.index.fulltext.queryNodes('note_title_fulltext_index', $note_title)
                 YIELD score, node AS note
             WITH note
                 ORDER BY score DESC
@@ -718,7 +718,7 @@ class Reader(PureReader):
                 } AS note_category_names
                     ORDER BY route.index_id
             """,
-            title=title
+            note_title=note_title
         )
         try:
             result_values = []
@@ -735,8 +735,8 @@ class Reader(PureReader):
         return result_values
 
     @staticmethod
-    async def read_note_by_title(session, title: str):
-        result = await session.execute_read(Reader._read_note_by_title, title)
+    async def read_note_by_title(session, note_title: str):
+        result = await session.execute_read(Reader._read_note_by_title, note_title)
         await logger.debug(f"method:\tread_note_by_title,\nresult:\t{result}")
         return result
 

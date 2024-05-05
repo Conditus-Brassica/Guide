@@ -240,6 +240,100 @@ get_landmarks_of_categories_in_map_sectors = \
     }
 
 """
+get_route_landmarks_by_index_id
+"""
+get_route_landmarks_by_index_id = \
+    {
+        "type": "object",
+        "properties": {
+            "index_id": {"type": "number"}
+        },
+        "required": ["index_id"],
+        "maxProperties": 1,
+        "additionalProperties": False
+    }
+
+"""
+get_routes_saved_by_user
+"""
+get_routes_saved_by_user = \
+    {
+        "type": "object",
+        "properties": {
+            "user_login": {"type": "string"}
+        },
+        "required": ["user_login"],
+        "maxProperties": 1,
+        "additionalProperties": False
+    }
+
+"""
+get_range_of_routes_saved_by_user
+"""
+get_range_of_routes_saved_by_user = \
+    {
+        "type": "object",
+        "properties": {
+            "user_login": {"type": "string"},
+            "skip": {"type": "number"},
+            "limit": {"type": "number"}
+        },
+        "required": ["user_login", "skip", "limit"],
+        "maxProperties": 3,
+        "additionalProperties": False
+    }
+
+"""
+get_note_by_title
+"""
+get_note_by_title = \
+    {
+        "type": "object",
+        "properties": {
+            "note_title": {"type": "string"}
+        },
+        "required": ["note_title"],
+        "maxProperties": 1,
+        "additionalProperties": False
+    }
+
+"""
+get_notes_in_range
+"""
+get_notes_in_range = \
+    {
+        "type": "object",
+        "properties": {
+            "skip": {"type": "number"},
+            "limit": {"type": "number"}
+        },
+        "required": ["skip", "limit"],
+        "maxProperties": 2,
+        "additionalProperties": False
+    }
+
+"""
+get_notes_of_categories_in_range
+"""
+get_notes_of_categories_in_range = \
+    {
+        "type": "object",
+        "properties": {
+            "note_categories_names": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "skip": {"type": "number"},
+            "limit": {"type": "number"}
+        },
+        "required": ["note_categories_names", "skip", "limit"],
+        "maxProperties": 3,
+        "additionalProperties": False
+    }
+
+"""
 get_recommendations_by_coordinates_and_categories
 """
 get_recommendations_by_coordinates_and_categories = \
@@ -263,7 +357,6 @@ get_recommendations_by_coordinates_and_categories = \
             "categories_names": {
                 "type": "array",
                 "items": {"type": "string"}
-
             },
             "user_login": {"type": "string"},
             "amount_of_recommendations_for_point": {"type": "number"},
@@ -281,4 +374,112 @@ get_recommendations_by_coordinates_and_categories = \
     }
 
 # Write validation
+"""
+put_user
+"""
+put_user = \
+    {
+        "type": "object",
+        "properties": {
+            "user_login": {"type": "string"}
+        },
+        "required": ["user_login"],
+        "maxProperties": 1,
+        "additionalProperties": False
+    }
 
+"""
+put_note
+"""
+put_note = \
+    {
+        "type": "object",
+        "properties": {
+            "guide_login": {"type": "string"},
+            "country_names": {
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "note_title": {"type": "string"},
+            "note_category_names": {
+                "type": "array",
+                "items": {"type": "string"}
+            }
+        },
+        "required": ["guide_login", "country_names", "note_title", "note_category_names"],
+        "maxProperties": 4,
+        "additionalProperties": False
+    }
+
+"""
+put_route_for_note
+"""
+put_route_for_note = \
+    {
+        "type": "object",
+        "properties": {
+            "note_title": {"type": "string"},
+            "landmark_info_position_dicts": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "position": {"type": "number"},
+                        "longitude": {"type": "number"},
+                        "latitude": {"type": "number"}
+                    },
+                    "required": ["name", "position", "longitude", "latitude"],
+                    "additionalProperties": False,
+                    "maxProperties": 4
+                }
+            },
+        },
+        "required": ["note_title", "landmark_info_position_dicts"],
+        "maxProperties": 2,
+        "additionalProperties": False
+    }
+
+"""
+put_route_saved_by_user
+"""
+put_route_saved_by_user = \
+    {
+        "type": "object",
+        "properties": {
+            "user_login": {"type": "string"},
+            "landmark_info_position_dicts": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "position": {"type": "number"},
+                        "longitude": {"type": "number"},
+                        "latitude": {"type": "number"}
+                    },
+                    "required": ["name", "position", "longitude", "latitude"],
+                    "additionalProperties": False,
+                    "maxProperties": 4
+                }
+            },
+        },
+        "required": ["user_login", "landmark_info_position_dicts"],
+        "maxProperties": 2,
+        "additionalProperties": False
+    }
+
+"""
+saved_relationship_for_existing_route
+"""
+saved_relationship_for_existing_route = \
+    {
+        "type": "object",
+        "properties": {
+            "user_login": {"type": "string"},
+            "index_id": {"type": "number"},
+        },
+        "required": ["user_login", "index_id"],
+        "maxProperties": 2,
+        "additionalProperties": False
+    }

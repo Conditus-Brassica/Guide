@@ -368,7 +368,7 @@ async def note_by_title_task(json_params: Dict):
     Works asynchronously.
 
     :param json_params: Dict in form {
-        "title": str
+        "note_title": str
     }
     :return: Coroutine
         List[
@@ -502,8 +502,8 @@ async def post_note_task(json_params: Dict):
     :param json_params: Dict in form {
         "guide_login": str,
         "country_names": List[str],
-        "title": str,
-        "category_names": List[str]
+        "note_title": str,
+        "note_category_names": List[str]
     }
     :return: Coroutine bool
     """

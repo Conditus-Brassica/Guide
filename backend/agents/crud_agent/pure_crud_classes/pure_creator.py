@@ -28,7 +28,7 @@ class PureCreator(ABC):
     @staticmethod
     @abstractmethod
     async def write_note(
-            session, guide_login: str, country_names: List[int], title: str, category_names: List[str]
+            session, guide_login: str, country_names: List[int], note_title: str, note_category_names: List[str]
     ) -> bool:
         """
         Try to write the note to the kb.
@@ -36,8 +36,8 @@ class PureCreator(ABC):
         :param session: async session of the knowledge base.
         :param guide_login: str login of the author of the note (only guide can be the author of the note).
         :param country_names: List of the names of the countries, that are mentioned in the note.
-        :param title: str unique title of the note.
-        :param category_names: List[str] categories that are referred by the note.
+        :param note_title: str unique title of the note.
+        :param note_category_names: List[str] categories that are referred by the note.
 
         return: Coroutine
         """

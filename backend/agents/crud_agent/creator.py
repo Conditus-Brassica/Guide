@@ -46,7 +46,7 @@ class Creator(PureCreator):
             return False
 
     @staticmethod
-    async def _write_note(tx, guide_login: str, country_names: List[str], title, category_names):
+    async def _write_note(tx, guide_login: str, country_names: List[str], note_title, note_category_names):
         """Transaction handler for write_note"""
         result = await tx.run(
             """
@@ -55,7 +55,7 @@ class Creator(PureCreator):
                 ORDER BY guideAccount.login ASC
                 LIMIT 1
                 
-            CREATE (guideAccount)-[:AUTHOR]->(note: Note {title: $title, last_update: datetime(), id_code: guideAccount.last_note_id_code + 1})
+            CREATE (guideAccount)-[:AUTHOR]->(note: Note {title: $note_title, last_update: datetime(), id_code: guideAccount.last_note_id_code + 1})
             
             WITH guideAccount, note
     
@@ -79,7 +79,7 @@ class Creator(PureCreator):
             SET guideAccount.last_note_id_code = guideAccount.last_note_id_code + 1 
             WITH note
                     
-            UNWIND $category_names AS note_category_name
+            UNWIND $note_category_names AS note_category_name
                 CALL {
                     WITH note_category_name
                     CALL db.index.fulltext.queryNodes('note_category_name_fulltext_index', note_category_name)
@@ -92,7 +92,10 @@ class Creator(PureCreator):
                 CREATE (note)-[:NOTE_REFERS]->(noteCategory)
             RETURN DISTINCT size(note.path_list) AS path_list_size
             """,
-            guide_login=guide_login, country_names=country_names, title=title, category_names=category_names
+            guide_login=guide_login,
+            country_names=country_names,
+            note_title=note_title,
+            note_category_names=note_category_names
         )
         path_list_size = 0
         async for record in result:
@@ -101,7 +104,7 @@ class Creator(PureCreator):
         counters = result_summary.counters
         if counters.nodes_created != 1:
             raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
-        if counters.relationships_created != len(category_names) + 1:  # Author -> Note and Note -> its categories
+        if counters.relationships_created != len(note_category_names) + 1:  # Author -> Note and Note -> its categories
             raise exceptions.Neo4jError("Unexpected behaviour: Wrong amount of relationships, that were created.")
         if path_list_size != len(country_names):
             raise exceptions.Neo4jError(
@@ -110,11 +113,15 @@ class Creator(PureCreator):
 
     @staticmethod
     async def write_note(
-            session: AsyncSession, guide_login: str, country_names: List[str], title: str, category_names: List[str]
+            session: AsyncSession,
+            guide_login: str,
+            country_names: List[str],
+            note_title: str,
+            note_category_names: List[str]
     ) -> bool:
         try:
             result = await session.execute_write(
-                Creator._write_note, guide_login, country_names, title, category_names
+                Creator._write_note, guide_login, country_names, note_title, note_category_names
             )
             await logger.debug(f"method:\twrite_note,\nresult:\t{result}")
             return True

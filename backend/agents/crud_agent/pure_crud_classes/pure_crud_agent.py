@@ -378,7 +378,7 @@ class PureCRUDAgent(ABC):
             Works asynchronously.
 
             :param json_params: Dict in form {
-                "title": str
+                "note_title": str
             }
             :return: Coroutine
             List[
@@ -504,8 +504,8 @@ class PureCRUDAgent(ABC):
             :param json_params: Dict in form {
                 "guide_login": str,
                 "country_names": List[str],
-                "title": str,
-                "category_names": List[str]
+                "note_title": str,
+                "note_category_names": List[str]
             }
             :return: Coroutine bool True if everything is fine, False otherwise
         """

@@ -206,11 +206,11 @@ if __name__ == '__main__':
                 }
             )
         )
-        note_by_title_asycio_task = asyncio.create_task(
+        note_by_title_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.note_by_title_task,
                 {
-                    "title": 'Test'
+                    "note_title": 'Test title'
                 }
             )
         )
@@ -258,7 +258,7 @@ if __name__ == '__main__':
         res13 = await route_landmarks_by_index_id_asyncio_task
         res14 = await routes_saved_by_user_asyncio_task
         res15 = await range_of_routes_saved_by_user_asyncio_task
-        res16 = await note_by_title_asycio_task
+        res16 = await note_by_title_asyncio_task
         res17 = await notes_in_range_asyncio_task
         res18 = await notes_of_categories_in_range_asyncio_task
 
@@ -307,7 +307,10 @@ if __name__ == '__main__':
         pprint(res15.return_value)
         print("\n\nres16")
         pprint(res16.return_value)
-        pprint(type(res16.return_value[0]["note"]["last_update"]))
+        try:
+            pprint(type(res16.return_value[0]["note"]["last_update"]))
+        except IndexError:
+            print("No notes by title")
         print("\n\nres17")
         pprint(res17.return_value)
         print("\n\nres18")

@@ -33,8 +33,8 @@ if __name__ == '__main__':
                 {
                     "guide_login": "Алан Смити",
                     "country_names": ["Беларусь"],
-                    "title": "Test title",
-                    "category_names": ["Test category"]
+                    "note_title": "Test title 2",
+                    "note_category_names": ["Test category"]
                 }
             )
         )

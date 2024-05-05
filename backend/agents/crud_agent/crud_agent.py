@@ -309,7 +309,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._reader.read_route_landmarks_by_index_id(session, index_id)
 
         try:
-            # TODO validate(json_params, get_route_landmarks_by_index_id)
+            validate(json_params, get_route_landmarks_by_index_id)
             return await asyncio.shield(
                 session_runner(json_params["index_id"])
             )
@@ -325,7 +325,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._reader.read_routes_saved_by_user(session, user_login)
 
         try:
-            # TODO validate(json_params, get_routes_saved_by_user)
+            validate(json_params, get_routes_saved_by_user)
             return await asyncio.shield(
                 session_runner(json_params["user_login"])
             )
@@ -341,7 +341,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._reader.read_range_of_routes_saved_by_user(session, user_login, skip, limit)
 
         try:
-            # TODO validate(json_params, get_range_of_routes_saved_by_user)
+            validate(json_params, get_range_of_routes_saved_by_user)
             if json_params["skip"] < 0:
                 raise ValidationError("skip can\'t be less than zero")
             if json_params["limit"] <= 0:
@@ -360,14 +360,14 @@ class CRUDAgent(PureCRUDAgent):
 
     @classmethod
     async def get_note_by_title(cls, json_params: Dict):
-        async def session_runner(title: str):
+        async def session_runner(note_title: str):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
-                return await cls._reader.read_note_by_title(session, title)
+                return await cls._reader.read_note_by_title(session, note_title)
 
         try:
-            # TODO validate(json_params, get_note_by_title)
+            validate(json_params, get_note_by_title)
             return await asyncio.shield(
-                session_runner(json_params["title"])
+                session_runner(json_params["note_title"])
             )
         except ValidationError as ex:
             await logger.error(f"get_note_by_title. "
@@ -381,7 +381,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._reader.read_notes_in_range(session, skip, limit)
 
         try:
-            # TODO validate(json_params, get_notes_in_range)
+            validate(json_params, get_notes_in_range)
             if json_params["skip"] < 0:
                 raise ValidationError("skip can\'t be less than zero")
             if json_params["limit"] <= 0:
@@ -404,7 +404,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._reader.read_notes_of_categories_in_range(session, note_categories_names, skip, limit)
 
         try:
-            # TODO validate(json_params, get_notes_of_categories_in_range)
+            validate(json_params, get_notes_of_categories_in_range)
             if json_params["skip"] < 0:
                 raise ValidationError("skip can\'t be less than zero")
             if json_params["limit"] <= 0:
@@ -453,6 +453,7 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     # Write queries
+
     @classmethod
     async def put_user(cls, json_params: Dict):
         async def session_runner(user_login: str):
@@ -460,7 +461,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._creator.write_user(session, user_login)
 
         try:
-            # TODO validate(json_params, put_user)
+            validate(json_params, put_user)
             return await asyncio.shield(
                 session_runner(json_params["user_login"])
             )
@@ -472,21 +473,21 @@ class CRUDAgent(PureCRUDAgent):
     @classmethod
     async def put_note(cls, json_params: Dict):
         async def session_runner(
-                guide_login: str, country_names: List[str], title: str, category_names: List[str]
+                guide_login: str, country_names: List[str], note_title: str, note_category_names: List[str]
         ):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
                 return await cls._creator.write_note(
-                    session, guide_login, country_names, title, category_names
+                    session, guide_login, country_names, note_title, note_category_names
                 )
 
         try:
-            # TODO validate(json_params, put_note)
+            validate(json_params, put_note)
             return await asyncio.shield(
                 session_runner(
                     json_params["guide_login"],
                     json_params["country_names"],
-                    json_params["title"],
-                    json_params["category_names"]
+                    json_params["note_title"],
+                    json_params["note_category_names"]
                 )
             )
         except ValidationError as ex:
@@ -503,7 +504,7 @@ class CRUDAgent(PureCRUDAgent):
                 )
 
         try:
-            # TODO validate(json_params, put_route_for_note)
+            validate(json_params, put_route_for_note)
             return await asyncio.shield(
                 session_runner(
                     json_params["note_title"],
@@ -522,7 +523,7 @@ class CRUDAgent(PureCRUDAgent):
                 return await cls._creator.write_route_saved_by_user(session, user_login, landmark_info_position_dicts)
 
         try:
-            # TODO validate(json_params, put_route_saved_by_user)
+            validate(json_params, put_route_saved_by_user)
             return await asyncio.shield(
                 session_runner(
                     json_params["user_login"], json_params["landmark_info_position_dicts"]
@@ -542,7 +543,7 @@ class CRUDAgent(PureCRUDAgent):
                 )
 
         try:
-            # TODO validate(json_params, saved_relationship_for_existing_route)
+            validate(json_params, saved_relationship_for_existing_route)
             return await asyncio.shield(
                 session_runner(json_params["user_login"], json_params["index_id"])
             )

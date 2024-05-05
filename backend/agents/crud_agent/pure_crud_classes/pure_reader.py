@@ -333,14 +333,14 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_note_by_title(session, title: str):
+    async def read_note_by_title(session, note_title: str):
         """
             Returns note with its routes (returns routes with theirs landmarks in the order that corresponds to the
             order of appearance of landmarks in the route) by title of the note.
             Works asynchronously.
 
             :param session: async session of knowledge base driver
-            :param title: str - title of the note.
+            :param note_title: str - title of the note.
             :return: Coroutine
             List[
                 Dict[
