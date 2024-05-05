@@ -181,9 +181,9 @@ INDEXES_QUERIES = [
     ON EACH [region.name];
     """,
     """
-    CREATE FULLTEXT INDEX landmark_name_fulltext_index IF NOT EXISTS
+    CREATE TEXT INDEX landmark_name_text_index IF NOT EXISTS
     FOR (landmark: Landmark)
-    ON EACH [landmark.name];
+    ON (landmark.name);
     """,
     """
     CREATE FULLTEXT INDEX landmark_category_name_fulltext_index IF NOT EXISTS
