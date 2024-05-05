@@ -214,6 +214,15 @@ if __name__ == '__main__':
                 }
             )
         )
+        notes_in_range_asyncio_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.notes_in_range_task,
+                {
+                    "skip": 0,
+                    "limit": 2
+                }
+            )
+        )
 
 
         # Async tasks running
@@ -240,35 +249,56 @@ if __name__ == '__main__':
         res14 = await routes_saved_by_user_asyncio_task
         res15 = await range_of_routes_saved_by_user_asyncio_task
         res16 = await note_by_title_asycio_task
+        res17 = await notes_in_range_asyncio_task
 
 
         # Taking and printing the result of broker tasks
+        print("\n\nres11")
         pprint(res11.return_value)
+        print("\n\nres11_2")
         pprint(res11_2.return_value)
 
         print("Hard task\n###")
+        print("\n\nres11_3")
         pprint(res11_3.return_value)
         print("###")
 
         res12_return_value = res12.return_value
+        print("\n\nres1")
         pprint(res1.return_value)
+        print("\\res2")
         pprint(res2.return_value)
+        print("\n\nres3")
         pprint(res3.return_value)
+        print("\n\nres4")
         pprint(res4.return_value)
+        print("\n\nres5")
         pprint(res5.return_value)
+        print("\n\nres6")
         pprint(res6.return_value)
+        print("\n\nres7")
         pprint(res7.return_value)
+        print("\n\nres8")
         pprint(res8.return_value)
+        print("\n\nres9")
         pprint(res9.return_value)
+        print("\n\nres10")
         pprint(res10.return_value)
+        print("\n\nres12")
         pprint(res12_return_value)
         pprint(len(res12_return_value))
 
+        print("\n\nres13")
         pprint(res13.return_value)
+        print("\n\nres14")
         pprint(res14.return_value)
+        print("\n\nres15")
         pprint(res15.return_value)
+        print("\n\nres16")
         pprint(res16.return_value)
         pprint(type(res16.return_value[0]["note"]["last_update"]))
+        print("\n\nres17")
+        pprint(res17.return_value)
 
 
 

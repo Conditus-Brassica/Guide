@@ -352,9 +352,27 @@ class PureReader(ABC):
         """
         raise NotImplementedError
 
-    """
-    MATCH (note: Note)
-    """
+    @staticmethod
+    @abstractmethod
+    async def read_notes_in_range(session, skip: int, limit: int):
+        """
+            Returns range of notes of all categories with their routes (with landmarks in the order that corresponds to
+            the order of appearance of landmarks in the route). Range looks like (skip, skip + limit].
+            Works asynchronously.
+
+            :param session: async session of knowledge base driver
+            :param skip: int - amount of records that will be skipped from the start.
+            :param limit: int - the maximum number of returning records.
+            :return: Coroutine
+            List[
+                Dict[
+                    "note": Dict | None,
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
 
     @staticmethod
     @abstractmethod

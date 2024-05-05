@@ -375,6 +375,29 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
+    async def get_notes_in_range(cls, json_params: Dict):
+        async def session_runner(skip: int, limit: int):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._reader.read_notes_in_range(session, skip, limit)
+
+        try:
+            # TODO validate(json_params, get_notes_in_range)
+            if json_params["skip"] < 0:
+                raise ValidationError("skip can\'t be less than zero")
+            if json_params["limit"] <= 0:
+                raise ValidationError("limit can\'t be less or equal to zero")
+            return await asyncio.shield(
+                session_runner(
+                    json_params["skip"],
+                    json_params["limit"]
+                )
+            )
+        except ValidationError as ex:
+            await logger.error(f"get_notes_in_range. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
     async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
         async def session_runner(
                 coordinates_of_points: List[Dict[str, float]],

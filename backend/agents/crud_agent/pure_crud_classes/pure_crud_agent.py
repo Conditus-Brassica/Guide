@@ -393,6 +393,29 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
+    async def get_notes_in_range(cls, json_params: Dict):
+        """
+            Returns range of notes of all categories with their routes (with landmarks in the order that corresponds to
+            the order of appearance of landmarks in the route). Range looks like (skip, skip + limit].
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "skip": int
+                "limit": int
+            }
+            :return: Coroutine
+            List[
+                Dict[
+                    "note": Dict | None,
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
     async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
         """
             Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark
