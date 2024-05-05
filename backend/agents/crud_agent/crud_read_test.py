@@ -225,7 +225,7 @@ if __name__ == '__main__':
         )
         notes_of_categories_in_range_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.notes_in_range_task,
+                crud_tasks.notes_of_categories_in_range,
                 {
                     "note_categories_names": ["Test category", "категория_2"],
                     "skip": 0,

@@ -426,7 +426,8 @@ async def notes_of_categories_in_range(json_params: Dict):
             Dict[
                 "note": Dict | None,
                 "route": Dict | None,
-                "route_landmarks": List[Dict | None] | None
+                "route_landmarks": List[Dict | None] | None,
+                "note_category_names": List[str | None] | None
             ]
         ]
     """

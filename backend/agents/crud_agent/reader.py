@@ -808,17 +808,21 @@ class Reader(PureReader):
                         OPTIONAL MATCH (landmark: Landmark)<-[part_of_route: PART_OF_ROUTE]-(route)
                         RETURN landmark
                             ORDER BY part_of_route.position ASC
-                } AS route_landmarks
-                    ORDER BY 
-                        note.last_update DESC,
-                        route.index_id ASC
+                    } AS route_landmarks,
+                    COLLECT {
+                        OPTIONAL MATCH (note_category: NoteCategory)<-[:NOTE_REFERS]-(note)
+                        RETURN note_category.name
+                    } AS note_category_names
+                        ORDER BY 
+                            note.last_update DESC,
+                            route.index_id ASC
             """,
             note_categories_names=note_categories_names, skip=skip, limit=limit
         )
         try:
             result_values = []
             async for record in result:
-                record = record.data("note", "route", "route_landmarks")
+                record = record.data("note", "route", "route_landmarks", "note_category_names")
                 if record["note"] is not None:
                     record["note"]["last_update"] = record["note"]["last_update"].to_native()
                 result_values.append(record)
@@ -831,7 +835,9 @@ class Reader(PureReader):
 
     @staticmethod
     async def read_notes_of_categories_in_range(session, note_categories_names: List[str], skip: int, limit: int):
-        result = await session.execute_read(Reader._read_notes_in_range, skip, limit)
+        result = await session.execute_read(
+            Reader._read_notes_of_categories_in_range, note_categories_names, skip, limit
+        )
         await logger.debug(f"method:\tread_notes_of_categories_in_range,\nresult:\t{result}")
         return result
 
