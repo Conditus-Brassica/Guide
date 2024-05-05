@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   knowledgeBase:
-    image: neo4j:5.14.0
+    image: neo4j:5.18.0
     restart: always
     ports:
       - 7474:7474
@@ -14,8 +14,8 @@ services:
       - NEO4J_apoc_import_file_use__neo4j__config=true
       - NEO4J_PLUGINS=["apoc"]
     volumes:
-      - $HOME/neo4j/data:/data
-      - $HOME/neo4j/data:/import
+      - root/neo4j/data:/data
+      - root/neo4j/data:/import
 
   redisBroker:
     image: redis:latest
