@@ -199,10 +199,10 @@ class Reader(PureReader):
             UNWIND $landmark_names AS landmark_name
             CALL {
                 WITH landmark_name
-                CALL db.index.fulltext.queryNodes('landmark_name_fulltext_index', landmark_name)
-                    YIELD score, node AS landmark
+                MATCH (landmark: Landmark)
+                    WHERE landmark.name STARTS WITH landmark_name
                 RETURN landmark
-                    ORDER BY score DESC
+                    ORDER BY landmark.name ASC
                     LIMIT 1
             }
             RETURN
@@ -210,7 +210,7 @@ class Reader(PureReader):
                 COLLECT {
                     MATCH (landmark)-[:REFERS]->(category:LandmarkCategory)
                     RETURN category.name AS category_name
-                } AS categories_names; 
+                } AS categories_names;
             """,
             landmark_names=landmark_names
         )
