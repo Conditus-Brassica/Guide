@@ -385,7 +385,8 @@ class PureCRUDAgent(ABC):
                 Dict[
                     "note": Dict | None,
                     "route": Dict | None,
-                    "route_landmarks": List[Dict | None] | None
+                    "route_landmarks": List[Dict | None] | None,
+                    "note_category_names": List[str | None] | None
                 ]
             ]
         """
