@@ -408,6 +408,32 @@ async def notes_in_range_task(json_params: Dict):
 
 
 @BROKER.task
+async def notes_of_categories_in_range(json_params: Dict):
+    """
+    Task to get range of notes of the given categories with their routes (with landmarks in the order that corresponds
+    to the order of appearance of landmarks in the route). Range looks like (skip, skip + limit].
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Dict in form {
+        "note_categories_names": List[str]
+        "skip": int,
+        "limit": limit
+    }
+    :return: Coroutine
+        List[
+            Dict[
+                "note": Dict | None,
+                "route": Dict | None,
+                "route_landmarks": List[Dict | None] | None
+            ]
+        ]
+    """
+    return await CRUD_AGENT.get_notes_of_categories_in_range(json_params)
+
+
+@BROKER.task
 async def crud_recommendations_by_coordinates_and_categories_task(json_params: Dict):
     """
     Task to get recommended landmarks for given user, given coordinates and given categories. Finds given

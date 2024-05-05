@@ -223,6 +223,16 @@ if __name__ == '__main__':
                 }
             )
         )
+        notes_of_categories_in_range_asyncio_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.notes_in_range_task,
+                {
+                    "note_categories_names": ["Test category", "категория_2"],
+                    "skip": 0,
+                    "limit": 2
+                }
+            )
+        )
 
 
         # Async tasks running
@@ -250,6 +260,7 @@ if __name__ == '__main__':
         res15 = await range_of_routes_saved_by_user_asyncio_task
         res16 = await note_by_title_asycio_task
         res17 = await notes_in_range_asyncio_task
+        res18 = await notes_of_categories_in_range_asyncio_task
 
 
         # Taking and printing the result of broker tasks
@@ -299,6 +310,8 @@ if __name__ == '__main__':
         pprint(type(res16.return_value[0]["note"]["last_update"]))
         print("\n\nres17")
         pprint(res17.return_value)
+        print("\n\nres18")
+        pprint(res18.return_value)
 
 
 

@@ -376,6 +376,29 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
+    async def read_notes_of_categories_in_range(session, note_categories_names: List[str], skip: int, limit: int):
+        """
+            Returns range of notes of the given categories with their routes (with landmarks in the order that
+            corresponds to the order of appearance of landmarks in the route). Range looks like (skip, skip + limit].
+            Works asynchronously.
+
+            :param session: async session of knowledge base driver
+            :param note_categories_names: List[str] - list of the names of categories of the notes.
+            :param skip: int - amount of records that will be skipped from the start.
+            :param limit: int - the maximum number of returning records.
+            :return: Coroutine
+            List[
+                Dict[
+                    "note": Dict | None,
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
     async def read_recommendations_by_coordinates_and_categories(
             session,
             coordinates_of_points: List[Dict[str, float]],
