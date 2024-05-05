@@ -123,7 +123,9 @@ class Creator(PureCreator):
             return False
 
     @staticmethod
-    async def _write_route_for_note(tx, note_title: str, landmarks_name_position_pairs: List[Dict[str, str | int]]):
+    async def _write_route_for_note(
+            tx, note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
+    ):
         """Transaction handler for write_route_for_note"""
         result = await tx.run(
             """
@@ -148,39 +150,43 @@ class Creator(PureCreator):
             CREATE (route: Route {index_id: last_route_index_id + 1})<-[:ROUTE_FOR_NOTE]-(note)
             WITH route
             
-            UNWIND $landmarks_name_position_pairs AS landmark_name_position_pair
+            UNWIND $landmark_info_position_dicts AS landmark_info_position_dict
                 CALL {
-                    WITH landmark_name_position_pair
-                    CALL db.index.fulltext.queryNodes('landmark_name_fulltext_index', landmark_name_position_pair.name)
-                        YIELD score, node AS landmark
+                    WITH landmark_info_position_dict
+                    MATCH (landmark: Landmark) 
+                        WHERE 
+                            landmark.latitude = landmark_info_position_dict.latitude AND
+                            landmark.longitude = landmark_info_position_dict.longitude AND
+                            landmark.name STARTS WITH landmark_info_position_dict.name
                     RETURN landmark
-                        ORDER BY score DESC
+                        ORDER BY landmark.name ASC
                         LIMIT 1
                 }
-                CREATE (route)-[:PART_OF_ROUTE {position: landmark_name_position_pair.position}]->(landmark)
+                CREATE (route)-[:PART_OF_ROUTE {position: landmark_info_position_dict.position}]->(landmark)
+
             """,
             note_title=note_title,
-            landmarks_name_position_pairs=landmarks_name_position_pairs
+            landmark_info_position_dicts=landmark_info_position_dicts
         )
         result_summary = await (result.consume())
         counters = result_summary.counters
 
         if counters.nodes_created != 1:
             raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
-        if counters.relationships_created != len(landmarks_name_position_pairs) + 1:  # Note -> Route and Route -> its Landmarks
+        if counters.relationships_created != len(landmark_info_position_dicts) + 1:  # Note -> Route and Route -> its Landmarks
             raise exceptions.Neo4jError("Unexpected behaviour: Wrong amount of relationships, that were created.")
-        if counters.properties_set != len(landmarks_name_position_pairs) + 1:  # index_id and position
+        if counters.properties_set != len(landmark_info_position_dicts) + 1:  # index_id and position
             raise exceptions.Neo4jError(
                 "Unexpected behaviour: Wrong amount properties that were set. Probably some of the given countries aren\'t exist"
             )
 
     @staticmethod
     async def write_route_for_note(
-            session: AsyncSession, note_title: str, landmarks_name_position_pair: List[Dict[str, str | int]]
+            session: AsyncSession, note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
     ) -> bool:
         try:
             result = await session.execute_write(
-                Creator._write_route_for_note, note_title, landmarks_name_position_pair
+                Creator._write_route_for_note, note_title, landmark_info_position_dicts
             )
             await logger.debug(f"method:\twrite_route_for_note,\nresult:\t{result}")
             return True
@@ -189,7 +195,9 @@ class Creator(PureCreator):
             return False
 
     @staticmethod
-    async def _write_route_saved_by_user(tx, user_login: str, landmarks_name_position_pairs: List[Dict[str, str | int]]):
+    async def _write_route_saved_by_user(
+            tx, user_login: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
+    ):
         """Transaction handler for write_route_saved_by_user"""
         result = await tx.run(
             """
@@ -213,39 +221,42 @@ class Creator(PureCreator):
             CREATE (route: Route {index_id: last_route_index_id + 1})<-[:ROUTE_SAVED_BY_USER]-(userAccount)
             WITH route
             
-            UNWIND $landmarks_name_position_pairs AS landmark_name_position_pair
+            UNWIND $landmark_info_position_dicts AS landmark_info_position_dict
                 CALL {
-                    WITH landmark_name_position_pair
-                    CALL db.index.fulltext.queryNodes('landmark_name_fulltext_index', landmark_name_position_pair.name)
-                        YIELD score, node AS landmark
+                    WITH landmark_info_position_dict
+                    MATCH (landmark: Landmark) 
+                        WHERE 
+                            landmark.latitude = landmark_info_position_dict.latitude AND
+                            landmark.longitude = landmark_info_position_dict.longitude AND
+                            landmark.name STARTS WITH landmark_info_position_dict.name
                     RETURN landmark
-                        ORDER BY score DESC
+                        ORDER BY landmark.name ASC
                         LIMIT 1
                 }
-                CREATE (route)-[:PART_OF_ROUTE {position: landmark_name_position_pair.position}]->(landmark)
+                CREATE (route)-[:PART_OF_ROUTE {position: landmark_info_position_dict.position}]->(landmark)
             """,
             user_login=user_login,
-            landmarks_name_position_pairs=landmarks_name_position_pairs
+            landmark_info_position_dicts=landmark_info_position_dicts
         )
         result_summary = await (result.consume())
         counters = result_summary.counters
 
         if counters.nodes_created != 1:
             raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
-        if counters.relationships_created != len(landmarks_name_position_pairs) + 1:  # User -> Route and Route -> its Landmarks
+        if counters.relationships_created != len(landmark_info_position_dicts) + 1:  # User -> Route and Route -> its Landmarks
             raise exceptions.Neo4jError("Unexpected behaviour: Wrong amount of relationships, that were created.")
-        if counters.properties_set != len(landmarks_name_position_pairs) + 1:  # index_id and position
+        if counters.properties_set != len(landmark_info_position_dicts) + 1:  # index_id and position
             raise exceptions.Neo4jError(
                 "Unexpected behaviour: Wrong amount properties that were set. Probably some of the given countries aren\'t exist"
             )
 
     @staticmethod
     async def write_route_saved_by_user(
-            session: AsyncSession, user_login: str, landmarks_name_position_pairs: List[Dict[str, str | int]]
+            session: AsyncSession, user_login: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
     ) -> bool:
         try:
             result = await session.execute_write(
-                Creator._write_route_saved_by_user, user_login, landmarks_name_position_pairs
+                Creator._write_route_saved_by_user, user_login, landmark_info_position_dicts
             )
             await logger.debug(f"method:\twrite_route_saved_by_user,\nresult:\t{result}")
             return True
@@ -254,41 +265,34 @@ class Creator(PureCreator):
             return False
 
     @staticmethod
-    async def _write_saved_route_from_note_relationship(tx, user_login: str, note_title: str):
-        """Transaction handler for write_saved_route_from_note_relationship"""
+    async def _write_saved_relationship_for_existing_route(tx, user_login: str, index_id: int):
+        """Transaction handler for write_saved_relationship_for_existing_route"""
         result = await tx.run(
             """
-            OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
+            MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
             WITH userAccount
                 ORDER BY userAccount.login ASC
                 LIMIT 1
                 
-            CALL db.index.fulltext.queryNodes('note_title_fulltext_index', $note_title)
-                YIELD score, node AS note
-            WITH userAccount, note
-                ORDER BY score DESC
-                LIMIT 1
+            MATCH (route: Route) WHERE route.index_id = $index_id
                 
-            MATCH (route: Route)<-[:ROUTE_FOR_NOTE]-(note)
-                
-            CREATE (userAccount)-[:ROUTE_SAVED_BY_USER]->(route)
+            MERGE (userAccount)-[route_saved_by_user: ROUTE_SAVED_BY_USER]->(route)
+            RETURN count(route_saved_by_user) AS amount_of_relationships
             """,
             user_login=user_login,
-            note_title=note_title
+            index_id=index_id
         )
-        result_summary = await (result.consume())
-        counters = result_summary.counters
-
-        if counters.relationships_created != 1:
-            raise exceptions.Neo4jError("Unexpected behaviour: No relationship was created or to much nodes were created.")
+        amount_of_relationships = await result.single("amount_of_relationships")
+        if amount_of_relationships.data("amount_of_relationships")["amount_of_relationships"] != 1:
+            raise exceptions.Neo4jError("Unexpected behaviour: No relationship was created or to much relationships were created.")
 
     @staticmethod
-    async def write_saved_route_from_note_relationship(session: AsyncSession, user_login: str, note_title: str) -> bool:
+    async def write_saved_relationship_for_existing_route(session: AsyncSession, user_login: str, index_id: int) -> bool:
         try:
             result = await session.execute_write(
-                Creator._write_saved_route_from_note_relationship, user_login, note_title
+                Creator._write_saved_relationship_for_existing_route, user_login, index_id
             )
-            await logger.debug(f"method:\twrite_saved_route_from_note_relationship,\nresult:\t{result}")
+            await logger.debug(f"method:\twrite_saved_relationship_for_existing_route,\nresult:\t{result}")
             return True
         except Exception as e:
             await logger.error(f"Error while writing route for note, args: {e.args[0]}")

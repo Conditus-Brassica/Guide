@@ -49,10 +49,10 @@ if __name__ == '__main__':
                 crud_tasks.post_route_for_note_task,
                 {
                     "note_title": "Test title",
-                    "landmarks_name_position_pair": [
-                        {"name": "свирь", "position": 0},
-                        {"name": "нарочь", "position": 1},
-                        {"name": "рудаково", "position": 2}
+                    "landmark_info_position_dicts": [
+                        {"name": "свирь", "position": 0, "latitude": 54.8069, "longitude": 26.4744},
+                        {"name": "нарочь", "position": 1, "latitude": 54.8525, "longitude": 26.7497},
+                        {"name": "рудаково", "position": 2, "latitude": 54.8964, "longitude": 26.8922}
                     ]
                 }
             )
@@ -91,18 +91,18 @@ if __name__ == '__main__':
                 crud_tasks.post_route_saved_by_user_task,
                 {
                     "user_login": "Test user",
-                    "landmarks_name_position_pair": [
-                        {"name": "бабинец (заказник)", "position": 0},
-                        {"name": "бабиновичский", "position": 1},
-                        {"name": "болото мох (белоруссия)", "position": 2}
+                    "landmark_info_position_dicts": [
+                        {"name": "свирь", "position": 0, "latitude": 54.8069, "longitude": 26.4744},
+                        {"name": "нарочь", "position": 1, "latitude": 54.8525, "longitude": 26.7497},
+                        {"name": "рудаково", "position": 2, "latitude": 54.8964, "longitude": 26.8922}
                     ]
                 }
             )
         )
         create_saved_route_from_note_relationship_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.post_saved_route_from_note_relationship_task,
-                {"user_login": "Test user", "note_title": "Test title"}
+                crud_tasks.post_saved_relationship_for_existing_route,
+                {"user_login": "Test user", "index_id": 5}
             )
         )
 

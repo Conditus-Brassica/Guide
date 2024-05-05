@@ -46,14 +46,21 @@ class PureCreator(ABC):
     @staticmethod
     @abstractmethod
     async def write_route_for_note(
-            session, note_title: str, landmarks_name_position_pair: List[Dict[str, str | int]]
+            session, note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
     ) -> bool:
         """
         Try to write the route, that is connected with note.
 
         :param session: async session of the knowledge base.
         :param note_title: str title of the note that is connected with the route.
-        :param landmarks_name_position_pair: List [ Dict["name": <landmark_name>, "position": <int_position_in_route>] ]
+        :param landmark_info_position_dicts: List [
+                Dict[
+                    "name": <landmark_name>,
+                    "position": <int_position_in_route>,
+                    "latitude": <float_landmark_latitude>,
+                    "longitude": <float_landmark_longitude>
+                ]
+            ]
             <int_position_in_route> starts from 0
             pairs of name of the landmark and its position in the route that are included in the route.
 
@@ -64,14 +71,21 @@ class PureCreator(ABC):
     @staticmethod
     @abstractmethod
     async def write_route_saved_by_user(
-            session, user_login: str, landmarks_name_position_pair: List[Dict[str, str | int]]
+            session, user_login: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
     ) -> bool:
         """
         Try to write the route, that is saved by the user.
 
         :param session: async session of the knowledge base.
         :param user_login: str login of the user, who saved the route.
-        :param landmarks_name_position_pair: List [ Dict["name": <landmark_name>, "position": <int_position_in_route>] ]
+        :param landmark_info_position_dicts: List [
+                Dict[
+                    "name": <landmark_name>,
+                    "position": <int_position_in_route>,
+                    "latitude": <float_landmark_latitude>,
+                    "longitude": <float_landmark_longitude>
+                ]
+            ]
             <int_position_in_route> starts from 0
             pairs of name of the landmark and its position in the route that are included in the route.
 
@@ -81,13 +95,13 @@ class PureCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    async def write_saved_route_from_note_relationship(session, user_login: str, note_title: str) -> bool:
+    async def write_saved_relationship_for_existing_route(session, user_login: str, index_id: int) -> bool:
         """
         Try to write the route, that is connected with note.
 
         :param session: async session of the knowledge base.
         :param user_login: str login of the user, who saved the route.
-        :param note_title: str title of the note that is connected with the route.
+        :param index_id: int unique id of route.
 
         return: Coroutine
         """

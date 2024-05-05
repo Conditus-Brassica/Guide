@@ -352,6 +352,10 @@ class PureReader(ABC):
         """
         raise NotImplementedError
 
+    """
+    MATCH (note: Note)
+    """
+
     @staticmethod
     @abstractmethod
     async def read_recommendations_by_coordinates_and_categories(

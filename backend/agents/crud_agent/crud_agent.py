@@ -449,10 +449,10 @@ class CRUDAgent(PureCRUDAgent):
 
     @classmethod
     async def put_route_for_note(cls, json_params: Dict):
-        async def session_runner(note_title: str, landmarks_name_position_pair: List[Dict[str, str | int]]):
+        async def session_runner(note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
                 return await cls._creator.write_route_for_note(
-                    session, note_title, landmarks_name_position_pair
+                    session, note_title, landmark_info_position_dicts
                 )
 
         try:
@@ -460,7 +460,7 @@ class CRUDAgent(PureCRUDAgent):
             return await asyncio.shield(
                 session_runner(
                     json_params["note_title"],
-                    json_params["landmarks_name_position_pair"]
+                    json_params["landmark_info_position_dicts"]
                 )
             )
         except ValidationError as ex:
@@ -470,15 +470,15 @@ class CRUDAgent(PureCRUDAgent):
 
     @classmethod
     async def put_route_saved_by_user(cls, json_params: Dict):
-        async def session_runner(user_login: str, landmarks_name_position_pair: List[Dict[str, str | int]]):
+        async def session_runner(user_login: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
-                return await cls._creator.write_route_saved_by_user(session, user_login, landmarks_name_position_pair)
+                return await cls._creator.write_route_saved_by_user(session, user_login, landmark_info_position_dicts)
 
         try:
             # TODO validate(json_params, put_route_saved_by_user)
             return await asyncio.shield(
                 session_runner(
-                    json_params["user_login"], json_params["landmarks_name_position_pair"]
+                    json_params["user_login"], json_params["landmark_info_position_dicts"]
                 )
             )
         except ValidationError as ex:
@@ -487,19 +487,19 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
-    async def put_saved_route_from_note_relationship(cls, json_params: Dict):
-        async def session_runner(user_login: str, note_title: str):
+    async def put_saved_relationship_for_existing_route(cls, json_params: Dict):
+        async def session_runner(user_login: str, index_id: int):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
-                return await cls._creator.write_saved_route_from_note_relationship(
-                    session, user_login, note_title
+                return await cls._creator.write_saved_relationship_for_existing_route(
+                    session, user_login, index_id
                 )
 
         try:
-            # TODO validate(json_params, put_saved_route_from_note_relationship)
+            # TODO validate(json_params, saved_relationship_for_existing_route)
             return await asyncio.shield(
-                session_runner(json_params["user_login"], json_params["note_title"])
+                session_runner(json_params["user_login"], json_params["index_id"])
             )
         except ValidationError as ex:
-            await logger.error(f"put_saved_route_from_note_relationship. "
+            await logger.error(f"put_saved_relationship_for_existing_route. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
             return []  # raise ValidationError

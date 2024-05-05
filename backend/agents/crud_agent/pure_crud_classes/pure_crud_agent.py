@@ -470,12 +470,14 @@ class PureCRUDAgent(ABC):
 
             :param json_params: Dict in form {
                 "note_title": str,
-                "landmarks_name_position_pair": List[
+                "landmark_info_position_dicts": List[
                     Dict [
                         "name": str,
-                        "position": int
+                        "position": int,
+                        "latitude": float,
+                        "longitude": float
                     ]
-                ], where name is name of landmark and position is position in route of corresponding landmark
+                ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
             }
 
             :return: Coroutine bool True if everything is fine, False otherwise
@@ -491,12 +493,14 @@ class PureCRUDAgent(ABC):
 
             :param json_params: Dict in form {
                 "user_login": str,
-                "landmarks_name_position_pair": List[
+                "landmark_info_position_dicts": List[
                     Dict [
                         "name": str,
-                        "position": int
+                        "position": int,
+                        "latitude": float,
+                        "longitude": float
                     ]
-                ], where name is name of landmark and position is position in route of corresponding landmark
+                ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
             }
 
             :return: Coroutine bool True if everything is fine, False otherwise
@@ -505,14 +509,14 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
-    async def put_saved_route_from_note_relationship(cls, json_params: Dict):
+    async def put_saved_relationship_for_existing_route(cls, json_params: Dict):
         """
-            Marks route, corresponding to note, as saved by user.
+            Marks route with the given index_id as saved by user.
             Works asynchronously.
 
             :param json_params: Dict in form {
                 "user_login": str,
-                "note_title": str
+                "index_id": int
             }
 
             :return: Coroutine bool True if everything is fine, False otherwise

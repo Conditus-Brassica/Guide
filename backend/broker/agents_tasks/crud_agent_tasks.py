@@ -466,12 +466,14 @@ async def post_route_for_note_task(json_params: Dict):
 
     :param json_params: Dict in form {
         "note_title": str,
-        "landmarks_name_position_pair": List[
+        "landmark_info_position_dicts": List[
             Dict [
                 "name": str,
-                "position": int
+                "position": int,
+                "latitude": float,
+                "longitude": float
             ]
-        ], where name is name of landmark and position is position in route of corresponding landmark
+        ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
     }
 
     :return: Coroutine bool
@@ -489,12 +491,14 @@ async def post_route_saved_by_user_task(json_params: Dict):
 
     :param json_params: Dict in form {
         "user_login": str,
-        "landmarks_name_position_pair": List[
+        "landmark_info_position_dicts": List[
             Dict [
                 "name": str,
-                "position": int
+                "position": int,
+                "latitude": float,
+                "longitude": float
             ]
-        ], where name is name of landmark and position is position in route of corresponding landmark
+        ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
     }
     :return: Coroutine bool
     """
@@ -502,9 +506,9 @@ async def post_route_saved_by_user_task(json_params: Dict):
 
 
 @BROKER.task
-async def post_saved_route_from_note_relationship_task(json_params: Dict):
+async def post_saved_relationship_for_existing_route(json_params: Dict):
     """
-    Task to mark route, corresponding to note, as saved by user. Returns True if everything fine,
+    Task to mark route with the given index_id as saved by user. Returns True if everything fine,
         returns False otherwise.
 
     Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
@@ -512,8 +516,8 @@ async def post_saved_route_from_note_relationship_task(json_params: Dict):
 
     :param json_params: Dict in form {
         "user_login": str,
-        "note_title": str
+        "index_id": int
     }
     :return: Coroutine bool
     """
-    return await CRUD_AGENT.put_saved_route_from_note_relationship(json_params)
+    return await CRUD_AGENT.put_saved_relationship_for_existing_route(json_params)
