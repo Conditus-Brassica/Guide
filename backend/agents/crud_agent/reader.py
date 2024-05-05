@@ -754,7 +754,11 @@ class Reader(PureReader):
                     OPTIONAL MATCH (landmark: Landmark)<-[part_of_route: PART_OF_ROUTE]-(route)
                     RETURN landmark
                         ORDER BY part_of_route.position ASC
-            } AS route_landmarks
+            } AS route_landmarks,
+            COLLECT {
+                OPTIONAL MATCH (note_category: NoteCategory)<-[:NOTE_REFERS]-(note)
+                RETURN note_category.name
+            } AS note_category_names
                 ORDER BY 
                     note.last_update DESC,
                     route.index_id ASC
@@ -764,7 +768,7 @@ class Reader(PureReader):
         try:
             result_values = []
             async for record in result:
-                record = record.data("note", "route", "route_landmarks")
+                record = record.data("note", "route", "route_landmarks", "note_category_names")
                 if record["note"] is not None:
                     record["note"]["last_update"] = record["note"]["last_update"].to_native()
                 result_values.append(record)

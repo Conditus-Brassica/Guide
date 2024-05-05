@@ -400,7 +400,8 @@ async def notes_in_range_task(json_params: Dict):
             Dict[
                 "note": Dict | None,
                 "route": Dict | None,
-                "route_landmarks": List[Dict | None] | None
+                "route_landmarks": List[Dict | None] | None,
+                "note_category_names": List[str | None] | None
             ]
         ]
     """
