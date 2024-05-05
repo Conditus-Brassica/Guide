@@ -314,7 +314,7 @@ class PureReader(ABC):
     async def read_range_of_routes_saved_by_user(session, user_login: str, skip: int, limit: int):
         """
             Returns range of routes with its landmarks (returns landmarks in the order that corresponds to the order of
-            appearance of landmarks in the route). Range looks like (skip, skip + limit]
+            appearance of landmarks in the route). Range looks like (skip, skip + limit].
             Works asynchronously.
 
             :param session: async session of knowledge base driver
@@ -324,6 +324,27 @@ class PureReader(ABC):
             :return: Coroutine
             List[
                 Dict[
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
+    async def read_note_by_title(session, title: str):
+        """
+            Returns note with its routes (returns routes with theirs landmarks in the order that corresponds to the
+            order of appearance of landmarks in the route) by title of the note.
+            Works asynchronously.
+
+            :param session: async session of knowledge base driver
+            :param title: str - title of the note.
+            :return: Coroutine
+            List[
+                Dict[
+                    "note": Dict | None,
                     "route": Dict | None,
                     "route_landmarks": List[Dict | None] | None
                 ]

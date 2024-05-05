@@ -235,7 +235,7 @@ async def map_sectors_of_points_task(json_params: Dict):
 
 
 @BROKER.task
-async def map_sectors_structure_of_region(json_params: Dict):
+async def map_sectors_structure_of_region_task(json_params: Dict):
     """
     Task to get map sectors structure of the given region.
     Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
@@ -310,7 +310,7 @@ async def route_landmarks_by_index_id_task(json_params: Dict):
 
 
 @BROKER.task
-async def routes_saved_by_user(json_params: Dict):
+async def routes_saved_by_user_task(json_params: Dict):
     """
     Task to get routes with its landmarks (returns landmarks in the order that corresponds to the order of appearance
         of landmarks in the route).
@@ -333,7 +333,7 @@ async def routes_saved_by_user(json_params: Dict):
 
 
 @BROKER.task
-async def range_of_routes_saved_by_user(json_params: Dict):
+async def range_of_routes_saved_by_user_task(json_params: Dict):
     """
     Task to get range of routes with its landmarks (returns landmarks in the order that corresponds to the order of
         appearance of landmarks in the route). Range looks like (skip, skip + limit]. skip=0 return result from the very
@@ -356,6 +356,30 @@ async def range_of_routes_saved_by_user(json_params: Dict):
         ]
     """
     return await CRUD_AGENT.get_range_of_routes_saved_by_user(json_params)
+
+
+@BROKER.task
+async def note_by_title_task(json_params: Dict):
+    """
+    Task to get note with its routes (returns routes with theirs landmarks in the order that corresponds to the
+        order of appearance of landmarks in the route) by title of the note.
+
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    :param json_params: Dict in form {
+        "title": str
+    }
+    :return: Coroutine
+        List[
+            Dict[
+                "note": Dict | None,
+                "route": Dict | None,
+                "route_landmarks": List[Dict | None] | None
+            ]
+        ]
+    """
+    return await CRUD_AGENT.get_note_by_title(json_params)
 
 
 @BROKER.task

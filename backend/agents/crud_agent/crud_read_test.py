@@ -97,7 +97,7 @@ if __name__ == '__main__':
         )
         map_sectors_structure_of_region_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.map_sectors_structure_of_region,
+                crud_tasks.map_sectors_structure_of_region_task,
                 {
                     "region_name": "Беларусь"
                 }
@@ -192,17 +192,25 @@ if __name__ == '__main__':
 
         routes_saved_by_user_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.routes_saved_by_user,
+                crud_tasks.routes_saved_by_user_task,
                 {"user_login": 'Test'}
             )
         )
         range_of_routes_saved_by_user_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.range_of_routes_saved_by_user,
+                crud_tasks.range_of_routes_saved_by_user_task,
                 {
                     "user_login": 'Test',
                     "skip": 1,
                     "limit": 3
+                }
+            )
+        )
+        note_by_title_asycio_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.note_by_title_task,
+                {
+                    "title": 'Test'
                 }
             )
         )
@@ -231,6 +239,7 @@ if __name__ == '__main__':
         res13 = await route_landmarks_by_index_id_asyncio_task
         res14 = await routes_saved_by_user_asyncio_task
         res15 = await range_of_routes_saved_by_user_asyncio_task
+        res16 = await note_by_title_asycio_task
 
 
         # Taking and printing the result of broker tasks
@@ -258,6 +267,8 @@ if __name__ == '__main__':
         pprint(res13.return_value)
         pprint(res14.return_value)
         pprint(res15.return_value)
+        pprint(res16.return_value)
+        pprint(type(res16.return_value[0]["note"]["last_update"]))
 
 
 

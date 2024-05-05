@@ -694,6 +694,49 @@ class Reader(PureReader):
         return result
 
     @staticmethod
+    async def _read_note_by_title(tx, title: str):
+        """Transaction handler for read_note_by_title"""
+        result = await tx.run(
+            """    
+            CALL db.index.fulltext.queryNodes('note_title_fulltext_index', $title)
+                YIELD score, node AS note
+            WITH note
+                ORDER BY score DESC
+                LIMIT 1
+            OPTIONAL MATCH (route: Route)<-[:ROUTE_FOR_NOTE]-(note)
+            RETURN
+                note,
+                route,
+                COLLECT {
+                    OPTIONAL MATCH (landmark: Landmark)<-[part_of_route: PART_OF_ROUTE]-(route)
+                    RETURN landmark
+                        ORDER BY part_of_route.position ASC
+                } AS route_landmarks
+                    ORDER BY route.index_id
+            """,
+            title=title
+        )
+        try:
+            result_values = []
+            async for record in result:
+                record = record.data("note", "route", "route_landmarks")
+                if record["note"] is not None:
+                    record["note"]["last_update"] = record["note"]["last_update"].to_native()
+                result_values.append(record)
+        except IndexError as ex:
+            await logger.error(f"Index error, args: {ex.args[0]}")
+            result_values = []
+
+        await logger.debug(f"method:\t_read_note_by_title,\nresult:\t{await result.consume()}")
+        return result_values
+
+    @staticmethod
+    async def read_note_by_title(session, title: str):
+        result = await session.execute_read(Reader._read_note_by_title, title)
+        await logger.debug(f"method:\tread_note_by_title,\nresult:\t{result}")
+        return result
+
+    @staticmethod
     async def _read_recommendations_by_coordinates_and_categories(
             tx,
             coordinates_of_points: List[Dict[str, float]],

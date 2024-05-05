@@ -359,6 +359,22 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
+    async def get_note_by_title(cls, json_params: Dict):
+        async def session_runner(title: str):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._reader.read_note_by_title(session, title)
+
+        try:
+            # TODO validate(json_params, get_note_by_title)
+            return await asyncio.shield(
+                session_runner(json_params["title"])
+            )
+        except ValidationError as ex:
+            await logger.error(f"get_note_by_title. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
     async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
         async def session_runner(
                 coordinates_of_points: List[Dict[str, float]],

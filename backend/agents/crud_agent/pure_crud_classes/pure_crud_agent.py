@@ -371,6 +371,28 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
+    async def get_note_by_title(cls, json_params: Dict):
+        """
+            Returns note with its routes (returns routes with theirs landmarks in the order that corresponds to the
+            order of appearance of landmarks in the route) by title of the note.
+            Works asynchronously.
+
+            :param json_params: Dict in form {
+                "title": str
+            }
+            :return: Coroutine
+            List[
+                Dict[
+                    "note": Dict | None,
+                    "route": Dict | None,
+                    "route_landmarks": List[Dict | None] | None
+                ]
+            ]
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
     async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
         """
             Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark

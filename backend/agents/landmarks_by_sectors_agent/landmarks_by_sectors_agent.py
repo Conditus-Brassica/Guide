@@ -8,7 +8,7 @@ from jsonschema.exceptions import ValidationError
 from backend.agents.landmarks_by_sectors_agent.pure_landmarks_by_sectors_agent import PURELandmarksBySectorsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import landmarks_of_categories_in_map_sectors_task, \
-    landmarks_in_map_sectors_task, map_sectors_structure_of_region
+    landmarks_in_map_sectors_task, map_sectors_structure_of_region_task
 from backend.agents.landmarks_by_sectors_agent.squares_params_json_validation import *
 
 logger = JsonLogger.with_default_handlers(
@@ -55,7 +55,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     async def create(cls):
         _region_sectors_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                map_sectors_structure_of_region,
+                map_sectors_structure_of_region_task,
                 {"region_name": "Беларусь"}
             )
         )
