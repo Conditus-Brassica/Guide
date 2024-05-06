@@ -154,21 +154,34 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
-    async def get_landmarks_by_names(cls, json_params: Dict):
-        async def session_runner(landmark_names: List[str], optional_limit: int = None):
+    async def get_landmarks_by_name_list(cls, json_params: Dict):
+        async def session_runner(landmark_names: List[str]):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
-                return await cls._reader.read_landmarks_by_names(session, landmark_names, optional_limit)
+                return await cls._reader.read_landmarks_by_name_list(session, landmark_names)
 
         try:
-            validate(json_params, get_landmarks_by_names_json)
-            json_params["optional_limit"] = json_params.get("optional_limit", None)
-            if json_params["optional_limit"] and json_params["optional_limit"] <= 0:
-                raise ValidationError("optional_limit can\'t be less or equal to zero")
+            validate(json_params, get_landmarks_by_name_list_json)
             return await asyncio.shield(
-                session_runner(json_params["landmark_names"], json_params["optional_limit"])
+                session_runner(json_params["landmark_names"])
             )
         except ValidationError as ex:
-            await logger.error(f"get_landmarks_by_names. "
+            await logger.error(f"get_landmarks_by_name_list. "
+                               f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
+            return []  # raise ValidationError
+
+    @classmethod
+    async def get_landmarks_by_name(cls, json_params: Dict):
+        async def session_runner(landmark_name: str, limit: int):
+            async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
+                return await cls._reader.read_landmarks_by_name(session, landmark_name, limit)
+
+        try:
+            validate(json_params, get_landmarks_by_name_json)
+            return await asyncio.shield(
+                session_runner(json_params["landmark_name"], json_params["limit"])
+            )
+        except ValidationError as ex:
+            await logger.error(f"get_landmarks_by_name. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
             return []  # raise ValidationError
 

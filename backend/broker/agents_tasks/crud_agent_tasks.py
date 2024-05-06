@@ -102,15 +102,14 @@ async def landmarks_by_coordinates_task(json_params: Dict):
 
 
 @BROKER.task
-async def landmarks_by_names_task(json_params: Dict):
+async def landmarks_by_name_list_task(json_params: Dict):
     """
     Task to get landmarks with given names.
     Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
     Works asynchronously.
 
     Params for target function of agent Dict in form {
-            "landmark_names": List[str],
-            "optional_limit": int | None
+            "landmark_names": List[str]
         }
     :return: Coroutine
         List [
@@ -120,7 +119,29 @@ async def landmarks_by_names_task(json_params: Dict):
             ]
         ],  where categories_names are categories of landmark
     """
-    return await CRUD_AGENT.get_landmarks_by_names(json_params)
+    return await CRUD_AGENT.get_landmarks_by_name_list(json_params)
+
+
+@BROKER.task
+async def landmarks_by_name_task(json_params: Dict):
+    """
+    Task to get landmarks with the names that starts with the given name.
+    Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
+    Works asynchronously.
+
+    Params for target function of agent Dict in form {
+            "landmark_name": str,
+            "limit": int
+        }
+    :return: Coroutine
+        List [
+            Dict[
+                "landmark": Dict | None,
+                "categories_names": List[str] | [] (empty list)
+            ]
+        ],  where categories_names are categories of landmark
+    """
+    return await CRUD_AGENT.get_landmarks_by_name(json_params)
 
 
 @BROKER.task

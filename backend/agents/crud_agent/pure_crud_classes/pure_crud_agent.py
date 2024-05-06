@@ -132,14 +132,34 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
-    async def get_landmarks_by_names(cls, json_params: Dict):
+    async def get_landmarks_by_name_list(cls, json_params: Dict):
         """
         Returns from kb landmarks with given names.
         Works asynchronously.
 
         :param json_params: Dict in form {
-                "landmark_names": List[str],
-                "optional_limit": int | None
+                "landmark_names": List[str]
+            }
+        :return: Coroutine
+            List [
+                Dict[
+                    "landmark": Dict | None,
+                    "categories_names": List[str] | [] (empty list)
+                ]
+            ],  where categories_names are categories of landmark
+        """
+        raise NotImplementedError
+
+    @classmethod
+    @abstractmethod
+    async def get_landmarks_by_name(cls, json_params: Dict):
+        """
+        Returns from kb landmarks with the names that starts with the given name.
+        Works asynchronously.
+
+        :param json_params: Dict in form {
+                "landmark_name": str,
+                "limit": int
             }
         :return: Coroutine
             List [

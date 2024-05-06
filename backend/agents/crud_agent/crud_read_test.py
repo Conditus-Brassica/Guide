@@ -54,8 +54,14 @@ if __name__ == '__main__':
         )
         landmarks_by_names_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.landmarks_by_names_task,
-                {"landmark_names": ["свирь", "рудаково", "нарочь"], "optional_limit": 3}
+                crud_tasks.landmarks_by_name_list_task,
+                {"landmark_names": ["свирь", "рудаково", "нарочь"]}
+            )
+        )
+        landmarks_by_name_asyncio_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                crud_tasks.landmarks_by_name_task,
+                {"landmark_name": "мин", "limit": 3}
             )
         )
         landmarks_of_categories_in_region_asyncio_task = asyncio.create_task(
@@ -248,6 +254,7 @@ if __name__ == '__main__':
         res3 = await landmarks_refers_to_categories_asyncio_task
         res4 = await landmarks_by_coordinates_asyncio_task
         res5 = await landmarks_by_names_asyncio_task
+        res5_1 = await landmarks_by_name_asyncio_task
         res6 = await landmarks_of_categories_in_region_asyncio_task
         res7 = await landmarks_by_region_asyncio_task
         res8 = await recommendations_for_landmark_by_region_asyncio_task
@@ -285,6 +292,8 @@ if __name__ == '__main__':
         pprint(res4.return_value)
         print("\n\nres5")
         pprint(res5.return_value)
+        print("\n\nres5_1")
+        pprint(res5_1.return_value)
         print("\n\nres6")
         pprint(res6.return_value)
         print("\n\nres7")

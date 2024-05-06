@@ -192,8 +192,8 @@ class Reader(PureReader):
         return result
 
     @staticmethod
-    async def _read_landmarks_by_names(tx, landmark_names: List[str], optional_limit: int = None):
-        """Transaction handler for read_landmarks_by_names"""
+    async def _read_landmarks_by_name_list(tx, landmark_names: List[str]):
+        """Transaction handler for read_landmarks_by_name_list"""
         result = await tx.run(
             """
             UNWIND $landmark_names AS landmark_name
@@ -215,22 +215,51 @@ class Reader(PureReader):
             landmark_names=landmark_names
         )
         try:
-            if optional_limit:
-                result_values = [
-                    record.data("landmark", "categories_names") for record in await result.fetch(optional_limit)
-                ]
-            else:
-                result_values = [record.data("landmark", "categories_names") async for record in result]
+            result_values = [record.data("landmark", "categories_names") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
 
-        await logger.debug(f"method:\t_read_landmarks_by_names,\nresult:\t{await result.consume()}")
+        await logger.debug(f"method:\t_read_landmarks_by_name_list,\nresult:\t{await result.consume()}")
         return result_values
 
     @staticmethod
-    async def read_landmarks_by_names(session: AsyncSession, landmark_names: List[str], optional_limit: int = None):
-        result = await session.execute_read(Reader._read_landmarks_by_names, landmark_names, optional_limit)
+    async def read_landmarks_by_name_list(session: AsyncSession, landmark_names: List[str]):
+        result = await session.execute_read(Reader._read_landmarks_by_name_list, landmark_names)
+        await logger.debug(f"method:\tread_landmarks_by_names,\nresult:\t{result}")
+        return result
+
+    @staticmethod
+    async def _read_landmarks_by_name(tx, landmark_name: str, limit: int):
+        """Transaction handler for read_landmarks_by_name"""
+        result = await tx.run(
+            """
+            MATCH (landmark: Landmark)
+                WHERE landmark.name STARTS WITH $landmark_name
+            RETURN
+                landmark,
+                COLLECT {
+                    MATCH (landmark)-[:REFERS]->(category:LandmarkCategory)
+                    RETURN category.name AS category_name
+                } AS categories_names 
+                    ORDER BY landmark.name ASC
+                    LIMIT $limit
+            """,
+            landmark_name=landmark_name,
+            limit=limit
+        )
+        try:
+            result_values = [record.data("landmark", "categories_names") async for record in result]
+        except IndexError as ex:
+            await logger.error(f"Index error, args: {ex.args[0]}")
+            result_values = []
+
+        await logger.debug(f"method:\t_read_landmarks_by_name,\nresult:\t{await result.consume()}")
+        return result_values
+
+    @staticmethod
+    async def read_landmarks_by_name(session: AsyncSession, landmark_name: str, limit: int):
+        result = await session.execute_read(Reader._read_landmarks_by_name, landmark_name, limit)
         await logger.debug(f"method:\tread_landmarks_by_names,\nresult:\t{result}")
         return result
 

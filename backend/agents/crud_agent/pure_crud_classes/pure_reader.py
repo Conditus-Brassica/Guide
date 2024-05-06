@@ -98,14 +98,33 @@ class PureReader(ABC):
 
     @staticmethod
     @abstractmethod
-    async def read_landmarks_by_names(session, landmark_names: List[str], optional_limit: int | None = None):
+    async def read_landmarks_by_name_list(session, landmark_names: List[str]):
         """
         Returns from kb landmarks with given names.
         Works asynchronously.
 
         :param session: async session of knowledge base driver
         :param landmark_names: List[str] names of target landmarks
-        :param optional_limit: int | None the maximum number of returning records (not specified if None is given)
+        :return: Coroutine
+            List [
+                Dict[
+                    "landmark": Dict | None,
+                    "categories_names": List[str] | [] (empty list)
+                ]
+            ], where categories_names are categories of landmark
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
+    async def read_landmarks_by_name(session, landmark_name: str, limit: int):
+        """
+        Returns from kb landmarks with given names.
+        Works asynchronously.
+
+        :param session: async session of knowledge base driver
+        :param landmark_name: str name of target landmarks
+        :param limit: int - the maximum number of returning records
         :return: Coroutine
             List [
                 Dict[

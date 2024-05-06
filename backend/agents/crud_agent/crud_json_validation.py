@@ -90,9 +90,9 @@ get_landmarks_by_coordinates_json = \
     }
 
 """
-get_landmarks_by_names
+get_landmarks_by_name_list
 """
-get_landmarks_by_names_json = \
+get_landmarks_by_name_list_json = \
     {
         "type": "object",
         "properties": {
@@ -104,10 +104,25 @@ get_landmarks_by_names_json = \
                     },
                     "additionalProperties": False
                 },
-            "optional_limit": {"type": ["number", "null"]},
             "additionalProperties": False
         },
         "required": ["landmark_names"],
+        "maxProperties": 1,
+        "additionalProperties": False
+    }
+
+"""
+get_landmarks_by_name
+"""
+get_landmarks_by_name_json = \
+    {
+        "type": "object",
+        "properties": {
+            "landmark_name": {"type": "string"},
+            "limit": {"type": "number"},
+            "additionalProperties": False
+        },
+        "required": ["landmark_name", "limit"],
         "maxProperties": 2,
         "additionalProperties": False
     }
