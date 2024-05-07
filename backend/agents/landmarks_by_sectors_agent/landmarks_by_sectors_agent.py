@@ -29,11 +29,10 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
 
     _single_landmarks_agent = None
 
-    def __init__(self, result_task):
+    def __init__(self):
         self._cache = {"map_sectors_names": set(), "categories_names": set()}
         self._result = {}
         self._sectors = {}
-        self._sectors = result_task.return_value
 
     @classmethod
     def get_landmarks_by_sectors_agent(cls):
@@ -52,7 +51,12 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
             return False
 
     @classmethod
-    async def create(cls):
+    def create(cls):
+        cls._single_landmarks_agent = LandmarksBySectorsAgent()
+        return cls._single_landmarks_agent
+
+    @classmethod
+    async def get_sectors(cls):
         _region_sectors_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 map_sectors_structure_of_region_task,
@@ -60,11 +64,12 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
             )
         )
         result_task = await _region_sectors_async_task
-        cls._single_landmarks_agent = LandmarksBySectorsAgent(result_task)
-        return cls._single_landmarks_agent
+        cls._sectors = result_task.return_value
 
     @classmethod
     async def get_landmarks_in_sector(cls, json_params: dict):
+        if not cls._sectors:
+            await cls.get_sectors()
         # Check if format of dictionary is right using validator
         await cls._coords_of_square_validation(json_params)
         squares_in_sector = await cls.get_necessary_sectors(json_params)
@@ -84,17 +89,20 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
             cls._result = result_task.return_value
         return cls._result
 
-    async def get_landmarks_by_categories_in_sector(self, jsom_params: dict):
-        await self._coords_of_square_with_categories_validation(jsom_params)
-        squares_in_sector = await self.get_necessary_sectors(jsom_params)
+    @classmethod
+    async def get_landmarks_by_categories_in_sector(cls, jsom_params: dict):
+        if not cls._sectors:
+            await cls.get_sectors()
+        await cls._coords_of_square_with_categories_validation(jsom_params)
+        squares_in_sector = await cls.get_necessary_sectors(jsom_params)
         squares_in_sector["categories_names"] = jsom_params["categories_names"]
         squares_in_sector["map_sectors_names"] = [
-            i for i in squares_in_sector["map_sectors_names"] if i not in self._cache["map_sectors_names"]
+            i for i in squares_in_sector["map_sectors_names"] if i not in cls._cache["map_sectors_names"]
         ]
         squares_in_sector["categories_names"] = [
-            i for i in squares_in_sector["categories_names"] if i not in self._cache["categories_names"]
+            i for i in squares_in_sector["categories_names"] if i not in cls._cache["categories_names"]
         ]
-        self._set_cache(squares_in_sector)
+        cls._set_cache(squares_in_sector)
         if len(squares_in_sector["map_sectors_names"]) != 0:
             landmarks_sectors_categories_async_task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(
@@ -102,8 +110,8 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
                 )
             )
             result_task = await landmarks_sectors_categories_async_task
-            self._result = result_task.return_value
-        return self._result
+            cls._result = result_task.return_value
+        return cls._result
 
     @classmethod
     def _set_cache(cls, squares_in_sector: dict):
