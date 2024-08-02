@@ -863,7 +863,6 @@ def run_cypher_scripts(
     except Exception as e:
         print("ERROR OCCURED!")
         print(f"{e.args[0]}, Error type: {type(e)}")
-        driver.execute_query("MATCH (n) DETACH DELETE n;")
 
 
 def on_refused_connection(
