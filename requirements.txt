@@ -39,3 +39,7 @@ urllib3==2.1.0
 Werkzeug==3.0.1
 xyzservices==2023.10.1
 zipp==3.17.0
+psycopg2-binary
+sqlalchemy
+transformers
+torch
