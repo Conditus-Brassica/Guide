@@ -68,10 +68,10 @@ class Reader(PureReader):
             UNWIND $map_sectors_names AS sector_name
             CALL {
                 WITH sector_name
-                CALL db.index.fulltext.queryNodes('map_sector_name_fulltext_index', sector_name)
-                    YIELD score, node AS sector
+                MATCH (sector: MapSector)
+                    WHERE sector.name STARTS WITH sector_name
                 RETURN sector
-                    ORDER BY score DESC
+                    ORDER BY sector.name
                     LIMIT 1
             }
             OPTIONAL MATCH (landmark: Landmark)-[:IN_SECTOR]->(sector)
@@ -563,10 +563,10 @@ class Reader(PureReader):
             UNWIND $map_sectors_names AS map_sector_name
             CALL {
                 WITH map_sector_name
-                CALL db.index.fulltext.queryNodes('map_sector_name_fulltext_index', map_sector_name)
-                    YIELD score, node AS mapSector
+                MATCH (mapSector: MapSector)
+                    WHERE mapSector.name STARTS WITH map_sector_name
                 RETURN mapSector
-                    ORDER BY score DESC
+                    ORDER BY mapSector.name
                     LIMIT 1
             }
             WITH mapSector
