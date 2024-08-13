@@ -66,10 +66,10 @@ class Creator(PureCreator):
                     UNWIND $country_names AS country_name
                         CALL {
                             WITH country_name
-                            CALL db.index.fulltext.queryNodes('region_name_fulltext_index', country_name)
-                                YIELD score, node AS region
+                            MATCH (region: Region)
+                                WHERE region.name STARTS WITH country_name
                             RETURN region
-                                ORDER BY score DESC
+                                ORDER BY region.name
                                 LIMIT 1
                         }
                         RETURN 'notes/' + toString(region.id_code) + '/' + toString(guideAccount.id_code) + '/' + toString(guideAccount.last_note_id_code + 1) + '/'
