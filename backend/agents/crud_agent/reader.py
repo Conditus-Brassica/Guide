@@ -732,9 +732,9 @@ class Reader(PureReader):
         result = await tx.run(
             """
             MATCH (note: Note)
-                WHERE note.name STARTS WITH $note_title
+                WHERE note.title STARTS WITH $note_title
             WITH note
-                ORDER BY note.name
+                ORDER BY note.title
                 LIMIT 1
             OPTIONAL MATCH (route: Route)<-[:ROUTE_FOR_NOTE]-(note)
             RETURN
