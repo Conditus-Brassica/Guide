@@ -158,10 +158,10 @@ class Reader(PureReader):
             UNWIND $categories_names AS category_name
             CALL {
                 WITH category_name
-                CALL db.index.fulltext.queryNodes('landmark_category_name_fulltext_index', category_name)
-                    YIELD score, node AS category
+                MATCH (category: LandmarkCategory)
+                    WHERE category.name STARTS WITH category_name
                 RETURN category
-                    ORDER BY score DESC
+                    ORDER BY category.name
                     LIMIT 1
             }
             OPTIONAL MATCH (landmark: Landmark)-[:REFERS]->(category)
@@ -279,10 +279,10 @@ class Reader(PureReader):
             UNWIND $categories_names AS category_name
             CALL {
                 WITH category_name
-                CALL db.index.fulltext.queryNodes("landmark_category_name_fulltext_index", category_name)
-                    YIELD score, node AS category
+                MATCH (category: LandmarkCategory)
+                    WHERE category.name STARTS WITH category_name
                 RETURN category
-                    ORDER BY score DESC
+                    ORDER BY category.name
                     LIMIT 1
             }
             OPTIONAL MATCH
@@ -573,10 +573,10 @@ class Reader(PureReader):
             UNWIND $categories_names AS category_name
             CALL {
                 WITH category_name
-                CALL db.index.fulltext.queryNodes("landmark_category_name_fulltext_index", category_name)
-                    YIELD score, node AS category
+                MATCH (category: LandmarkCategory)
+                    WHERE category.name STARTS WITH category_name
                 RETURN category
-                    ORDER BY score DESC
+                    ORDER BY category.name
                     LIMIT 1
             }
             OPTIONAL MATCH
@@ -916,10 +916,10 @@ class Reader(PureReader):
                 UNWIND $categories_names AS category_name
                 CALL {
                     WITH category_name
-                    CALL db.index.fulltext.queryNodes("landmark_category_name_fulltext_index", category_name)
-                        YIELD score, node AS category
+                    MATCH (category: LandmarkCategory)
+                        WHERE category.name STARTS WITH category_name
                     RETURN category
-                        ORDER BY score DESC
+                        ORDER BY category.name
                         LIMIT 1
                 }
                 
