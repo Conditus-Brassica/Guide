@@ -33,8 +33,8 @@ if __name__ == '__main__':
                 {
                     "guide_login": "Алан Смити",
                     "country_names": ["Беларусь"],
-                    "note_title": "Test title 2",
-                    "note_category_names": ["Test category"]
+                    "note_title": "Test title",
+                    "note_category_names": ["Test Category"]
                 }
             )
         )
@@ -50,9 +50,9 @@ if __name__ == '__main__':
                 {
                     "note_title": "Test title",
                     "landmark_info_position_dicts": [
-                        {"name": "свирь", "position": 0, "latitude": 54.8069, "longitude": 26.4744},
-                        {"name": "нарочь", "position": 1, "latitude": 54.8525, "longitude": 26.7497},
-                        {"name": "рудаково", "position": 2, "latitude": 54.8964, "longitude": 26.8922}
+                        {"name": "Минская ратуша", "position": 0, "latitude": 53.90333, "longitude": 	27.55611},
+                        {"name": "Минское суворовское военное училище", "position": 1, "latitude": 53.91139, "longitude": 27.55889},
+                        {"name": "Минск — город-герой", "position": 2, "latitude": 53.9159, "longitude": 	27.5381}
                     ]
                 }
             )
@@ -92,9 +92,10 @@ if __name__ == '__main__':
                 {
                     "user_login": "Test user",
                     "landmark_info_position_dicts": [
-                        {"name": "свирь", "position": 0, "latitude": 54.8069, "longitude": 26.4744},
-                        {"name": "нарочь", "position": 1, "latitude": 54.8525, "longitude": 26.7497},
-                        {"name": "рудаково", "position": 2, "latitude": 54.8964, "longitude": 26.8922}
+                        {"name": "Минская ратуша", "position": 0, "latitude": 53.90333, "longitude": 27.55611},
+                        {"name": "Минское суворовское военное училище", "position": 1, "latitude": 53.91139,
+                         "longitude": 27.55889},
+                        {"name": "Минск — город-герой", "position": 2, "latitude": 53.9159, "longitude": 27.5381}
                     ]
                 }
             )
@@ -102,7 +103,7 @@ if __name__ == '__main__':
         create_saved_route_from_note_relationship_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.post_saved_relationship_for_existing_route,
-                {"user_login": "Test user", "index_id": 5}
+                {"user_login": "Test user", "index_id": 3}
             )
         )
 

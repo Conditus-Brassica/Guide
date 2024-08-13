@@ -35,7 +35,7 @@ if __name__ == '__main__':
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_refers_to_categories_task,
                 {
-                    "categories_names": ["озёра мядельского района", "национальные парки белоруссии"],
+                    "categories_names": ["Музеи Белоруссии", "Музеи Минска", "категория, которой нету"],
                     "optional_limit": 3
                 }
             )
@@ -45,8 +45,8 @@ if __name__ == '__main__':
                 crud_tasks.landmarks_by_coordinates_task,
                 {
                     "coordinates": [
-                        {"longitude": 26.91887917, "latitude": 54.84001},
-                        {"longitude": 26.8629, "latitude": 54.955}, {"longitude": 26.8684, "latitude": 54.9683}
+                        {"longitude": 27.561, "latitude": 53.8993},
+                        {"longitude": 	27.56528, "latitude": 	53.90611}, {"longitude": 0, "latitude": 0}
                     ],
                     "optional_limit": 3
                 }
@@ -55,25 +55,29 @@ if __name__ == '__main__':
         landmarks_by_names_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_by_name_list_task,
-                {"landmark_names": ["свирь", "рудаково", "нарочь"]}
+                {"landmark_names": [
+                    "Фольварк Ракутёвщина",
+                    "Логойский историко-краеведческий музей имени Константина и Евстафия Тышкевичей",
+                    "Судобле"
+                ]}
             )
         )
         landmarks_by_name_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_by_name_task,
-                {"landmark_name": "мин", "limit": 3}
+                {"landmark_name": "Мин", "limit": 3}
             )
         )
         landmarks_of_categories_in_region_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_of_categories_in_region_task,
-                {"region_name": "Мядзельскі раён", "categories_names": ["национальные парки белоруссии"]}
+                {"region_name": "Мядзельскі раён", "categories_names": ["Национальные парки Белоруссии"]}
             )
         )
         landmarks_by_region_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_by_region_task,
-                {"region_name": "Мядзел", "optional_limit": 3}
+                {"region_name": "Мядзельскі", "optional_limit": 3}
             )
         )
         recommendations_for_landmark_by_region_asyncio_task = asyncio.create_task(
@@ -81,9 +85,9 @@ if __name__ == '__main__':
                 crud_tasks.crud_recommendations_for_landmark_by_region_task,
                 {
                     "user_login": "user",
-                    "current_latitude": 54.8964,
-                    "current_longitude": 26.8922,
-                    "current_name": "рудаково (озеро)",
+                    "current_latitude": 53.90333,
+                    "current_longitude": 	27.55611,
+                    "current_name": "Минская ратуша",
                     "amount_of_recommendations": 10
                    }
             )
@@ -94,10 +98,10 @@ if __name__ == '__main__':
                 {
                     "coordinates_of_points": [
                     {"latitude": 55.7, "longitude": 26.7},
-                        {"latitude": 55.61639, "longitude": 26.70833},
-                        {"latitude": 55.39417, "longitude": 26.62722}
+                    {"latitude": 55.61639, "longitude": 26.70833},
+                    {"latitude": 55.39417, "longitude": 26.62722}
                     ],
-                    "optional_limit": 1
+                    "optional_limit": 3
                 }
             )
         )
@@ -113,13 +117,13 @@ if __name__ == '__main__':
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_of_categories_in_map_sectors_task,
                 {
-                    "map_sectors_names": ["a8", "h4"],
+                    "map_sectors_names": ["h6", "h8"],
                     "categories_names": [
-                        "историко-культурные ценности республики беларусь",
-                        "заказники белоруссии",
+                        "Музеи Белоруссии",
+                        "Историко-культурные ценности Республики Беларусь",
                         "озёра поставского района"
                     ],
-                    "optional_limit": 1
+                    "optional_limit": 6
                 }
             )
         )
@@ -128,11 +132,10 @@ if __name__ == '__main__':
                 crud_tasks.crud_recommendations_by_coordinates_and_categories_task,
                 {
                     "coordinates_of_points": [
-                        {"latitude": 55.19861, "longitude": 27.41694},
-                        {"latitude": 54.1275, "longitude": 25.36306}
+                        {"latitude": 54.93861, "longitude": 26.68722},
+                        {"latitude": 53.896257438615244, "longitude": 30.310238234003748}
                     ],
-                    "categories_names": ["озёра поставского района"],
-                    # ["историко-культурные ценности республики беларусь", "озёра поставского района"],
+                    "categories_names": ["Историко-культурные ценности Республики Беларусь"],
                     "user_login": "user",
                     "amount_of_recommendations_for_point": 3,
                     "optional_limit": 6
@@ -144,11 +147,11 @@ if __name__ == '__main__':
                 crud_tasks.crud_recommendations_by_coordinates_and_categories_task,
                 {
                     "coordinates_of_points": [
-                        {"latitude": 55.19861, "longitude": 27.41694},
-                        {"latitude": 54.1275, "longitude": 25.36306}
+                        {"latitude": 53.93196593231837, "longitude": 27.530826740218853},
+                        {"latitude": 52.12180293608815, "longitude": 23.755318009426464}
                     ],
-                    "categories_names": ["озёра поставского района"],
-                    # ["историко-культурные ценности республики беларусь", "озёра поставского района"],
+                    "categories_names": #["озёра поставского района"],
+                    ["Историко-культурные ценности Республики Беларусь", "озёра поставского района"],
                     "user_login": "user",
                     "amount_of_recommendations_for_point": 3,
                     "optional_limit": 6
@@ -164,25 +167,14 @@ if __name__ == '__main__':
                     'coordinates_of_points': [
                         {'latitude': 53.9124414, 'longitude': 27.5951789}
                     ],
-                    'categories_names': ['историко-культурные ценности республики беларусь',
-                         'историко-культурные ценности республики беларусь', 'памятники истории белоруссии',
-                         'памятники истории белоруссии', 'исторические музеи белоруссии',
-                         'исторические музеи белоруссии', 'художественные музеи белоруссии',
-                         'художественные музеи белоруссии', 'дома-музеи белоруссии', 'дома-музеи белоруссии',
-                         'музеи-квартиры белоруссии', 'музеи-квартиры белоруссии',
-                         'персональные музеи белоруссии', 'персональные музеи белоруссии',
-                         'национальные музеи белоруссии', 'национальные музеи белоруссии',
-                         'железнодорожные музеи белоруссии', 'железнодорожные музеи белоруссии',
-                         'музеи брестской области', 'музеи брестской области', 'музеи витебской области',
-                         'музеи витебской области', 'музеи гомельской области', 'музеи гомельской области',
-                         'музеи гродненской области', 'музеи гродненской области', 'музеи могилёвской области',
-                         'музеи могилёвской области', 'театры минска', 'театры минска', 'театры гомеля',
-                         'театры гомеля', 'театры витебска', 'театры витебска', 'театры бреста',
-                         'театры бреста', 'театры белоруссии', 'театры белоруссии', 'сады и парки белоруссии',
-                         'сады и парки белоруссии', 'сады и парки минска', 'сады и парки минска',
-                         'сады и парки могилёва', 'сады и парки могилёва', 'скверы белоруссии',
-                         'скверы белоруссии', 'памятники садово-паркового искусства белоруссии',
-                         'памятники садово-паркового искусства белоруссии'],
+                    'categories_names': [
+                        "Ботанические сады Белоруссии",
+                        "Историко-культурные ценности Республики Беларусь",
+                        "Музеи Минска",
+                        "Футбольные стадионы Белоруссии",
+                        "Музеи Белоруссии",
+                        "Памятники садово-паркового искусства Белоруссии"
+                    ],
                     "amount_of_recommendations_for_point": 50,
                     "optional_limit": 40
                 }
@@ -192,7 +184,7 @@ if __name__ == '__main__':
         route_landmarks_by_index_id_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.route_landmarks_by_index_id_task,
-                {'index_id': 6}
+                {'index_id':2}
             )
         )
 
@@ -208,7 +200,7 @@ if __name__ == '__main__':
                 {
                     "user_login": 'Test',
                     "skip": 1,
-                    "limit": 3
+                    "limit": 5
                 }
             )
         )
@@ -233,7 +225,7 @@ if __name__ == '__main__':
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.notes_of_categories_in_range,
                 {
-                    "note_categories_names": ["Test category", "категория_2"],
+                    "note_categories_names": ["Test Category", "категория_2"],
                     "skip": 0,
                     "limit": 2
                 }
