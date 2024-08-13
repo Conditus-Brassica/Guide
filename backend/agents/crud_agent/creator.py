@@ -136,12 +136,12 @@ class Creator(PureCreator):
         """Transaction handler for write_route_for_note"""
         result = await tx.run(
             """
-            CALL db.index.fulltext.queryNodes('note_title_fulltext_index', $note_title)
-                YIELD score, node AS note
+            MATCH (note: Note)
+                WHERE note.name STARTS WITH $note_title
             WITH note
-                ORDER BY score DESC
+                ORDER BY note.name
                 LIMIT 1
-            
+                
             OPTIONAL MATCH (route: Route)
             WITH note, route
                 ORDER BY route.index_id DESC

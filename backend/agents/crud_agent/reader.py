@@ -730,11 +730,11 @@ class Reader(PureReader):
     async def _read_note_by_title(tx, note_title: str):
         """Transaction handler for read_note_by_title"""
         result = await tx.run(
-            """    
-            CALL db.index.fulltext.queryNodes('note_title_fulltext_index', $note_title)
-                YIELD score, node AS note
+            """
+            MATCH (note: Note)
+                WHERE note.name STARTS WITH $note_title
             WITH note
-                ORDER BY score DESC
+                ORDER BY note.name
                 LIMIT 1
             OPTIONAL MATCH (route: Route)<-[:ROUTE_FOR_NOTE]-(note)
             RETURN
