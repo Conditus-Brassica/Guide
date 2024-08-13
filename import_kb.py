@@ -186,9 +186,9 @@ INDEXES_QUERIES = [
     ON (landmark.name);
     """,
     """
-    CREATE FULLTEXT INDEX landmark_category_name_fulltext_index IF NOT EXISTS
+    CREATE TEXT INDEX landmark_category_name_text_index IF NOT EXISTS
     FOR (landmarkCategory: LandmarkCategory)
-    ON EACH [landmarkCategory.name];
+    ON (landmarkCategory.name);
     """,
     """
     CREATE INDEX landmark_longitude_latitude_range_index IF NOT EXISTS
@@ -199,9 +199,9 @@ INDEXES_QUERIES = [
     );
     """,
     """
-    CREATE FULLTEXT INDEX map_sector_name_fulltext_index IF NOT EXISTS
+    CREATE TEXT INDEX map_sector_name_text_index IF NOT EXISTS
     FOR (mapSector: MapSector)
-    ON EACH [mapSector.name];
+    ON (mapSector.name);
     """,
     """
     CREATE INDEX map_sector_tl_longitude_latitude_range_index IF NOT EXISTS
