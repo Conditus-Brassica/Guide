@@ -271,8 +271,10 @@ def import_regions(driver, filename="regions.json"):
                         region_json,
                         regionType,
                         CASE
-                            WHEN region_json.part_of.country IS null THEN ''  // If country
-                            WHEN region_json.part_of.state IS null THEN ' (' + region_json.part_of.country + ')'  // If state
+                            WHEN region_json.part_of.country IS null OR region_json.part_of.country = ''  // If country
+                                THEN ''  
+                            WHEN region_json.part_of.state IS null OR region_json.part_of.state = ''  // If state
+                                THEN ' (' + region_json.part_of.country + ')'  
                             ELSE ' (' + region_json.part_of.country + ', ' + region_json.part_of.state + ')'  // If district
                         END AS name_postscript
                     MERGE (region: Region {name: region_json.name + name_postscript})
@@ -305,8 +307,10 @@ def import_regions(driver, filename="regions.json"):
                                 labeledRegion,
                                 borderedRegionType,
                                 CASE
-                                    WHEN borderedRegionJSON.part_of.country IS null THEN ''  // If country
-                                    WHEN borderedRegionJSON.part_of.state IS null THEN ' (' + borderedRegionJSON.part_of.country + ')'  // If state
+                                    WHEN borderedRegionJSON.part_of.country IS null OR borderedRegionJSON.part_of.country  // If country
+                                        THEN ''  
+                                    WHEN borderedRegionJSON.part_of.state IS null OR borderedRegionJSON.part_of.state  // If state
+                                        THEN ' (' + borderedRegionJSON.part_of.country + ')'  
                                     ELSE ' (' + borderedRegionJSON.part_of.country + ', ' + borderedRegionJSON.part_of.state + ')'  // If district
                                 END AS name_postscript
                             MERGE (borderedRegion: Region {name: borderedRegionJSON.name + name_postscript})
@@ -343,8 +347,10 @@ def import_include_from_import_regions(driver, filename="regions.json"):
                     WITH 
                         region_json,
                         CASE
-                            WHEN region_json.part_of.country IS null THEN ''  // If country
-                            WHEN region_json.part_of.state IS null THEN ' (' + region_json.part_of.country + ')'  // If state
+                            WHEN region_json.part_of.country IS null OR region_json.part_of.country = ''  // If country
+                                THEN ''
+                            WHEN region_json.part_of.state IS null OR region_json.part_of.state = ''  // If state
+                                THEN ' (' + region_json.part_of.country + ')'  
                             ELSE ' (' + region_json.part_of.country + ', ' + region_json.part_of.state + ')'  // If district
                         END AS name_postscript
                     CALL {
@@ -360,7 +366,9 @@ def import_include_from_import_regions(driver, filename="regions.json"):
                         // (or Cities with labels of country, state, district)
                         // [:INCLUDE] for simple cities are created in import_landmarks function
                         [  
-                            region_json.part_of.state IS null AND region_json.part_of.country IS NOT null,
+                            (region_json.part_of.state IS null OR region_json.part_of.state = '')
+                                AND
+                            (region_json.part_of.country IS NOT null AND region_json.part_of.country <> ''),
                             "
                                 CALL {
                                     WITH region_json
@@ -373,7 +381,9 @@ def import_include_from_import_regions(driver, filename="regions.json"):
                                 MERGE (country)-[:INCLUDE]->(region)
                                 RETURN 'state'
                             ",
-                            region_json.part_of.district IS null AND region_json.part_of.country IS NOT null,
+                            (region_json.part_of.district IS null OR region_json.part_of.district = '')
+                                AND
+                            (region_json.part_of.country IS NOT null AND region_json.part_of.country <> ''),
                             "
                                 CALL {
                                     WITH region_json
@@ -418,24 +428,31 @@ def import_include_from_import_regions(driver, filename="regions.json"):
                             WITH
                                 borderedRegionJSON,
                                 CASE
-                                    WHEN borderedRegionJSON.part_of.country IS null THEN ''  // If country
-                                    WHEN borderedRegionJSON.part_of.state IS null THEN ' (' + borderedRegionJSON.part_of.country + ')'  // If state
+                                    WHEN borderedRegionJSON.part_of.country IS null OR borderedRegionJSON.part_of.country = ''  // If country
+                                        THEN ''  
+                                    WHEN borderedRegionJSON.part_of.state IS null OR borderedRegionJSON.part_of.state = ''  // If state 
+                                        THEN ' (' + borderedRegionJSON.part_of.country + ')'  
                                     ELSE ' (' + borderedRegionJSON.part_of.country + ', ' + borderedRegionJSON.part_of.state + ')'  // If district
                                 END AS bordered_region_name_postscript,
                                 CASE 
-                                    WHEN borderedRegionJSON.part_of.country IS NOT null THEN borderedRegionJSON.part_of.country  
+                                    WHEN borderedRegionJSON.part_of.country IS NOT null AND borderedRegionJSON.part_of.country <> ''
+                                        THEN borderedRegionJSON.part_of.country  
                                     ELSE borderedRegionJSON.part_of.name
                                 END AS bordered_country_name,
                                 CASE
-                                    WHEN borderedRegionJSON.part_of.state IS null AND borderedRegionJSON.part_of.country IS null
-                                        THEN null
-                                    WHEN borderedRegionJSON.part_of.state IS null AND borderedRegionJSON.part_of.country IS NOT null
-                                        THEN borderedRegionJSON.name + ' (' + borderedRegionJSON.part_of.country + ')'
-                                    WHEN borderedRegionJSON.part_of.state IS NOT null
+                                    WHEN (borderedRegionJSON.part_of.state IS null OR borderedRegionJSON.part_of.state = '')
+                                            AND
+                                         (borderedRegionJSON.part_of.country IS null OR borderedRegionJSON.part_of.country = '') 
+                                            THEN null
+                                    WHEN (borderedRegionJSON.part_of.state IS null OR borderedRegionJSON.part_of.state = '')
+                                            AND 
+                                         (borderedRegionJSON.part_of.country IS NOT null AND borderedRegionJSON.part_of.country <> '')
+                                            THEN borderedRegionJSON.name + ' (' + borderedRegionJSON.part_of.country + ')'
+                                    WHEN borderedRegionJSON.part_of.state IS NOT null AND borderedRegionJSON.part_of.state <> ''
                                         THEN borderedRegionJSON.part_of.state + ' (' + borderedRegionJSON.part_of.country + ')'
                                 END AS bordered_state_name,
                                 CASE 
-                                    WHEN borderedRegionJSON.part_of.state IS NOT null
+                                    WHEN borderedRegionJSON.part_of.state IS NOT null AND borderedRegionJSON.part_of.state <> ''
                                         THEN borderedRegionJSON.name + ' (' + borderedRegionJSON.part_of.country + ', ' + borderedRegionJSON.part_of.state + ')'
                                     ELSE null
                                 END AS bordered_district_name
@@ -583,7 +600,7 @@ def import_landmarks(driver, filename="landmarks.json"):
                             landmark_json.located.state IS null,  // Located in Minks and other cities of republican subordination
                             // (:State:City)-[:INCLUDE]->(:District)<-[:LOCATED]-(:Landmark)
                             "
-                                CALL {
+                                 CALL {
                                     WITH located
                                     MATCH (district: Region)
                                         WHERE district.name STARTS WITH located.district + ' (' + located.country + ', ' + located.city + ')'
@@ -900,10 +917,6 @@ def encoding_regions_and_landmarks(driver, base_dir):
                 state_id_code = last_used_state_id_code + 1
             else:
                 state_id_code = 0
-
-        if record.get("district_name") == "Мядзельскі раён (Беларусь, Мінская вобласць)":
-            print(record.get("district_name") is not None)
-            print(find_last_used_id_code_district(record.get("state_name")))
 
         district_id_code = record.get("district_id_code")
         if district_id_code is None:
