@@ -597,7 +597,8 @@ def import_landmarks(driver, filename="landmarks.json"):
                     // Define type of region where landmark is located.
                     // Create region if needed. Create relations between regions if needed and landmark if needed
                         [
-                            landmark_json.located.state IS null,  // Located in Minks and other cities of republican subordination
+                            landmark_json.located.state IS null OR landmark_json.located.state = '',  
+                            // Located in Minks and other cities of republican subordination
                             // (:State:City)-[:INCLUDE]->(:District)<-[:LOCATED]-(:Landmark)
                             "
                                  CALL {
@@ -611,7 +612,8 @@ def import_landmarks(driver, filename="landmarks.json"):
                                 MERGE (landmark)-[:LOCATED]->(district)
                                 RETURN 'state-city'
                             ",
-                            landmark_json.located.district IS null,  // Located in district or in city of state subordination
+                            landmark_json.located.district IS null OR landmark_json.located.district = '',  
+                            // Located in district or in city of state subordination
                             // (:State)-[:INCLUDE]->(:District)<-[:LOCATED]-(:Landmark) or
                             // (:State)-[:INCLUDE]->(:District:City)<-[:LOCATED]-(:Landmark)
                             "
