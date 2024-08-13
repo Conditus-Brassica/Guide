@@ -1019,3 +1019,16 @@ class Reader(PureReader):
         await logger.debug(f"method:\tread_recommendations_by_coordinates_and_categories,\nresult:\t{result}")
         return result
 
+
+
+
+
+
+
+
+
+
+
+
+
+

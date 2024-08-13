@@ -248,7 +248,6 @@ if __name__ == '__main__':
         start = datetime.datetime.now()
         res11_3 = await recommendations_by_coordinates_and_categories_asyncio_task_3
         print(datetime.datetime.now() - start)
-
         res1 = await categories_of_region_asyncio_task
         res2 = await landmarks_in_map_sectors_asyncio_task
         res3 = await landmarks_refers_to_categories_asyncio_task
