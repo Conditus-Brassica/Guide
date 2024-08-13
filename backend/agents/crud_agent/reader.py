@@ -18,16 +18,17 @@ class Reader(PureReader):
     All methods work asynchronously.
     """
 
+
     @staticmethod
     async def _read_categories_of_region(tx, region_name: str, optional_limit: int = None):
         """Transaction handler for read_categories_of_region"""
         result = await tx.run(
             """
             CALL {
-                CALL db.index.fulltext.queryNodes('region_name_fulltext_index', $region_name)
-                    YIELD score, node AS region
+                MATCH (region: Region)
+                    WHERE region.name STARTS WITH $region_name
                 RETURN region
-                    ORDER BY score DESC
+                    ORDER BY region.name
                     LIMIT 1
             }
             OPTIONAL MATCH  
@@ -270,10 +271,10 @@ class Reader(PureReader):
         """Transaction handler for read_landmarks_of_categories_in_region"""
         result = await tx.run(
             """
-            CALL db.index.fulltext.queryNodes('region_name_fulltext_index', $region_name)
-                YIELD score, node AS region
-            WITH score, region
-                ORDER BY score DESC
+            MATCH (region: Region)
+                WHERE region.name STARTS WITH $region_name
+            WITH region
+                ORDER BY region.name
                 LIMIT 1
             UNWIND $categories_names AS category_name
             CALL {
@@ -420,10 +421,10 @@ class Reader(PureReader):
         """Transaction handler for read_landmarks_by_region"""
         result = await tx.run(
             """
-            CALL db.index.fulltext.queryNodes('region_name_fulltext_index', $region_name)
-                YIELD score, node AS region
-            WITH score, region
-                ORDER BY score DESC
+            MATCH (region: Region)
+                WHERE region.name STARTS WITH $region_name
+            WITH region
+                ORDER BY region.name
                 LIMIT 1
             OPTIONAL MATCH
                 (region)
@@ -514,8 +515,11 @@ class Reader(PureReader):
 
         result = await tx.run(
             """
-            CALL db.index.fulltext.queryNodes('region_name_fulltext_index', $region_name)
-                YIELD score, node AS region
+            MATCH (region: Region)
+                WHERE region.name STARTS WITH $region_name
+            WITH region
+                ORDER BY region.name
+                LIMIT 1
             MATCH (region)-[:DIVIDED_ON_SECTORS]->(:CountryMapSectors)-[:INCLUDE_SECTOR]->(mapSector:MapSector)
             RETURN 
                 mapSector.name AS name,
