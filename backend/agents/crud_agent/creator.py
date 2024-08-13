@@ -82,10 +82,10 @@ class Creator(PureCreator):
             UNWIND $note_category_names AS note_category_name
                 CALL {
                     WITH note_category_name
-                    CALL db.index.fulltext.queryNodes('note_category_name_fulltext_index', note_category_name)
-                        YIELD score, node AS noteCategory
+                    MATCH (noteCategory: NoteCategory)
+                        WHERE noteCategory.name STARTS WITH note_category_name
                     RETURN noteCategory
-                        ORDER BY score DESC
+                        ORDER BY noteCategory.name
                         LIMIT 1
                 }
                     

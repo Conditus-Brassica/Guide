@@ -830,10 +830,10 @@ class Reader(PureReader):
             UNWIND $note_categories_names AS note_category_name
                 CALL {
                     WITH note_category_name
-                    CALL db.index.fulltext.queryNodes("note_category_name_fulltext_index", note_category_name)
-                        YIELD score, node AS note_category
+                    MATCH (note_category: NoteCategory)
+                        WHERE note_category.name STARTS WITH note_category_name
                     RETURN note_category
-                        ORDER BY score DESC
+                        ORDER BY note_category.name
                         LIMIT 1
                 }
                 MATCH (note: Note)-[:NOTE_REFERS]->(note_category)
