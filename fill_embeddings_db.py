@@ -45,7 +45,7 @@ with postgres_engine.begin() as tx:
                 tokenized_landmark_summary[key] = tokenized_landmark_summary[key].type(torch.int32).to(device)
 
             # mean of last hidden state of model is used as embedding
-            landmark_embedding_torch = model(**tokenized_landmark_summary).last_hidden_state.mean(dim=1)
+            landmark_embedding_torch = model(**tokenized_landmark_summary).last_hidden_state.mean(dim=1)[0]
 
             landmark_embedding = landmark_embedding_torch.detach().cpu().tolist()
             del landmark_embedding_torch
@@ -78,6 +78,8 @@ with postgres_engine.begin() as tx:
                 INSERT INTO ostisGovno.landmarks_embeddings
                     (landmark_name, landmark_latitude, landmark_longitude, embedding)
                     VALUES (:landmark_name, :landmark_latitude, :landmark_longitude, :embedding)
+                    ON CONFLICT ON CONSTRAINT landmarks_embeddings_landmark_name_landmark_latitude_landma_key 
+                        DO UPDATE SET embedding = :embedding;
                 """
             ),
             {
@@ -87,6 +89,7 @@ with postgres_engine.begin() as tx:
                 "embedding": landmark_embedding
             }
         )
+
 
 neo4j_driver.close()
 

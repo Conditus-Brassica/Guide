@@ -13,7 +13,7 @@ with engine.begin() as tx:
                 landmark_name       TEXT NOT NULL,
                 landmark_latitude   FLOAT NOT NULL,
                 landmark_longitude  FLOAT NOT NULL,
-                embedding           FLOAT[][],
+                embedding           FLOAT[],
                 UNIQUE (landmark_name, landmark_latitude, landmark_longitude)
             );
             """
