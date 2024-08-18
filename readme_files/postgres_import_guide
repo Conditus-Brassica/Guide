@@ -1,0 +1,15 @@
+Перед запуском базы postgres необходимо, чтобы была включена и заполнена база neo4j. 
+
+1) Поднять контейнер postgres
+
+  sudo docker run
+    -d
+    --name some-postgres
+    -e POSTGRES_PASSWORD=ostisGovno
+    -e PGDATA=/var/lib/postgresql/data/pgdata
+    -v /home/postgres:/var/lib/postgresql/data 
+    -p 5432:5432  
+    postgres
+
+2) Запустить скрипт ...
+  python3 ...
