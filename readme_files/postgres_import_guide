@@ -11,5 +11,8 @@
     -p 5432:5432  
     postgres
 
-2) Запустить скрипт ...
-  python3 ...
+2) Запустить скрипт create_embeddings_db_scheme.py
+  python3 create_embeddings_db_scheme.py
+
+3) Запустить скрипт fill_embeddings_db.py
+  python3 fill_embeddings_db.py
