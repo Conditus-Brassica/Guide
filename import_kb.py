@@ -1273,6 +1273,7 @@ def import_function(
 
 
 def main():
+    print("Warning! This script is legacy. Do not use it. Use repository https://github.com/Conditus-Brassica/DB to up base and full it with content.", flush=True)
     if "--help" in sys.argv or "--h" in sys.argv or "-h" in sys.argv:
         print(HELP_MESSAGE)
         return
