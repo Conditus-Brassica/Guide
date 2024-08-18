@@ -430,8 +430,9 @@ class PureReader(ABC):
             optional_limit: int | None = None
     ):
         """
+            LEGACY
             Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark
-            by its name and coordinates; finds user by his/her login. Returns recommended landmark, categories of
+            by its coordinates; finds user by his/her login. Returns recommended landmark, categories of
             recommended landmark, node of the given User account, "wish" mark, if user left it on recommended landmark
             (else None), "visited" mark with the amount of visits, if user already visited this landmark (else None)/
             Works asynchronously.
@@ -462,4 +463,28 @@ class PureReader(ABC):
         """
         raise NotImplementedError
 
+    @staticmethod
+    @abstractmethod
+    async def read_recommendations_by_coordinates(session, coordinates_of_points: List[Dict[str, float]], limit: int):
+        """
+            Returns recommended landmarks for the given coordinates. Returns recommended landmark, categories of
+            recommended landmark,
+            Works asynchronously.
+
+            :param session: async session of knowledge base driver
+            :param coordinates_of_points: List[
+                Dict [
+                    "latitude": float,
+                    "longitude": float
+                ]
+            ] coordinates of given points
+            :param limit: int max amount of recommended landmarks that will be returned
+            :return: Coroutine
+            List[
+                Dict[
+                    "recommendation": Dict | None,
+                ]
+            ]
+        """
+        raise NotImplementedError
 

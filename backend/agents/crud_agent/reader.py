@@ -892,6 +892,8 @@ class Reader(PureReader):
             optional_limit: int | None
     ):
         """Transaction handler for read_recommendations_by_coordinates_and_categories"""
+        logger.warning("Legacy method. Empty list will be returned to avoid errors")
+        return []
         result = await tx.run(
             """
             OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
@@ -1023,16 +1025,59 @@ class Reader(PureReader):
         await logger.debug(f"method:\tread_recommendations_by_coordinates_and_categories,\nresult:\t{result}")
         return result
 
+    @staticmethod
+    async def _read_recommendations_by_coordinates(tx, coordinates_of_points: List[Dict[str, float]], limit: int):
+        """Transaction handler for read_recommendations_by_coordinates"""
+        result = await tx.run(
+            """
+            UNWIND $coordinates_of_points AS coordinates_of_point
+                WITH coordinates_of_point
+                OPTIONAL MATCH (mapSector: MapSector)
+                    WHERE
+                        mapSector.tl_longitude <= toFloat(coordinates_of_point.longitude) AND
+                        mapSector.tl_latitude >= toFloat(coordinates_of_point.latitude) AND
+                        point.withinBBox(
+                            point({latitude: coordinates_of_point.latitude, longitude: coordinates_of_point.longitude, crs:'WGS-84'}),
+                            point({latitude: mapSector.br_latitude, longitude: mapSector.tl_longitude, crs:'WGS-84'}),
+                            point({latitude: mapSector.tl_latitude, longitude: mapSector.br_longitude, crs:'WGS-84'})
+                        )
+                OPTIONAL MATCH
+                    (mapSector) ((:MapSector)-[:NEIGHBOUR_SECTOR]-(:MapSector)){0,1} (recommendationSector: MapSector)
+                        <-[:IN_SECTOR]-
+                    (recommendedLandmark:Landmark)
+                
+                WITH
+                    recommendedLandmark AS recommendation,
+                    point.distance(
+                        point({latitude: coordinates_of_point.latitude, longitude: coordinates_of_point.longitude, crs:'WGS-84'}),
+                        point({latitude: recommendedLandmark.latitude, longitude: recommendedLandmark.longitude})
+                    ) AS distance
+                ORDER BY distance ASC
+                
+                RETURN DISTINCT
+                    recommendation    
+                LIMIT $limit
+            """,
+            coordinates_of_points=coordinates_of_points, limit=limit
+        )
+        try:
+            result_values = [record.data("recommendation") async for record in result]
+        except IndexError as ex:
+            await logger.error(f"Index error, args: {ex.args[0]}")
+            result_values = []
 
+        await logger.debug(
+            f"method:\t_read_recommendations_by_coordinates_and_categories,\nresult:\t{await result.consume()}"
+        )
+        return result_values
 
-
-
-
-
-
-
-
-
-
-
+    @staticmethod
+    async def read_recommendations_by_coordinates(
+            session: AsyncSession, coordinates_of_points: List[Dict[str, float]], limit: int
+    ):
+        result = await session.execute_read(
+            Reader._read_recommendations_by_coordinates, coordinates_of_points, limit
+        )
+        await logger.debug(f"method:\tread_recommendations_by_coordinates,\nresult:\t{result}")
+        return result
 
