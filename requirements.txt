@@ -42,4 +42,4 @@ zipp==3.17.0
 psycopg2-binary
 sqlalchemy
 transformers
-torch
+
