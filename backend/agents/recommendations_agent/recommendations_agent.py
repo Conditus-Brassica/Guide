@@ -1,9 +1,11 @@
 # Author: Vodohleb04
 import asyncio
+import torch
 import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
 from typing import Dict, List
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
+from torch import nn
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_and_categories_task
@@ -33,67 +35,35 @@ class RecommendationsAgent(PureRecommendationsAgent):
         else:
             return False
 
-    @property
-    def coefficients(self) -> Dict:
-        return self.__coefficients
-
-    def __init__(self, coefficients: Dict[str, float]):
+    def __init__(self):
         if not self.recommendations_agent_exists():
-            validate(coefficients, json_validation.recommendations_agent_coefficients_json)
-            self.__coefficients = coefficients
+
             self._single_recommendations_agent = self
         else:
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
 
     @staticmethod
-    def _find_params_unifiers(user_categories_preference, a_priori_recommended):
-        params_unifiers = {}
-        logger.debug(
-            f"Recommendations agent, _find_params_unifiers, user_categories_preference: {user_categories_preference}"
-        )
-        logger.debug(
-            f"Recommendations agent, _find_params_unifiers, a_priori_recommended: {a_priori_recommended}"
-        )
-        max_preference_value = max(user_categories_preference.values())
-        if not max_preference_value or max_preference_value == 0:
-            params_unifiers["user_categories_preference"] = 1
-        else:
-            params_unifiers["user_categories_preference"] = max_preference_value
-        max_distance = max([recommended["distance"] for recommended in a_priori_recommended])
-        if not max_distance or max_distance == 0:
-            params_unifiers["distance"] = 1
-        else:
-            params_unifiers["distance"] = max_distance
-        params_unifiers["wish_to_visit"] = 1
-        max_visited_amount = max([recommended["visited_amount"] for recommended in a_priori_recommended])
-        if not max_visited_amount or max_visited_amount == 0:
-            params_unifiers["visited_amount"] = 1
-        else:
-            params_unifiers["visited_amount"] = max_visited_amount
-        return params_unifiers
-
-    @staticmethod
-    def _outdated_remove_nones_from_kb_result(a_priori_recommended: List) -> List:
+    def _outdated_remove_nones_from_kb_result(kb_pre_recommendations: List) -> List:
         """Changes list"""
         return [
-            a_priori_recommended[i] for i in range(len(a_priori_recommended))
-            if a_priori_recommended[i]["recommendation"]
+            kb_pre_recommendations[i] for i in range(len(kb_pre_recommendations))
+            if kb_pre_recommendations[i]["recommendation"]
         ]
 
     @staticmethod
-    def _remove_nones_from_kb_result(a_priori_recommended: List) -> None:
+    def _remove_nones_from_kb_result(kb_pre_recommendations: List) -> None:
         """Changes list"""
         i = 0
-        len_bound = len(a_priori_recommended)
+        len_bound = len(kb_pre_recommendations)
         while i < len_bound:
-            if a_priori_recommended[i]["recommendation"] is None:
-                a_priori_recommended.pop(i)
+            if kb_pre_recommendations[i]["recommendation"] is None:
+                kb_pre_recommendations.pop(i)
                 len_bound -= 1
                 continue
             i += 1
 
     @staticmethod
-    def _are_the_same(left_landmark: Dict, right_landmark: Dict) -> bool:
+    def _landmarks_are_equal(left_landmark: Dict, right_landmark: Dict) -> bool:
         if left_landmark["name"] != right_landmark["name"]:
             return False
         if left_landmark["latitude"] != right_landmark["latitude"]:
@@ -103,99 +73,29 @@ class RecommendationsAgent(PureRecommendationsAgent):
         return True
 
     @staticmethod
-    def _remove_duplicates_from_kb_result(a_priori_recommended: List):
+    def _remove_duplicates_from_kb_result(kb_pre_recommendations: List):
         """Changes list"""
         i = 0
-        len_bound = len(a_priori_recommended)
+        len_bound = len(kb_pre_recommendations)
         while i < len_bound:
             j = 0
             while j < len_bound:
                 if i == j:
                     j += 1
                     continue
-                if RecommendationsAgent._are_the_same(
-                        a_priori_recommended[i]["recommendation"], a_priori_recommended[j]["recommendation"]
+                if RecommendationsAgent._landmarks_are_equal(
+                        kb_pre_recommendations[i]["recommendation"], kb_pre_recommendations[j]["recommendation"]
                 ):
                     len_bound -= 1
-                    if a_priori_recommended[i]["distance"] <= a_priori_recommended[j]["distance"]:
-                        a_priori_recommended.pop(j)
+                    if kb_pre_recommendations[i]["distance"] <= kb_pre_recommendations[j]["distance"]:
+                        kb_pre_recommendations.pop(j)
                         continue
                     else:
-                        a_priori_recommended.pop(i)
+                        kb_pre_recommendations.pop(i)
                         i -= 1  # To make increase == 0 (i + 1 - 1 == i)
                         break
                 j += 1
             i += 1
-
-    @staticmethod
-    def _categories_overlay(
-            user_categories_preference: Dict[str, int], categories_list: List[str], preference_unifier: float
-    ) -> float:
-        result_criteria = 0
-        i = 0
-        while i < len(categories_list):
-            result_criteria += user_categories_preference.get(categories_list[i], 0) / preference_unifier
-            i += 1
-        return result_criteria
-
-    @staticmethod
-    def _additive_super_criteria(
-            user_categories_preference: Dict[str, int],
-            main_categories_names: List[str],
-            subcategories_names: List[str],
-            distance: float,
-            wish_to_visit: bool,
-            visited_amount: int,
-            coefficients: Dict[str, float],
-            params_unifiers: Dict[str, float]
-    ) -> float:
-        return (
-                RecommendationsAgent._categories_overlay(
-                    user_categories_preference, main_categories_names, params_unifiers["user_categories_preference"]
-                )
-                * coefficients["main_categories_names"] / params_unifiers["user_categories_preference"] +
-                RecommendationsAgent._categories_overlay(
-                    user_categories_preference, subcategories_names, params_unifiers["user_categories_preference"]
-                )
-                * coefficients["subcategories_names"] / params_unifiers["user_categories_preference"] +
-                distance
-                * coefficients["distance"] / params_unifiers["distance"] +
-                int(wish_to_visit)
-                * coefficients["wish_to_visit"] / params_unifiers["wish_to_visit"] +
-                visited_amount
-                * coefficients["visited_amount"] / params_unifiers["visited_amount"]
-        )
-
-    def _find_indexes_of_recommendations(
-            self,
-            a_priori_recommended: List[Dict],
-            params_unifiers: Dict[str, float],
-            user_categories_preference: Dict[str, int],
-            maximum_amount_of_recommendations: int,
-    ) -> List[int]:
-        a_posteriori_recommended_criteria = []
-        a_posteriori_recommended_indexes = []
-        for i in range(len(a_priori_recommended)):
-            criteria = self._additive_super_criteria(
-                user_categories_preference,
-                a_priori_recommended[i]["main_categories_names"],
-                a_priori_recommended[i]["subcategories_names"],
-                a_priori_recommended[i]["distance"],
-                a_priori_recommended[i]["wish_to_visit"],
-                a_priori_recommended[i]["visited_amount"],
-                self.__coefficients,
-                params_unifiers
-            )
-            if len(a_posteriori_recommended_criteria) < maximum_amount_of_recommendations:
-                a_posteriori_recommended_indexes.append(i)
-                a_posteriori_recommended_criteria.append(criteria)
-            else:
-                min_value = min(a_posteriori_recommended_criteria)
-                if criteria > min_value:
-                    position_to_replace = a_posteriori_recommended_criteria.index(min_value)
-                    a_posteriori_recommended_criteria[position_to_replace] = criteria
-                    a_posteriori_recommended_indexes[position_to_replace] = i
-        return a_posteriori_recommended_indexes
 
     @staticmethod
     def _json_params_validation(json_params):
@@ -210,37 +110,25 @@ class RecommendationsAgent(PureRecommendationsAgent):
             raise ValidationError("optional_limit can\'t be less or equal to zero")
 
     @staticmethod
-    async def _a_priori_recommended_by_coordinates_and_categories(json_params: Dict):
+    async def _kb_pre_recommendation_by_coordinates_and_categories(json_params: Dict):
         recommendations_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(crud_recommendations_by_coordinates_and_categories_task, json_params)
         )
-        a_priori_recommended_asyncio_result = await recommendations_async_task
+        kb_pre_recommendation_asyncio_result = await recommendations_async_task
         logger.debug(
             f"Recommendations agent, find_recommendations_for_coordinates_and_categories, "
-            f"a_priori_recommended_asyncio_result: {a_priori_recommended_asyncio_result}"
+            f"kb_pre_recommendation_asyncio_result: {kb_pre_recommendation_asyncio_result}"
         )
-        a_priori_recommended = a_priori_recommended_asyncio_result.return_value
-        return a_priori_recommended
-
-    @staticmethod
-    def _wrap_recommendations_result(recommendations: List[Dict], recommended_indexes: List[int]):
-        result = [{"recommendation": None} for _ in range(len(recommended_indexes))]
-        for i in range(len(recommended_indexes)):
-            result[i]["recommendation"] = recommendations[recommended_indexes[i]]["recommendation"]
-        return result
+        kb_pre_recommendations = kb_pre_recommendation_asyncio_result.return_value
+        return kb_pre_recommendations
 
     async def _find_recommendations_for_coordinates_and_categories(
             self, recommendations, maximum_amount_of_recommendations
     ):
-        user_categories_preference = {"озёра поставского района": 1}  # TODO cash request
         # TODO Cash request
         # TODO check cash on None values
-        unifiers = self._find_params_unifiers(user_categories_preference, recommendations)
+        pass
 
-        recommended_indexes = self._find_indexes_of_recommendations(
-            recommendations, unifiers, user_categories_preference, maximum_amount_of_recommendations
-        )
-        return self._wrap_recommendations_result(recommendations, recommended_indexes)
 
     async def find_recommendations_for_coordinates_and_categories(self, json_params: Dict):
         try:
@@ -251,19 +139,19 @@ class RecommendationsAgent(PureRecommendationsAgent):
             await logger.error(f"find_recommendations_for_coordinates_and_categories, ValidationError({ex.args[0]})")
             return []  # raise ValidationError
 
-        a_priori_recommended = await self._a_priori_recommended_by_coordinates_and_categories(json_params)
-        self._remove_nones_from_kb_result(a_priori_recommended)
+        kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates_and_categories(json_params)
+        self._remove_nones_from_kb_result(kb_pre_recommendations)
         logger.debug(
             f"Recommendations agent, find_recommendations_for_coordinates_and_categories, "
-            f"a_priori_recommended after None removed: {a_priori_recommended}"
+            f"kb_pre_recommendations after None removed: {kb_pre_recommendations}"
         )
-        if not a_priori_recommended:
-            return a_priori_recommended
-        self._remove_duplicates_from_kb_result(a_priori_recommended)
+        if not kb_pre_recommendations:
+            return kb_pre_recommendations
+        self._remove_duplicates_from_kb_result(kb_pre_recommendations)
         logger.debug(
             f"Recommendations agent, find_recommendations_for_coordinates_and_categories, "
-            f"a_priori_recommended after duplicates removed: {a_priori_recommended}"
+            f"kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
         )
         return await self._find_recommendations_for_coordinates_and_categories(
-            a_priori_recommended, maximum_amount_of_recommendations
+            kb_pre_recommendations, maximum_amount_of_recommendations
         )
