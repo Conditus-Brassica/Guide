@@ -1,11 +1,12 @@
 # Author: Vodohleb04
 import asyncio
-import torch
+from networkx import k_nearest_neighbors
+import tensorflow as tf
+import keras
 import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
 from typing import Dict, List
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
-from torch import nn
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_and_categories_task
@@ -27,6 +28,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         """
         return cls._single_recommendations_agent
 
+
     @classmethod
     def recommendations_agent_exists(cls) -> bool:
         """Method to check if recommendations agent object already exists"""
@@ -35,12 +37,32 @@ class RecommendationsAgent(PureRecommendationsAgent):
         else:
             return False
 
-    def __init__(self):
-        if not self.recommendations_agent_exists():
 
+    def __init__(self, actor_model: keras.Model, critic_model: keras.Model, dtype: tf.DType, noise_object = None):
+        """
+
+        ###
+        1. actor_model: keras.Model
+            - Actor network, counts action from the given state in terms of Markov decision process (check https://arxiv.org/pdf/1509.02971 for more details).
+        2. critic_model: keras.Model
+            - Critic network, counts Q-value from the given state and action (check https://arxiv.org/pdf/1509.02971 for more details).
+        3. dtype: tensorflow.DType
+            - dtype that is used in models layers.
+        4. *noise_object [DEFAULT = None]
+                - Adds noise to the proto-action (is needed to solve exploration/exploitation problem). None by default.
+                    noise_object must be callable type (supports __call__ method) noise_object must return numpy.ndarray 
+                    or the other object whose type has a registered tensorflow.Tensor conversion function. 
+        """
+        if not self.recommendations_agent_exists():
+            self.actor_model = actor_model
+            self.critic_model = critic_model
+            self.noise_object = noise_object
+            self.dtype = dtype
+            
             self._single_recommendations_agent = self
         else:
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
+
 
     @staticmethod
     def _outdated_remove_nones_from_kb_result(kb_pre_recommendations: List) -> List:
@@ -49,6 +71,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
             kb_pre_recommendations[i] for i in range(len(kb_pre_recommendations))
             if kb_pre_recommendations[i]["recommendation"]
         ]
+
 
     @staticmethod
     def _remove_nones_from_kb_result(kb_pre_recommendations: List) -> None:
@@ -62,6 +85,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 continue
             i += 1
 
+
     @staticmethod
     def _landmarks_are_equal(left_landmark: Dict, right_landmark: Dict) -> bool:
         if left_landmark["name"] != right_landmark["name"]:
@@ -71,6 +95,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         if left_landmark["longitude"] != right_landmark["longitude"]:
             return False
         return True
+
 
     @staticmethod
     def _remove_duplicates_from_kb_result(kb_pre_recommendations: List):
@@ -97,6 +122,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 j += 1
             i += 1
 
+
     @staticmethod
     def _json_params_validation(json_params):
         """This method checks values only of special params. Other values will be checked in target agent."""
@@ -108,6 +134,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
             raise ValidationError("amount_of_recommendations_for_point can\'t be less or equal to zero")
         if json_params["optional_limit"] and json_params["optional_limit"] <= 0:
             raise ValidationError("optional_limit can\'t be less or equal to zero")
+
 
     @staticmethod
     async def _kb_pre_recommendation_by_coordinates_and_categories(json_params: Dict):
@@ -122,12 +149,95 @@ class RecommendationsAgent(PureRecommendationsAgent):
         kb_pre_recommendations = kb_pre_recommendation_asyncio_result.return_value
         return kb_pre_recommendations
 
+
     async def _find_recommendations_for_coordinates_and_categories(
             self, recommendations, maximum_amount_of_recommendations
     ):
         # TODO Cash request
         # TODO check cash on None values
         pass
+
+
+    @staticmethod
+    def _k_nearest_actions(
+        proto_action: tf.Tensor,
+        real_actions: tf.Tensor,
+        k: int
+    ):
+        """
+            Finds k actions nearest to the proto-action from the given real_actions_tensor. L2 distance is used to define distance.
+
+            ###
+            1. proto_action: tensorflow.Tensor
+                - Proto-action counted by actor_model.
+            2. real_actions: tensorflow.Tensor
+                - The actions in Markov decision process. Tensor of the real actions, returned from the database.
+                    In recommendation system - objects, that can be recommended to the given user.
+            3. k: int
+                - The amount of the real actions that will be returned.
+        """
+        if k < 1:
+            raise AttributeError("k must be int value grater then zero.")
+        l2_distance = tf.sqrt(
+            tf.reduce_sum(
+                tf.square(real_actions, proto_action),
+                axis=1
+            )
+        )
+        
+        # Finds k nearest actions
+        min_distance_list = []
+        for i in range(l2_distance.shape[0]):
+            if len(min_distance_list) < k:
+                min_distance_list.append((l2_distance[i], i))  # pair of distance and index in the real_actions
+            else:
+                max_from_min = max(min_distance_list, key=lambda x: x[0])  # finds maximal distance in the list of minimal distances
+
+                if l2_distance[i] < max_from_min[0]:  # max_from_min is pair (distance, index)
+                    max_from_min_index = min_distance_list.index(max_from_min)
+                    min_distance_list[max_from_min_index] = (l2_distance[i], i)
+    
+        return tf.gather(real_actions, [dist_index[1] for dist_index in min_distance_list])
+        
+
+    def _wolpertinger_policy(
+        self,
+        state: tf.Tensor,
+        real_actions: tf.Tensor,
+        recommendations_amount: int
+    ):
+        """
+            Wolpertinger policy. Check https://arxiv.org/pdf/1512.07679 for more details.
+            ### Parameters
+            1. state: tensorflow.Tensor
+                - The state in Markov decision process. In recommendation system - the current state of the given user.
+            2. real_actions: tensorflow.Tensor
+                - The actions in Markov decision process. Tensor of the real actions, returned from the database.
+                    In recommendation system - objects, that can be recommended to the given user.
+            3. recommendations_amount: int
+                - The amount of the real actions that will be returned.
+        """
+        proto_action = self.actor_model(state)
+        if self.noise_object:
+            proto_action += tf.convert_to_tensor(self.noise_object())
+        
+        real_actions = self._k_nearest_actions(proto_action, real_actions, k=recommendations_amount * 2)  # TODO check if 200% is good k
+
+        critic_values = self.critic_model(state, real_actions)  # TODO Check if for is needed
+
+        # Finds recommendations with the highest Critic value
+        max_critic_values_list = []
+        for i in range(critic_values.shape[0]):
+            if len(max_critic_values_list) < recommendations_amount:
+                max_critic_values_list.append((critic_values[i], i))  #  pair of critic value and index in the real_actions
+            else:
+                min_from_max = min(max_critic_values_list, key=lambda x: x[0])# finds minimal critic value in the list of maximal critic values
+                
+                if critic_values[i] > min_from_max[0]:
+                    min_from_max_index = max_critic_values_list.index(min_from_max)
+                    max_critic_values_list[min_from_max_index] = (critic_values[i], i)
+                
+        return tf.gather(real_actions, [value_index[1] for value_index in max_critic_values_list])
 
 
     async def find_recommendations_for_coordinates_and_categories(self, json_params: Dict):
@@ -143,7 +253,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         self._remove_nones_from_kb_result(kb_pre_recommendations)
         logger.debug(
             f"Recommendations agent, find_recommendations_for_coordinates_and_categories, "
-            f"kb_pre_recommendations after None removed: {kb_pre_recommendations}"
+            f"kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
         )
         if not kb_pre_recommendations:
             return kb_pre_recommendations
