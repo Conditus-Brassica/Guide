@@ -4,6 +4,7 @@ from typing import List
 from keras import layers
 import keras
 import tensorflow as tf
+import tensorflow
 
 HE_INIT = keras.initializers.HeNormal()
 
@@ -58,17 +59,6 @@ class CriticModel(keras.Model):
         
         if action_hidden_units:
             self._action_hidden_network = self._define_hidden_network(action_hidden_units, dtype)
-        
-        if state_hidden_units and action_hidden_units:
-            concat_units = state_hidden_units[-1] + action_hidden_units[-1]
-        elif state_hidden_units:
-            concat_units = state_hidden_units[-1] + action_input_units
-        elif action_hidden_units:
-            concat_units = state_input_units + action_hidden_units[-1]
-        else:
-            concat_units = state_input_units + action_input_units
-        self._concat_dense = layers.Dense(concat_units, use_bias=False, kernel_initializer=HE_INIT, dtype=dtype)
-        self._concat_batch_norm = layers.BatchNormalization(dtype=dtype)
 
         if concat_hidden_units:
             self._concat_hidden_network = self._define_hidden_network(concat_hidden_units, dtype)
@@ -93,10 +83,6 @@ class CriticModel(keras.Model):
 
         critic_value = tf.concat([state, action], axis=1)
 
-        critic_value = self._concat_dense(critic_value)
-        critic_value = self._concat_batch_norm(critic_value)
-        critic_value = tf.nn.leaky_relu(critic_value, alpha=0.3)
-
         if self._concat_hidden_network:
             critic_value = self._concat_hidden_network(critic_value)
         
@@ -105,4 +91,25 @@ class CriticModel(keras.Model):
         return critic_value
 
 
-# TODO make test
+if __name__ == "__main__":
+    critic = CriticModel(tf.float32, 16, 16, [32, 64], [32, 64], [256, 256])
+    
+    action = tf.convert_to_tensor([[0.53]], dtype=tf.float32)
+    state = tf.convert_to_tensor([[1., 1., 1.]], dtype=tf.float32)
+
+    critic_optim = keras.optimizers.Adam(learning_rate=5e-4)
+
+    right = tf.convert_to_tensor(1, dtype=tf.float32)
+
+    with tf.GradientTape() as tape:
+        critic_value = critic(state, action)
+
+        loss = tf.reduce_mean(tf.square(right - critic_value))
+        print(loss)
+
+    print(critic.trainable_weights)
+    gradient = tape.gradient(loss, critic.trainable_weights)
+    critic_optim.apply_gradients(zip(gradient, critic.trainable_weights))
+
+
+
