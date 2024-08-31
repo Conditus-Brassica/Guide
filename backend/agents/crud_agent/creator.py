@@ -4,7 +4,6 @@ from typing import List, Dict
 import neo4j
 from aiologger.loggers.json import JsonLogger
 from neo4j import AsyncSession, exceptions
-from backend.agents.crud_agent.pure_crud_classes.pure_creator import PureCreator
 
 
 logger = JsonLogger.with_default_handlers(
@@ -13,7 +12,7 @@ logger = JsonLogger.with_default_handlers(
 )
 
 
-class Creator(PureCreator):
+class Creator:
     """
     https://sefon.pro/mp3/217283-pantera-10-s/
     Creator part of CRUDAgent. All write queries to knowledgebase are located here.

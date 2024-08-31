@@ -27,7 +27,7 @@ class PureRecommendationsAgent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def find_recommendations_for_coordinates_and_categories(self, json_params: Dict):
+    async def find_recommendations_by_coordinates(self, json_params: Dict):
         """
         Method to get recommendations from agent.
 
@@ -38,12 +38,8 @@ class PureRecommendationsAgent(ABC):
                     "longitude": float
                 ]
             ],
-            "categories_names": List[str],
-            "user_login": str,
-            "amount_of_recommendations_for_point": int,z
-            "maximum_amount_of_recommendations": int,
-            "optional_limit": int | None
-        }, where current_name is the name of given landmark
+            "maximum_amount_of_recommendations": int
+        },
         :return: Coroutine
             List[
                 {

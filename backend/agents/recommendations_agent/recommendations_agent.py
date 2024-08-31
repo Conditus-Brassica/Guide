@@ -1,6 +1,5 @@
 # Author: Vodohleb04
 import asyncio
-from networkx import k_nearest_neighbors
 import tensorflow as tf
 import keras
 import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
@@ -9,7 +8,7 @@ from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
-from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_and_categories_task
+from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 
 logger = JsonLogger.with_default_handlers(
     level="DEBUG",
@@ -54,10 +53,10 @@ class RecommendationsAgent(PureRecommendationsAgent):
                     or the other object whose type has a registered tensorflow.Tensor conversion function. 
         """
         if not self.recommendations_agent_exists():
-            self.actor_model = actor_model
-            self.critic_model = critic_model
-            self.noise_object = noise_object
-            self.dtype = dtype
+            self._actor_model = actor_model
+            self._critic_model = critic_model
+            self._noise_object = noise_object
+            self._dtype = dtype
             
             self._single_recommendations_agent = self
         else:
@@ -112,13 +111,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
                         kb_pre_recommendations[i]["recommendation"], kb_pre_recommendations[j]["recommendation"]
                 ):
                     len_bound -= 1
-                    if kb_pre_recommendations[i]["distance"] <= kb_pre_recommendations[j]["distance"]:
-                        kb_pre_recommendations.pop(j)
-                        continue
-                    else:
-                        kb_pre_recommendations.pop(i)
-                        i -= 1  # To make increase == 0 (i + 1 - 1 == i)
-                        break
+                    kb_pre_recommendations.pop(j)
+                    continue
                 j += 1
             i += 1
 
@@ -129,11 +123,6 @@ class RecommendationsAgent(PureRecommendationsAgent):
         validate(json_params, json_validation.find_recommendations_for_coordinates_and_categories)
         if json_params["maximum_amount_of_recommendations"] and json_params["maximum_amount_of_recommendations"] <= 0:
             raise ValidationError("maximum_amount_of_recommendations can\'t be less or equal to zero")
-        if json_params["amount_of_recommendations_for_point"] and \
-                json_params["amount_of_recommendations_for_point"] <= 0:
-            raise ValidationError("amount_of_recommendations_for_point can\'t be less or equal to zero")
-        if json_params["optional_limit"] and json_params["optional_limit"] <= 0:
-            raise ValidationError("optional_limit can\'t be less or equal to zero")
 
 
     @staticmethod
@@ -148,14 +137,6 @@ class RecommendationsAgent(PureRecommendationsAgent):
         )
         kb_pre_recommendations = kb_pre_recommendation_asyncio_result.return_value
         return kb_pre_recommendations
-
-
-    async def _find_recommendations_for_coordinates_and_categories(
-            self, recommendations, maximum_amount_of_recommendations
-    ):
-        # TODO Cash request
-        # TODO check cash on None values
-        pass
 
 
     @staticmethod
@@ -217,51 +198,84 @@ class RecommendationsAgent(PureRecommendationsAgent):
             3. recommendations_amount: int
                 - The amount of the real actions that will be returned.
         """
-        proto_action = self.actor_model(state)
-        if self.noise_object:
-            proto_action += tf.convert_to_tensor(self.noise_object())
+        proto_action = self._actor_model(state)  # state shape is [1, state_dim]
+        if self._noise_object:
+            proto_action += tf.convert_to_tensor(self._noise_object())
+            proto_action = tf.clip_by_value(proto_action, clip_value_min=-1., clip_value_max=1.)
         
+        proto_action = tf.squeeze(proto_action, [0])  # actor_model returns shape (1, action_dim), but shape (action_dim) is needed
+
         real_actions = self._k_nearest_actions(proto_action, real_actions, k=recommendations_amount * 2)  # TODO check if 200% is good k
 
-        critic_values = self.critic_model(state, real_actions)  # TODO Check if for is needed
+        # state_for_actions shape is [n, state_dim]. The same state is used for multiple actions
+        state_for_actions = tf.tile(state, [real_actions.shape[0], 1])
+
+        critic_values = self._critic_model(state_for_actions, real_actions)  # critic_values shape is [n, 1]
 
         # Finds recommendations with the highest Critic value
         max_critic_values_list = []
         for i in range(critic_values.shape[0]):
             if len(max_critic_values_list) < recommendations_amount:
-                max_critic_values_list.append((critic_values[i], i))  #  pair of critic value and index in the real_actions
+                max_critic_values_list.append((critic_values[i][0], i))  #  pair of critic value and index in the real_actions
             else:
                 min_from_max = min(max_critic_values_list, key=lambda x: x[0])# finds minimal critic value in the list of maximal critic values
                 
-                if critic_values[i] > min_from_max[0]:
+                if critic_values[i][0] > min_from_max[0]:  # critic_values shape is [n, 1]
                     min_from_max_index = max_critic_values_list.index(min_from_max)
-                    max_critic_values_list[min_from_max_index] = (critic_values[i], i)
+                    max_critic_values_list[min_from_max_index] = (critic_values[i][0], i)
                 
         return tf.gather(real_actions, [value_index[1] for value_index in max_critic_values_list])
 
 
-    async def find_recommendations_for_coordinates_and_categories(self, json_params: Dict):
+
+    async def _find_recommendations_by_coordinates(
+            self, recommendations, maximum_amount_of_recommendations
+    ):
+        # TODO Cash request
+        # TODO check cash on None values
+        # state shape is [state_dim]
+        state = tf.random.normal((64,), dtype=self._dtype)  # TODO make states
+        real_actions = tf.random.normal((15, 32), dtype=self._dtype)  # TODO make real_actions
+
+        real_actions = self._wolpertinger_policy(
+            tf.expand_dims(state, axis=0), real_actions, maximum_amount_of_recommendations
+        )  # expands state shape to [1, state_dim]
+
+        # TODO way to save SARS tuple
+        return real_actions  # TODO get environment result and learning process
+
+
+    async def find_recommendations_by_coordinates(self, json_params: Dict):
         try:
             self._json_params_validation(json_params)
             maximum_amount_of_recommendations = json_params["maximum_amount_of_recommendations"]
             json_params.pop("maximum_amount_of_recommendations")
         except ValidationError as ex:
-            await logger.error(f"find_recommendations_for_coordinates_and_categories, ValidationError({ex.args[0]})")
+            await logger.error(f"find_recommendations_by_coordinates, ValidationError({ex.args[0]})")
             return []  # raise ValidationError
 
         kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates_and_categories(json_params)
+
         self._remove_nones_from_kb_result(kb_pre_recommendations)
         logger.debug(
-            f"Recommendations agent, find_recommendations_for_coordinates_and_categories, "
+            f"Recommendations agent, find_recommendations_by_coordinates, "
             f"kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
         )
         if not kb_pre_recommendations:
             return kb_pre_recommendations
         self._remove_duplicates_from_kb_result(kb_pre_recommendations)
         logger.debug(
-            f"Recommendations agent, find_recommendations_for_coordinates_and_categories, "
+            f"Recommendations agent, find_recommendations_by_coordinates, "
             f"kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
         )
-        return await self._find_recommendations_for_coordinates_and_categories(
+        return await self._find_recommendations_by_coordinates(
             kb_pre_recommendations, maximum_amount_of_recommendations
         )
+
+
+# TODO возвращать не эмбединги, а достопримечательтьтности + index в буфере + uuid записи в буфере
+# TODO перемещение частичных записей в сарс буфер 
+# TODO реализация формулы подсчета состояния пользователя (желательна рекуррентная формула)
+# TODO вовзрат в агента того, что он отправил + то, что оставил пользователь + оценка пользователя
+# TODO после получения оценки пересчёт нового сотояния + проверка uuid + запись в буфер (если uuid не совпал, то не записываем)
+# TODO если в буфере есть хотя бы одна полная запись, то выполняется запуск обучения

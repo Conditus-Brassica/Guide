@@ -42,4 +42,5 @@ zipp==3.17.0
 psycopg2-binary
 sqlalchemy
 transformers
+tensorflow[and-cuda]==2.17.0
 

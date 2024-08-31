@@ -2,7 +2,6 @@
 from typing import List, Dict
 from aiologger.loggers.json import JsonLogger
 from neo4j import AsyncSession
-from backend.agents.crud_agent.pure_crud_classes.pure_reader import PureReader
 
 
 logger = JsonLogger.with_default_handlers(
@@ -11,7 +10,7 @@ logger = JsonLogger.with_default_handlers(
 )
 
 
-class Reader(PureReader):
+class Reader:
     """
     Reader part of CRUDAgent. All read queries to knowledgebase are located here.
     Implements PureReader.
@@ -320,100 +319,6 @@ class Reader(PureReader):
             Reader._read_landmarks_of_categories_in_region, region_name, categories_names, optional_limit
         )
         await logger.debug(f"method:\tread_landmarks_of_categories_in_region,\nresult:\t{result}")
-        return result
-
-    @staticmethod
-    async def _read_recommendations_for_landmark_by_region(
-            tx, user_login: str, current_latitude: float,  current_longitude: float, current_name: str,
-            amount_of_recommendations: int
-    ):
-        """Transaction handler for read_recommendations_for_landmark_by_region"""
-        result = await tx.run(
-            """
-            MATCH (current_landmark: Landmark) 
-                WHERE
-                    current_landmark.latitude = $current_latitude AND
-                    current_landmark.longitude = $current_longitude AND
-                    current_landmark.name STARTS WITH $current_name
-            OPTIONAL MATCH
-                (category:LandmarkCategory)<-[current_landmark_category_ref:REFERS]-(current_landmark)
-                    -[:LOCATED]->
-                (:Region)((:Region&!State)-[:INCLUDE|NEIGHBOUR_REGION]-(:Region&!State)){0,4}(:Region)
-                    <-[:LOCATED]-
-                (recommendation:Landmark)-[recommendation_landmark_category_ref:REFERS]->(category)
-            OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login = $user_login)
-            OPTIONAL MATCH (userAccount)-[wish_ref:WISH_TO_VISIT]->(recommendation)
-            OPTIONAL MATCH (userAccount)-[visited_ref:VISITED]->(recommendation)
-            WITH 
-                recommendation,
-                recommendation_landmark_category_ref,
-                current_landmark_category_ref,
-                wish_ref,
-                visited_ref
-            ORDER BY 
-                current_landmark_category_ref.main_category_flag DESC,
-                recommendation_landmark_category_ref.main_category_flag DESC,
-                point.distance(
-                    point({latitude: $current_latitude, longitude: $current_longitude}),
-                    point({latitude: recommendation.latitude, longitude: recommendation.longitude})
-                ) ASC
-            LIMIT $amount_of_recommendations
-            RETURN DISTINCT 
-                recommendation,
-                COLLECT {
-                    MATCH (recommendation)
-                        -[refer:REFERS WHERE refer.main_category_flag = True]->
-                    (category:LandmarkCategory)
-                    RETURN category.name AS category_name
-                } AS main_categories_names,
-                COLLECT {
-                    MATCH (recommendation)
-                        -[refer:REFERS WHERE refer.main_category_flag = False]->
-                    (category:LandmarkCategory)
-                    RETURN category.name AS category_name
-                } AS subcategories_names,
-                point.distance(
-                    point({latitude: $current_latitude, longitude: $current_longitude}),
-                    point({latitude: recommendation.latitude, longitude: recommendation.longitude})
-                ) AS distance,
-                CASE
-                    WHEN wish_ref IS NULL THEN False
-                    ELSE True
-                END AS wish_to_visit,
-                CASE
-                    WHEN visited_ref.amount IS NULL THEN 0
-                    ELSE visited_ref.amount
-                END AS visited_amount;
-            """,
-            user_login=user_login, current_latitude=current_latitude, current_longitude=current_longitude,
-            current_name=current_name, amount_of_recommendations=amount_of_recommendations
-        )
-        try:
-            result_values = []
-            async for record in result:
-                result_values.append(
-                    record.data(
-                        "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
-                        "visited_amount"
-                    )
-                )
-        except IndexError as ex:
-            await logger.error(f"Index error, args: {ex.args[0]}")
-            result_values = []
-
-        await logger.debug(f"method:\t_read_recommendations_for_landmark_by_region,\nresult:\t{await result.consume()}")
-        return result_values
-
-    @staticmethod
-    async def read_recommendations_for_landmark_by_region(
-            session: AsyncSession, user_login: str, current_latitude: float, current_longitude: float,
-            current_name: str, amount_of_recommendations: int
-    ):
-        result = await session.execute_read(
-            Reader._read_recommendations_for_landmark_by_region, user_login,  current_latitude, current_longitude,
-            current_name, amount_of_recommendations
-        )
-        await logger.debug(f"method:\tread_recommendations_for_landmark_by_region,\nresult:\t{result}")
         return result
 
     @staticmethod
@@ -883,149 +788,6 @@ class Reader(PureReader):
         return result
 
     @staticmethod
-    async def _read_recommendations_by_coordinates_and_categories(
-            tx,
-            coordinates_of_points: List[Dict[str, float]],
-            categories_names: List[str],
-            user_login: str,
-            amount_of_recommendations_for_point: int,
-            optional_limit: int | None
-    ):
-        """Transaction handler for read_recommendations_by_coordinates_and_categories"""
-        logger.warning("Legacy method. Empty list will be returned to avoid errors")
-        return []
-        result = await tx.run(
-            """
-            OPTIONAL MATCH (userAccount: UserAccount WHERE userAccount.login STARTS WITH $user_login)
-            WITH userAccount
-                ORDER BY userAccount.login ASC
-                LIMIT 1
-                        
-            UNWIND $coordinates_of_points AS coordinates_of_point
-            CALL {
-                WITH coordinates_of_point, userAccount
-                OPTIONAL MATCH (mapSector: MapSector)
-                    WHERE
-                        mapSector.tl_longitude <= toFloat(coordinates_of_point.longitude) AND
-                        mapSector.tl_latitude >= toFloat(coordinates_of_point.latitude) AND
-                        point.withinBBox(
-                            point({latitude: coordinates_of_point.latitude, longitude: coordinates_of_point.longitude, crs:'WGS-84'}),
-                            point({latitude: mapSector.br_latitude, longitude: mapSector.tl_longitude, crs:'WGS-84'}),
-                            point({latitude: mapSector.tl_latitude, longitude: mapSector.br_longitude, crs:'WGS-84'})
-                        )
-                        
-                WITH mapSector, coordinates_of_point, userAccount
-                UNWIND $categories_names AS category_name
-                CALL {
-                    WITH category_name
-                    MATCH (category: LandmarkCategory)
-                        WHERE category.name STARTS WITH category_name
-                    RETURN category
-                        ORDER BY category.name
-                        LIMIT 1
-                }
-                
-                OPTIONAL MATCH
-                    (mapSector) ((:MapSector)-[:NEIGHBOUR_SECTOR]-(:MapSector)){0,1} (recommendationSector: MapSector)
-                        <-[:IN_SECTOR]-
-                    (recommendedLandmark:Landmark)
-                        -[recommendation_landmark_category_ref:REFERS]->
-                    (category)
-                    
-                OPTIONAL MATCH (userAccount)-[wish_ref:WISH_TO_VISIT]->(recommendedLandmark)
-                OPTIONAL MATCH (userAccount)-[visited_ref:VISITED]->(recommendedLandmark)
-                
-                WITH DISTINCT
-                    coordinates_of_point,
-                    recommendedLandmark AS recommendation,
-                    recommendation_landmark_category_ref,
-                    category,
-                    wish_ref,
-                    visited_ref,
-                    point.distance(
-                        point({latitude: coordinates_of_point.latitude, longitude: coordinates_of_point.longitude, crs:'WGS-84'}),
-                        point({latitude: recommendedLandmark.latitude, longitude: recommendedLandmark.longitude})
-                    ) AS distance,
-                    userAccount
-                ORDER BY distance ASC
-                LIMIT $amount_of_recommendations_for_point
-                
-                RETURN
-                    recommendation,
-                    COLLECT {
-                        MATCH (recommendation)
-                            -[main_category_refer:REFERS WHERE main_category_refer.main_category_flag = True]->
-                        (main_category:LandmarkCategory)
-                        RETURN main_category.name AS main_category_name
-                    } AS main_categories_names,
-                    COLLECT {
-                        MATCH (recommendation)
-                            -[subcategory_refer:REFERS WHERE subcategory_refer.main_category_flag = False]->
-                        (subcategory:LandmarkCategory)
-                        RETURN subcategory.name AS subcategory_name
-                    } AS subcategories_names,
-                    distance,
-                    CASE
-                        WHEN wish_ref IS NULL THEN False
-                        ELSE True
-                    END AS wish_to_visit,
-                    CASE
-                        WHEN visited_ref.amount IS NULL THEN 0
-                        ELSE visited_ref.amount
-                    END AS visited_amount
-            } 
-            RETURN DISTINCT
-                recommendation,
-                main_categories_names,
-                subcategories_names,
-                distance,
-                wish_to_visit,
-                visited_amount
-            """,
-            coordinates_of_points=coordinates_of_points, categories_names=categories_names, user_login=user_login,
-            amount_of_recommendations_for_point=amount_of_recommendations_for_point
-        )
-        try:
-            if optional_limit:
-                result_values = [
-                    record.data(
-                        "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
-                        "visited_amount"
-                    ) for record in await result.fetch(optional_limit)
-                ]
-            else:
-                result_values = [
-                    record.data(
-                        "recommendation", "main_categories_names", "subcategories_names", "distance", "wish_to_visit",
-                        "visited_amount"
-                    ) async for record in result
-                ]
-        except IndexError as ex:
-            await logger.error(f"Index error, args: {ex.args[0]}")
-            result_values = []
-
-        await logger.debug(
-            f"method:\t_read_recommendations_by_coordinates_and_categories,\nresult:\t{await result.consume()}"
-        )
-        return result_values
-
-    @staticmethod
-    async def read_recommendations_by_coordinates_and_categories(
-            session: AsyncSession,
-            coordinates_of_points: List[Dict[str, float]],
-            categories_names: List[str],
-            user_login: str,
-            amount_of_recommendations_for_point: int,
-            optional_limit: int = None
-    ):
-        result = await session.execute_read(
-            Reader._read_recommendations_by_coordinates_and_categories, coordinates_of_points, categories_names,
-            user_login, amount_of_recommendations_for_point, optional_limit
-        )
-        await logger.debug(f"method:\tread_recommendations_by_coordinates_and_categories,\nresult:\t{result}")
-        return result
-
-    @staticmethod
     async def _read_recommendations_by_coordinates(tx, coordinates_of_points: List[Dict[str, float]], limit: int):
         """Transaction handler for read_recommendations_by_coordinates"""
         result = await tx.run(
@@ -1067,7 +829,7 @@ class Reader(PureReader):
             result_values = []
 
         await logger.debug(
-            f"method:\t_read_recommendations_by_coordinates_and_categories,\nresult:\t{await result.consume()}"
+            f"method:\t_read_recommendations_by_coordinates_and_categories\nresult:\t{await result.consume()}"
         )
         return result_values
 

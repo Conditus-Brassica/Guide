@@ -80,18 +80,6 @@ if __name__ == '__main__':
                 {"region_name": "Мядзельскі", "optional_limit": 3}
             )
         )
-        recommendations_for_landmark_by_region_asyncio_task = asyncio.create_task(
-            AbstractAgentsBroker.call_agent_task(
-                crud_tasks.crud_recommendations_for_landmark_by_region_task,
-                {
-                    "user_login": "user",
-                    "current_latitude": 53.90333,
-                    "current_longitude": 	27.55611,
-                    "current_name": "Минская ратуша",
-                    "amount_of_recommendations": 10
-                   }
-            )
-        )
         map_sectors_of_points_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.map_sectors_of_points_task,
@@ -127,56 +115,39 @@ if __name__ == '__main__':
                 }
             )
         )
-        recommendations_by_coordinates_and_categories_asyncio_task_1 = asyncio.create_task(
+        recommendations_by_coordinates_asyncio_task_1 = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.crud_recommendations_by_coordinates_and_categories_task,
+                crud_tasks.crud_recommendations_by_coordinates_task,
                 {
                     "coordinates_of_points": [
                         {"latitude": 54.93861, "longitude": 26.68722},
                         {"latitude": 53.896257438615244, "longitude": 30.310238234003748}
                     ],
-                    "categories_names": ["Историко-культурные ценности Республики Беларусь"],
-                    "user_login": "user",
-                    "amount_of_recommendations_for_point": 3,
-                    "optional_limit": 6
+                    "limit": 6
                 }
             )
         )
-        recommendations_by_coordinates_and_categories_asyncio_task_2 = asyncio.create_task(
+        recommendations_by_coordinates_asyncio_task_2 = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.crud_recommendations_by_coordinates_and_categories_task,
+                crud_tasks.crud_recommendations_by_coordinates_task,
                 {
                     "coordinates_of_points": [
                         {"latitude": 53.93196593231837, "longitude": 27.530826740218853},
                         {"latitude": 52.12180293608815, "longitude": 23.755318009426464}
                     ],
-                    "categories_names": #["озёра поставского района"],
-                    ["Историко-культурные ценности Республики Беларусь", "озёра поставского района"],
-                    "user_login": "user",
-                    "amount_of_recommendations_for_point": 3,
-                    "optional_limit": 6
+                    "limit": 6
                 }
             )
         )
 
-        recommendations_by_coordinates_and_categories_asyncio_task_3 = asyncio.create_task(
+        recommendations_by_coordinates_asyncio_task_3 = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                crud_tasks.crud_recommendations_by_coordinates_and_categories_task,
+                crud_tasks.crud_recommendations_by_coordinates_task,
                 {
-                    'user_login': '',
                     'coordinates_of_points': [
                         {'latitude': 53.9124414, 'longitude': 27.5951789}
                     ],
-                    'categories_names': [
-                        "Ботанические сады Белоруссии",
-                        "Историко-культурные ценности Республики Беларусь",
-                        "Музеи Минска",
-                        "Футбольные стадионы Белоруссии",
-                        "Музеи Белоруссии",
-                        "Памятники садово-паркового искусства Белоруссии"
-                    ],
-                    "amount_of_recommendations_for_point": 50,
-                    "optional_limit": 40
+                    "limit": 40
                 }
             )
         )
@@ -234,11 +205,11 @@ if __name__ == '__main__':
 
 
         # Async tasks running
-        res11 = await recommendations_by_coordinates_and_categories_asyncio_task_1
-        res11_2 = await recommendations_by_coordinates_and_categories_asyncio_task_2
+        res11 = await recommendations_by_coordinates_asyncio_task_1
+        res11_2 = await recommendations_by_coordinates_asyncio_task_2
 
         start = datetime.datetime.now()
-        res11_3 = await recommendations_by_coordinates_and_categories_asyncio_task_3
+        res11_3 = await recommendations_by_coordinates_asyncio_task_3
         print(datetime.datetime.now() - start)
         res1 = await categories_of_region_asyncio_task
         res2 = await landmarks_in_map_sectors_asyncio_task

@@ -217,38 +217,7 @@ class PureCRUDAgent(ABC):
         """
         raise NotImplementedError
 
-    @classmethod
-    @abstractmethod
-    async def get_recommendations_for_landmark_by_region(cls, json_params: Dict):
-        """
-            Returns recommended landmarks for given landmark and given user. Finds given landmark by its name and
-            coordinates; finds user by his/her login. Returns recommended landmark, categories of recommended landmark,
-            distance from current_landmark to recommended landmark in meters, category of the given landmark, node of
-            the given User account, "wish" mark, if user left it on recommended landmark (else None), "visited" mark
-            with the amount of visits, if user already visited this landmark (else None)/
-            Works asynchronously.
-
-            :param json_params: Dict in form {
-                "user_login": str,
-                "current_latitude": float,
-                "current_longitude": float,
-                "current_name": str,
-                "amount_of_recommendations": int
-            }, where current_name is the name of given landmark
-            :return: Coroutine
-            List[
-                Dict[
-                    "recommendation": Dict | None,
-                    "main_categories_names": List[str] | [] (empty list),
-                    "subcategories_names": List[str] | [] (empty list),
-                    "distance": float | None,
-                    "wish_to_visit": bool | None,
-                    "visited_amount": int | None
-                ]
-            ]
-        """
-        raise NotImplementedError
-
+    
     @classmethod
     @abstractmethod
     async def get_map_sectors_of_points(cls, json_params: Dict):
@@ -463,12 +432,9 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
-    async def get_recommendations_by_coordinates_and_categories(cls, json_params: Dict):
+    async def get_recommendations_by_coordinates(cls, json_params: Dict):
         """
-            Returns recommended landmarks for given user, given coordinates and given categories. Finds given landmark
-            by its name and coordinates; finds user by his/her login. Returns recommended landmark, categories of
-            recommended landmark, node of the given User account, "wish" mark, if user left it on recommended landmark
-            (else None), "visited" mark with the amount of visits, if user already visited this landmark (else None)/
+            Returns recommended landmarks for given coordinates. Returns recommended landmark.
             Works asynchronously.
 
             :param json_params: Dict in form {
@@ -478,22 +444,13 @@ class PureCRUDAgent(ABC):
                         "longitude": float
                     ]
                 ],
-                "categories_names": List[str],
-                "user_login": str,
-                "amount_of_recommendations_for_point": int,
-                "optional_limit": int | None
-            }, where current_name is the name of given landmark
+                "limit": int
+            },
             :return: Coroutine
             List[
                 Dict[
                     Dict[
                         "recommendation": Dict | None,
-                        "main_categories_names": List[str] | [] (empty list),
-                        "subcategories_names": List[str] | [] (empty list),
-                        "distance": float | None,
-                        "user_account": Dict | None,
-                        "wish_to_visit": bool | None,
-                        "visited_amount": int | None
                     ]
                 ]
             ]

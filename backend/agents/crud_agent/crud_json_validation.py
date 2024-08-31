@@ -168,25 +168,6 @@ get_landmarks_by_region_json = \
         "additionalProperties": False
     }
 
-"""
-get_recommendations_for_landmark_by_region
-"""
-get_recommendations_for_landmark_by_region_json = \
-    {
-        "type": "object",
-        "properties": {
-            "user_login": {"type": "string"},
-            "current_latitude": {"type": "number"},
-            "current_longitude": {"type": "number"},
-            "current_name": {"type": "string"},
-            "amount_of_recommendations": {"type": "number"}
-
-        },
-        "required": ["user_login", "current_latitude", "current_longitude", "current_name",
-                     "amount_of_recommendations"],
-        "maxProperties": 5,
-        "additionalProperties": False
-    }
 
 """
 get_map_sectors_of_points
@@ -349,9 +330,9 @@ get_notes_of_categories_in_range = \
     }
 
 """
-get_recommendations_by_coordinates_and_categories
+get_recommendations_by_coordinates
 """
-get_recommendations_by_coordinates_and_categories = \
+get_recommendations_by_coordinates = \
     {
         "type": "object",
         "properties": {
@@ -369,22 +350,13 @@ get_recommendations_by_coordinates_and_categories = \
                 }
 
             },
-            "categories_names": {
-                "type": "array",
-                "items": {"type": "string"}
-            },
-            "user_login": {"type": "string"},
-            "amount_of_recommendations_for_point": {"type": "number"},
-            "optional_limit": {"type": ["null", "number"]}
-
+            "limit": {"type": "number"}
         },
         "required": [
             "coordinates_of_points",
-            "categories_names",
-            "amount_of_recommendations_for_point",
-            "user_login"
+            "limit"
         ],
-        "maxProperties": 5,
+        "maxProperties": 2,
         "additionalProperties": False
     }
 

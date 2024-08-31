@@ -2,12 +2,11 @@
 import asyncio
 import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
 from typing import Dict, List, Tuple
-from enum import Enum
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
-from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_and_categories_task
+from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 
 logger = JsonLogger.with_default_handlers(
     level="DEBUG",
