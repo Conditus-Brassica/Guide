@@ -2,7 +2,12 @@
 import asyncio
 import datetime
 
-import backend.broker.agents_tasks.crud_agent_tasks as crud_tasks
+import sys
+sys.path.append("/home/vodohleb/PycharmProjects/Guide")
+for path in sys.path:
+    print(repr(path))
+
+from backend.broker.agents_tasks import crud_agent_tasks as crud_tasks
 from pprint import pprint
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_broker import AgentsBroker
@@ -219,7 +224,6 @@ if __name__ == '__main__':
         res5_1 = await landmarks_by_name_asyncio_task
         res6 = await landmarks_of_categories_in_region_asyncio_task
         res7 = await landmarks_by_region_asyncio_task
-        res8 = await recommendations_for_landmark_by_region_asyncio_task
         res9 = await map_sectors_of_points_asyncio_task
         res10 = await landmarks_of_categories_in_map_sectors_asyncio_task
         res12 = await map_sectors_structure_of_region_task
@@ -260,14 +264,12 @@ if __name__ == '__main__':
         pprint(res6.return_value)
         print("\n\nres7")
         pprint(res7.return_value)
-        print("\n\nres8")
-        pprint(res8.return_value)
         print("\n\nres9")
         pprint(res9.return_value)
         print("\n\nres10")
         pprint(res10.return_value)
         print("\n\nres12")
-        pprint(res12_return_value)
+        #pprint(res12_return_value)
         pprint(len(res12_return_value))
 
         print("\n\nres13")

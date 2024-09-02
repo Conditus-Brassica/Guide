@@ -40,7 +40,7 @@ Werkzeug==3.0.1
 xyzservices==2023.10.1
 zipp==3.17.0
 psycopg2-binary
-sqlalchemy
+sqlalchemy[asyncio]
 transformers
 tensorflow[and-cuda]==2.17.0
 
