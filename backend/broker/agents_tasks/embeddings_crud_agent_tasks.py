@@ -26,6 +26,6 @@ async def get_landmarks_embeddings_task(json_params: Dict):
             ]
         ]
     ]
-    returns: Coroutine NamedTuple["embedding": List[float]]
+    returns: Coroutine List[NamedTuple["embedding": List[float]]]
     """
     return await EmbeddingsCRUD.get_landmarks_embeddings(json_params)

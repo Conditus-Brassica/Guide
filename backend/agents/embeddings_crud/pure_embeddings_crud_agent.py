@@ -22,6 +22,22 @@ class PureEmbeddingsCRUDAgent(ABC):
     @classmethod
     @abstractmethod
     def embeddings_crud_exists(cls) -> bool:
-        """Method to check if embeddings crud object already exists"""
+        """
+        Read query to get embeddings of the given landmarks.
+        Works asynchronously.
+
+        ###
+        1. json_params: Dict[
+            "landmarks": List[
+                Dict[
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float
+                ]
+            ]
+        ]
+            - landmarks, for wich the embedding is returned
+        returns: Coroutine List[NamedTuple["embedding": List[float]]]
+        """
         raise NotImplementedError
     

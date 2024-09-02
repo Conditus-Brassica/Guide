@@ -62,9 +62,7 @@ class EmbeddingsCRUD(PureEmbeddingsCRUDAgent):
         Works asynchronously.
 
         ###
-        1. db_connection: sqlalchemy.ext.asyncio.AsyncConnection
-            - async connection to the embeddings database
-        2. json_params: Dict[
+        1. json_params: Dict[
             "landmarks": List[
                 Dict[
                     "name": str,
@@ -74,7 +72,7 @@ class EmbeddingsCRUD(PureEmbeddingsCRUDAgent):
             ]
         ]
             - landmarks, for wich the embedding is returned
-        returns: Coroutine NamedTuple["embedding": List[float]]
+        returns: Coroutine List[NamedTuple["embedding": List[float]]]
         """
         # TODO validate json_params
     
