@@ -9,6 +9,7 @@ from aiologger.loggers.json import JsonLogger
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
+from backend.broker.agents_tasks.embeddings_crud_agent_tasks import get_landmarks_embeddings_task
 
 logger = JsonLogger.with_default_handlers(
     level="DEBUG",
@@ -126,13 +127,13 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
 
     @staticmethod
-    async def _kb_pre_recommendation_by_coordinates_and_categories(json_params: Dict):
+    async def _kb_pre_recommendation_by_coordinates(json_params: Dict):
         recommendations_async_task = asyncio.create_task(
-            AbstractAgentsBroker.call_agent_task(crud_recommendations_by_coordinates_and_categories_task, json_params)
+            AbstractAgentsBroker.call_agent_task(crud_recommendations_by_coordinates_task, json_params)
         )
         kb_pre_recommendation_asyncio_result = await recommendations_async_task
         logger.debug(
-            f"Recommendations agent, find_recommendations_for_coordinates_and_categories, "
+            f"Recommendations agent, find_recommendations_for_coordinates, "
             f"kb_pre_recommendation_asyncio_result: {kb_pre_recommendation_asyncio_result}"
         )
         kb_pre_recommendations = kb_pre_recommendation_asyncio_result.return_value
@@ -177,14 +178,30 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 if l2_distance[i] < max_from_min[0]:  # max_from_min is pair (distance, index)
                     max_from_min_index = min_distance_list.index(max_from_min)
                     min_distance_list[max_from_min_index] = (l2_distance[i], i)
-    
-        return tf.gather(real_actions, [dist_index[1] for dist_index in min_distance_list])
-        
+
+        return [dist_index[1] for dist_index in min_distance_list]
+
+
+    def _max_critic_values_indexes(self, critic_values, recommendations_amount: int):
+        # Finds indexes of recommendations with the highest Critic value
+        max_critic_values_list = []
+        for i in range(critic_values.shape[0]):
+            if len(max_critic_values_list) < recommendations_amount:
+                max_critic_values_list.append((critic_values[i][0], i))  #  pair of critic value and index in the real_actions
+            else:
+                min_from_max = min(max_critic_values_list, key=lambda x: x[0])# finds minimal critic value in the list of maximal critic values
+                
+                if critic_values[i][0] > min_from_max[0]:  # critic_values shape is [n, 1]
+                    min_from_max_index = max_critic_values_list.index(min_from_max)
+                    max_critic_values_list[min_from_max_index] = (critic_values[i][0], i)
+        return [value_index[1] for value_index in max_critic_values_list]
+
 
     def _wolpertinger_policy(
         self,
         state: tf.Tensor,
         real_actions: tf.Tensor,
+        recommendations: List[Dict],
         recommendations_amount: int
     ):
         """
@@ -197,6 +214,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
                     In recommendation system - objects, that can be recommended to the given user.
             3. recommendations_amount: int
                 - The amount of the real actions that will be returned.
+
+            returns: Tuple[tensorflow.Tensor, List[Dict]] - tensor of actions and corresponding recommendations
         """
         proto_action = self._actor_model(state)  # state shape is [1, state_dim]
         if self._noise_object:
@@ -205,27 +224,33 @@ class RecommendationsAgent(PureRecommendationsAgent):
         
         proto_action = tf.squeeze(proto_action, [0])  # actor_model returns shape (1, action_dim), but shape (action_dim) is needed
 
-        real_actions = self._k_nearest_actions(proto_action, real_actions, k=recommendations_amount * 2)  # TODO check if 200% is good k
+        real_actions_indexes = self._k_nearest_actions(proto_action, real_actions, k=recommendations_amount * 2)  # TODO check if 200% is good k
+        recommendations = [recommendations[index] for index in real_actions_indexes]
+        real_actions = tf.gather(real_actions, real_actions_indexes)
 
-        # state_for_actions shape is [n, state_dim]. The same state is used for multiple actions
+        # state_for_actions shape is [n, state_dim]. The same state is copied for multiple actions
         state_for_actions = tf.tile(state, [real_actions.shape[0], 1])
 
         critic_values = self._critic_model(state_for_actions, real_actions)  # critic_values shape is [n, 1]
 
-        # Finds recommendations with the highest Critic value
-        max_critic_values_list = []
-        for i in range(critic_values.shape[0]):
-            if len(max_critic_values_list) < recommendations_amount:
-                max_critic_values_list.append((critic_values[i][0], i))  #  pair of critic value and index in the real_actions
-            else:
-                min_from_max = min(max_critic_values_list, key=lambda x: x[0])# finds minimal critic value in the list of maximal critic values
+        max_critic_values_indexes = self._max_critic_values_indexes(critic_values, recommendations_amount)
+        recommendations = [recommendations[index] for index in max_critic_values_indexes]
+        real_actions = tf.gather(real_actions, max_critic_values_indexes)
                 
-                if critic_values[i][0] > min_from_max[0]:  # critic_values shape is [n, 1]
-                    min_from_max_index = max_critic_values_list.index(min_from_max)
-                    max_critic_values_list[min_from_max_index] = (critic_values[i][0], i)
-                
-        return tf.gather(real_actions, [value_index[1] for value_index in max_critic_values_list])
+        return real_actions, recommendations
 
+    async def _embeddings_for_landmarks(self, kb_recommended_landmarks):
+        json_params = {"landmarks": kb_recommended_landmarks}
+        embeddings_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(get_landmarks_embeddings_task, json_params)
+        )
+        embeddings_asyncio_result = await embeddings_async_task
+        logger.debug(
+            f"Recommendations agent, _embeddings_for_landmarks, "
+            f"embeddings_for_landmarks: {embeddings_asyncio_result}"
+        )
+
+        return [row.embeddings for row in embeddings_asyncio_result.return_value]
 
 
     async def _find_recommendations_by_coordinates(
@@ -235,14 +260,20 @@ class RecommendationsAgent(PureRecommendationsAgent):
         # TODO check cash on None values
         # state shape is [state_dim]
         state = tf.random.normal((64,), dtype=self._dtype)  # TODO make states
-        real_actions = tf.random.normal((15, 32), dtype=self._dtype)  # TODO make real_actions
+        
+        real_actions = self._embeddings_for_landmarks(recommendations)
+        real_actions = tf.convert_to_tensor(real_actions, dtype=self._dtype)
 
-        real_actions = self._wolpertinger_policy(
-            tf.expand_dims(state, axis=0), real_actions, maximum_amount_of_recommendations
+        real_actions = tf.random.normal((15, 32), dtype=self._dtype)  # TODO remove this shit
+
+        real_actions, recommendations = self._wolpertinger_policy(
+            tf.expand_dims(state, axis=0), real_actions, recommendations, maximum_amount_of_recommendations
         )  # expands state shape to [1, state_dim]
 
         # TODO way to save SARS tuple
-        return real_actions  # TODO get environment result and learning process
+        # TODO return landmarks, not embeddings
+        # TODO get environment result and learning process
+        return recommendations 
 
 
     async def find_recommendations_by_coordinates(self, json_params: Dict):
@@ -250,11 +281,12 @@ class RecommendationsAgent(PureRecommendationsAgent):
             self._json_params_validation(json_params)
             maximum_amount_of_recommendations = json_params["maximum_amount_of_recommendations"]
             json_params.pop("maximum_amount_of_recommendations")
+            json_params["limit"] = maximum_amount_of_recommendations * 4  # TODO if 400% is enough
         except ValidationError as ex:
             await logger.error(f"find_recommendations_by_coordinates, ValidationError({ex.args[0]})")
             return []  # raise ValidationError
 
-        kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates_and_categories(json_params)
+        kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates(json_params)
 
         self._remove_nones_from_kb_result(kb_pre_recommendations)
         logger.debug(
@@ -273,7 +305,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         )
 
 
-# TODO возвращать не эмбединги, а достопримечательтьтности + index в буфере + uuid записи в буфере
+# TODO возвращать достопримечательтьтности + index в буфере + uuid записи в буфере
 # TODO перемещение частичных записей в сарс буфер 
 # TODO реализация формулы подсчета состояния пользователя (желательна рекуррентная формула)
 # TODO вовзрат в агента того, что он отправил + то, что оставил пользователь + оценка пользователя
