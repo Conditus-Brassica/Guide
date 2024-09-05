@@ -62,6 +62,26 @@ class RecommendationsAgent(PureRecommendationsAgent):
             self._single_recommendations_agent = self
         else:
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
+      
+        
+    @property
+    def actor_model(cls) -> keras.Model:
+        return cls._actor_model
+    
+
+    @actor_model.setter
+    async def actor_model(cls, actor_model: keras.Model):
+        cls._actor_model.set_weights(actor_model.get_weights())
+
+
+    @property
+    def critic_model(cls) -> keras.Model:
+        return cls._critic_model
+
+    
+    @critic_model.setter
+    async def critic_model(cls, critic_model: keras.Model):
+        cls._critic_model.set_weights(critic_model.get_weights())
 
 
     @staticmethod
@@ -270,10 +290,16 @@ class RecommendationsAgent(PureRecommendationsAgent):
             tf.expand_dims(state, axis=0), real_actions, recommendations, maximum_amount_of_recommendations
         )  # expands state shape to [1, state_dim]
 
+        for i in range(len(recommendations)):
+            pass
+            # index, uuid = save to buffer
+            # recommendations[i]["buffer_index"] = index
+            # recommendations[i]["buffer_uuid"] = uuid
+            # uuids.append(uuid)
         # TODO way to save SARS tuple
         # TODO return landmarks, not embeddings
         # TODO get environment result and learning process
-        return recommendations 
+        return recommendations
 
 
     async def find_recommendations_by_coordinates(self, json_params: Dict):

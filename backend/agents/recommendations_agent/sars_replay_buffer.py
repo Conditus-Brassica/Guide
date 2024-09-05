@@ -24,6 +24,15 @@ class SARSReplayBuffer:
 
 
     def partial_record(self, state: np.ndarray, action: np.ndarray):
+        """
+        Is used to write first part of sars tuple. This tuple will be saved, but won't be used in training samples
+
+        ###
+        1. state: numpy.ndarray
+        2. action: numpy.ndarray
+
+        returns: Tuple[int, uuid] - index of row in buffer and uuid of row.
+        """
         row_uuid = uuid4()
         row_index = self._current_index
         self._state_buffer[row_index] = state
@@ -46,6 +55,19 @@ class SARSReplayBuffer:
     
 
     def fill_up_partial_record(self, row_index, row_uuid, reward: np.ndarray, next_state: np.ndarray):
+        """
+        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
+            and the row may be used in training batch.
+
+        1. row_index: int
+            - index of the row in buffer (such index is returned as result of partial_record method) 
+        2. row_uuid: uuid
+            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
+        3. reward: numpy.ndarray
+        4. next_state: numpy.ndarray
+
+        returns: bool - True if uuid is correct, False otherwise
+        """
         if self._row_uuids[row_index] == row_uuid:
             self._reward_buffer[row_index] = reward
             self._next_state_buffer[row_index] = next_state
@@ -58,6 +80,17 @@ class SARSReplayBuffer:
         
 
     def fill_up_partial_record_no_index(self, row_uuid, reward: np.ndarray, next_state: np.ndarray):
+        """
+        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
+            and the row may be used in training batch. Linear search is used to find out uuid.
+
+        1. row_uuid: uuid
+            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
+        2. reward: numpy.ndarray
+        3. next_state: numpy.ndarray
+
+        returns: bool - True if uuid was found out, False otherwise
+        """
         for index, uuid in enumerate(self._row_uuids):
             if uuid == row_uuid:
                 self._reward_buffer[index] = reward

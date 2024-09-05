@@ -6,7 +6,6 @@ from typing import Dict
 class PureRecommendationsAgent(ABC):
     """
     Pure abstract class of Recommendations agent. Provides methods for commands from the other agents.
-    All work with kb provided by child classes of this class.
 
     All methods work asynchronously.
     """
@@ -42,9 +41,7 @@ class PureRecommendationsAgent(ABC):
         },
         :return: Coroutine
             List[
-                {
-                    recommendation: Dict | None
-                }
+                {recommendation: Dict | None}
             ] | None
         """
         raise NotImplementedError

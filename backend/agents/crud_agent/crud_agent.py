@@ -154,7 +154,7 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
-    async def get_landmarks_by_name_list(cls, json_params: Dict):
+    async def ge86t_landmarks_by_name_list(cls, json_params: Dict):
         async def session_runner(landmark_names: List[str]):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
                 return await cls._reader.read_landmarks_by_name_list(session, landmark_names)
