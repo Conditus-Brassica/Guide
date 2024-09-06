@@ -1,9 +1,12 @@
 # Author: Vodohleb04
 import asyncio
+from email.mime import base
+from multiprocessing import Value
 import tensorflow as tf
 import keras
+import numpy as np
 import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
@@ -38,7 +41,11 @@ class RecommendationsAgent(PureRecommendationsAgent):
             return False
 
 
-    def __init__(self, actor_model: keras.Model, critic_model: keras.Model, dtype: tf.DType, noise_object = None):
+    def __init__(
+        self,
+        actor_model: keras.Model, critic_model: keras.Model, tf_dtype: tf.DType, np_dtype: np.dtype, noise_object = None,
+        watch_state_discount_factor: float = 0.97, visit_state_discount_factor: float = 0.97
+    ):
         """
 
         ###
@@ -57,7 +64,12 @@ class RecommendationsAgent(PureRecommendationsAgent):
             self._actor_model = actor_model
             self._critic_model = critic_model
             self._noise_object = noise_object
-            self._dtype = dtype
+
+            self._watch_state_discount_factor = watch_state_discount_factor
+            self._visit_state_discount_factor = visit_state_discount_factor
+
+            self._tf_dtype = tf_dtype
+            self._np_dtype = np_dtype
             
             self._single_recommendations_agent = self
         else:
@@ -83,6 +95,88 @@ class RecommendationsAgent(PureRecommendationsAgent):
     async def critic_model(cls, critic_model: keras.Model):
         cls._critic_model.set_weights(critic_model.get_weights())
 
+    
+    async def count_new_watch_state(
+        self, new_watched_landmark: Dict, watch_state: np.ndarray, old_watched_amount
+    ) -> np.ndarray:
+        """
+        Counts new watch state using old state. 
+        s(n + 1) = s(n) * disc_fact * old_amount / (old_amount + 1) + new_watched_landmark / (n + 1)
+
+        ###
+        1. new_watched_landmark: Dict["name": str, "latitude": float, "longitude": float]
+            - landmark, that causes changing of the state
+        2. watch_state: numpy.ndarray
+            - float ndarray, old state
+        3. old_watch_amount: int
+            - amount of watched landmarks (without new_watched_landmark)
+        
+            returns: numpy.ndarray - new state
+        """
+        watch_state = watch_state.astype(dtype=self._np_dtype)
+        new_landmark_embedding = await self._embeddings_for_landmarks(new_watched_landmark) # returns List[embedding]
+        new_landmark_embedding = np.asarray(new_landmark_embedding[0], dtype=self._np_dtype)
+
+        return (
+            watch_state * self._watch_state_discount_factor * old_watched_amount / (old_watched_amount + 1)
+                +
+            new_landmark_embedding / (1 + old_watched_amount)
+        )
+    
+    async def count_new_visit_state(
+        self, new_visited_landmark: Dict, visit_state: np.ndarray, old_visited_amount
+    ) -> np.ndarray:
+        """
+        Counts new visit state using old state. 
+        s(n + 1) = s(n) * disc_fact * old_amount / (old_amount + 1) + new_visited_landmark / (n + 1)
+
+        ###
+        1. new_visited_landmark: Dict["name": str, "latitude": float, "longitude": float]
+            - landmark, that causes changing of the state
+        2. visit_state: numpy.ndarray
+            - float ndarray, old state
+        3. old_visit_amount: int
+            - amount of visited landmarks (without new_watched_landmark)
+        
+            returns: numpy.ndarray - new state
+        """
+        visit_state = visit_state.astype(dtype=self._np_dtype)
+        new_landmark_embedding = await self._embeddings_for_landmarks(new_visited_landmark) # returns List[embedding]
+        new_landmark_embedding = np.asarray(new_landmark_embedding[0], dtype=self._np_dtype)
+
+        return (
+            visit_state * self._visit_state_discount_factor * old_visited_amount / (old_visited_amount + 1)
+                +
+            new_landmark_embedding / (1 + old_visited_amount)
+        )
+    
+    async def concat_state(self, base_states: Tuple[np.ndarray], mask: Tuple[float] | None = None, return_tf_tensor=False):
+        """
+        Concatenate the given states in the given order.
+
+        result = base_states[0] * mask[0] \/ base_states[1] * mask[1] \/ ... \/ base_states[n] * mask[n]
+        ###
+        1. base_states: Tuple[numpy.ndarray]
+            - States to concatenate, presented in the numpy.ndarray
+        2.* mask: Tuple[float] [DEFAULT] = None
+            - Float factors in range [0, 1] to mask the states. 
+        3.* return_tf_tensor: bool [DEFAULT = False]
+            - Returns tensorflow.Tensor if True, numpy.ndarray otherwise
+        """
+        if mask:
+            if len(base_states) != len(mask):
+                raise ValueError(f"len of base_states and len of the mask must be equal, but they are: {len(base_states)}, {len(mask)}")
+            else:
+                base_states = list(base_states)
+                for i in range(len(base_states)):
+                    if mask[i] < 0 or mask[i] > 1:
+                        raise ValueError("Mask factors must satisfy the expression 0 <= mask[i] <= 1")
+                    base_states[i] = base_states[i] * mask[i]
+        result = np.concatenate(base_states, axis=0, dtype=self._np_dtype)
+        if return_tf_tensor:
+            return tf.convert_to_tensor(result)
+        else:
+            return result
 
     @staticmethod
     def _outdated_remove_nones_from_kb_result(kb_pre_recommendations: List) -> List:
@@ -259,8 +353,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 
         return real_actions, recommendations
 
-    async def _embeddings_for_landmarks(self, kb_recommended_landmarks):
-        json_params = {"landmarks": kb_recommended_landmarks}
+    async def _embeddings_for_landmarks(self, landmarks):
+        json_params = {"landmarks": landmarks}
         embeddings_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(get_landmarks_embeddings_task, json_params)
         )
@@ -279,12 +373,12 @@ class RecommendationsAgent(PureRecommendationsAgent):
         # TODO Cash request
         # TODO check cash on None values
         # state shape is [state_dim]
-        state = tf.random.normal((64,), dtype=self._dtype)  # TODO make states
+        state = tf.random.normal((64,), dtype=self._tf_dtype)  # TODO make states
         
-        real_actions = self._embeddings_for_landmarks(recommendations)
-        real_actions = tf.convert_to_tensor(real_actions, dtype=self._dtype)
+        real_actions = await self._embeddings_for_landmarks(recommendations)
+        real_actions = tf.convert_to_tensor(real_actions, dtype=self._tf_dtype)
 
-        real_actions = tf.random.normal((15, 32), dtype=self._dtype)  # TODO remove this shit
+        real_actions = tf.random.normal((15, 32), dtype=self._tf_dtype)  # TODO remove this shit
 
         real_actions, recommendations = self._wolpertinger_policy(
             tf.expand_dims(state, axis=0), real_actions, recommendations, maximum_amount_of_recommendations
