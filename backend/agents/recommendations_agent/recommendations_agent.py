@@ -1,7 +1,5 @@
 # Author: Vodohleb04
 import asyncio
-from email.mime import base
-from multiprocessing import Value
 import tensorflow as tf
 import keras
 import numpy as np
@@ -13,6 +11,7 @@ from backend.agents.recommendations_agent.pure_recommendations_agent import Pure
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 from backend.broker.agents_tasks.embeddings_crud_agent_tasks import get_landmarks_embeddings_task
+from backend.broker.agents_tasks.trainer_tasks import partial_record
 
 logger = JsonLogger.with_default_handlers(
     level="DEBUG",
@@ -364,36 +363,36 @@ class RecommendationsAgent(PureRecommendationsAgent):
             f"embeddings_for_landmarks: {embeddings_asyncio_result}"
         )
 
-        return [row.embeddings for row in embeddings_asyncio_result.return_value]
+        return embeddings_asyncio_result.return_value
 
 
     async def _find_recommendations_by_coordinates(
-            self, recommendations, maximum_amount_of_recommendations
+        self, recommendations, maximum_amount_of_recommendations
     ):
-        # TODO Cash request
-        # TODO check cash on None values
         # state shape is [state_dim]
         state = tf.random.normal((64,), dtype=self._tf_dtype)  # TODO make states
         
         real_actions = await self._embeddings_for_landmarks(recommendations)
         real_actions = tf.convert_to_tensor(real_actions, dtype=self._tf_dtype)
 
-        real_actions = tf.random.normal((15, 32), dtype=self._tf_dtype)  # TODO remove this shit
-
         real_actions, recommendations = self._wolpertinger_policy(
-            tf.expand_dims(state, axis=0), real_actions, recommendations, maximum_amount_of_recommendations
+            tf.expand_dims(state, axis=0),
+            real_actions, recommendations, maximum_amount_of_recommendations
         )  # expands state shape to [1, state_dim]
 
         for i in range(len(recommendations)):
-            pass
-            # index, uuid = save to buffer
-            # recommendations[i]["buffer_index"] = index
-            # recommendations[i]["buffer_uuid"] = uuid
-            # uuids.append(uuid)
-        # TODO way to save SARS tuple
-        # TODO return landmarks, not embeddings
-        # TODO get environment result and learning process
-        return recommendations
+            partial_record_async_task = asyncio.create_task(
+                AbstractAgentsBroker.call_agent_task(
+                    partial_record,
+                    {"state": state.numpy(), "action": real_actions[i].numpy()}
+                )
+            )
+            partial_record_async_result = await partial_record_async_task
+            index, uuid = partial_record_async_result.return_value
+            recommendations[i]["buffer_index"] = index
+            recommendations[i]["buffer_uuid"] = uuid
+ 
+        return recommendations  # TODO get environment result and learning process
 
 
     async def find_recommendations_by_coordinates(self, json_params: Dict):
