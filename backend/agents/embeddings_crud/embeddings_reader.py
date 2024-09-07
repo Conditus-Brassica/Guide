@@ -34,10 +34,14 @@ class EmbeddingsReader:
                     landmarss_embeddings.longitude = :longitude;
             """
         )
-        embeddings_result = await db_connection.execute(
-            select_query,
-            landmarks
-        )
+        result = [None for _ in range(len(landmarks))]
+        for i in range(len(landmarks)):
+            result[i] = (
+                await db_connection.execute(
+                    select_query,
+                    landmarks[i]
+                )
+            ).first()
 
-        return embeddings_result.fetchall()
+        return result
 
