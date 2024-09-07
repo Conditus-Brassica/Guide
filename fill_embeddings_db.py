@@ -4,7 +4,7 @@ import sqlalchemy
 import neo4j
 import json
 
-json_path = "/home/vodohleb/Downloads/landmarks.json"
+json_path = "/home/vodohleb/Загрузки/landmarks.json"
 neo4j_host = "localhost"
 neo4j_port = 7687
 neo4j_user = "neo4j"
