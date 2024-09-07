@@ -29,9 +29,9 @@ class EmbeddingsReader:
             SELECT landmarks_embeddings.embedding
                 FROM ostis_govno.landmarks_embeddings AS landmarks_embeddings
                 WHERE 
-                    landmarks_embeddings.name = $name AND
-                    landmarks_embeddings.latitude = $latitude AND
-                    landmarss_embeddings.longitude = $longitude;
+                    landmarks_embeddings.name = :name AND
+                    landmarks_embeddings.latitude = :latitude AND
+                    landmarss_embeddings.longitude = :longitude;
             """
         )
         embeddings_result = await db_connection.execute(
