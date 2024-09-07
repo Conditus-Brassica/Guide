@@ -22,7 +22,7 @@ class EmbeddingsReader:
             ]
         ]
             - landmarks, for wich the embedding is returned
-        returns: List[NamedTuple["embedding": List[float]]]
+        returns: List[List[float]] - List of embeddings of the given landmarks
         """
         select_query = sqlalchemy.text(
             """

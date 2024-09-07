@@ -37,7 +37,7 @@ class PureEmbeddingsCRUDAgent(ABC):
             ]
         ]
             - landmarks, for wich the embedding is returned
-        returns: Coroutine List[NamedTuple["embedding": List[float]]]
+        returns: Coroutine List[[List[float]] - List of embeddings of the given landmarks
         """
         raise NotImplementedError
     
