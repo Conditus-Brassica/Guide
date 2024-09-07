@@ -302,7 +302,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
             if len(max_critic_values_list) < recommendations_amount:
                 max_critic_values_list.append((critic_values[i][0], i))  #  pair of critic value and index in the real_actions
             else:
-                min_from_max = min(max_critic_values_list, key=lambda x: x[0])# finds minimal critic value in the list of maximal critic values
+                # finds minimal critic value in the list of maximal critic values
+                min_from_max = min(max_critic_values_list, key=lambda x: x[0])
                 
                 if critic_values[i][0] > min_from_max[0]:  # critic_values shape is [n, 1]
                     min_from_max_index = max_critic_values_list.index(min_from_max)
@@ -424,9 +425,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
         )
 
 
-# TODO возвращать достопримечательтьтности + index в буфере + uuid записи в буфере
-# TODO перемещение частичных записей в сарс буфер 
-# TODO реализация формулы подсчета состояния пользователя (желательна рекуррентная формула)
+ 
+# TODO state пользователя в качестве входного параметра при подсчёте достопримечательностей (либо получать с помощью запроса)
 # TODO вовзрат в агента того, что он отправил + то, что оставил пользователь + оценка пользователя
-# TODO после получения оценки пересчёт нового сотояния + проверка uuid + запись в буфер (если uuid не совпал, то не записываем)
+# TODO после получения оценки пересчёт нового сотояния + дополнение частичной записи в буфере
 # TODO если в буфере есть хотя бы одна полная запись, то выполняется запуск обучения
