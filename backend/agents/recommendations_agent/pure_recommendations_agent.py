@@ -41,7 +41,11 @@ class PureRecommendationsAgent(ABC):
         },
         :return: Coroutine
             List[
-                {recommendation: Dict | None}
-            ] | None
+                {
+                    "recommendation": Dict,
+                    "buffer_index": int,
+                    "buffer_uuid": uuid4
+                }
+            ] | empty list
         """
         raise NotImplementedError
