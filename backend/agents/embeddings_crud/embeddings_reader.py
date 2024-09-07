@@ -41,7 +41,7 @@ class EmbeddingsReader:
                     select_query,
                     landmarks[i]
                 )
-            ).first()
+            ).first().embedding
 
         return result
 
