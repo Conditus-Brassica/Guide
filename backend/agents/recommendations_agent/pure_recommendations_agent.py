@@ -37,6 +37,8 @@ class PureRecommendationsAgent(ABC):
                     "longitude": float
                 ]
             ],
+            "watch_state": List[float],
+            "visit_state": List[float],
             "maximum_amount_of_recommendations": int
         },
         :return: Coroutine

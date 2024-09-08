@@ -43,7 +43,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
     def __init__(
         self,
         actor_model: keras.Model, critic_model: keras.Model, tf_dtype: tf.DType, np_dtype: np.dtype, noise_object = None,
-        watch_state_discount_factor: float = 0.97, visit_state_discount_factor: float = 0.97
+        watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9
     ):
         """
 
@@ -96,46 +96,38 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
     
     async def count_new_watch_state(
-        self, new_watched_landmark: Dict, watch_state: np.ndarray, old_watched_amount
+        self, new_watched_landmark: Dict, watch_state: np.ndarray
     ) -> np.ndarray:
         """
         Counts new watch state using old state. 
-        s(n + 1) = s(n) * disc_fact * old_amount / (old_amount + 1) + new_watched_landmark / (n + 1)
+        s(n + 1) = s(n) * disc_fact + new_watched_landmark
 
         ###
         1. new_watched_landmark: Dict["name": str, "latitude": float, "longitude": float]
             - landmark, that causes changing of the state
         2. watch_state: numpy.ndarray
-            - float ndarray, old state
-        3. old_watch_amount: int
-            - amount of watched landmarks (without new_watched_landmark)
-        
+            - float ndarray, old state        
             returns: numpy.ndarray - new state
         """
         watch_state = watch_state.astype(dtype=self._np_dtype)
         new_landmark_embedding = await self._embeddings_for_landmarks(new_watched_landmark) # returns List[embedding]
         new_landmark_embedding = np.asarray(new_landmark_embedding[0], dtype=self._np_dtype)
 
-        return (
-            watch_state * self._watch_state_discount_factor * old_watched_amount / (old_watched_amount + 1)
-                +
-            new_landmark_embedding / (1 + old_watched_amount)
-        )
+        return watch_state * self._watch_state_discount_factor + new_landmark_embedding
+        
     
     async def count_new_visit_state(
-        self, new_visited_landmark: Dict, visit_state: np.ndarray, old_visited_amount
+        self, new_visited_landmark: Dict, visit_state: np.ndarray
     ) -> np.ndarray:
         """
         Counts new visit state using old state. 
-        s(n + 1) = s(n) * disc_fact * old_amount / (old_amount + 1) + new_visited_landmark / (n + 1)
+        s(n + 1) = s(n) * disc_fact + new_visited_landmark
 
         ###
         1. new_visited_landmark: Dict["name": str, "latitude": float, "longitude": float]
             - landmark, that causes changing of the state
         2. visit_state: numpy.ndarray
             - float ndarray, old state
-        3. old_visit_amount: int
-            - amount of visited landmarks (without new_watched_landmark)
         
             returns: numpy.ndarray - new state
         """
@@ -143,11 +135,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
         new_landmark_embedding = await self._embeddings_for_landmarks(new_visited_landmark) # returns List[embedding]
         new_landmark_embedding = np.asarray(new_landmark_embedding[0], dtype=self._np_dtype)
 
-        return (
-            visit_state * self._visit_state_discount_factor * old_visited_amount / (old_visited_amount + 1)
-                +
-            new_landmark_embedding / (1 + old_visited_amount)
-        )
+        return visit_state * self._visit_state_discount_factor + new_landmark_embedding
+    
     
     async def concat_state(self, base_states: Tuple[np.ndarray], mask: Tuple[float] | None = None, return_tf_tensor=False):
         """
@@ -368,16 +357,17 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
 
     async def _find_recommendations_by_coordinates(
-        self, recommendations, maximum_amount_of_recommendations
+        self, state: np.ndarray, recommendations, maximum_amount_of_recommendations
     ):
         # state shape is [state_dim]
-        state = tf.random.normal((64,), dtype=self._tf_dtype)  # TODO make states
-        
+
         real_actions = await self._embeddings_for_landmarks(recommendations)
         real_actions = tf.convert_to_tensor(real_actions, dtype=self._tf_dtype)
 
         real_actions, recommendations = self._wolpertinger_policy(
-            tf.expand_dims(state, axis=0),
+            tf.expand_dims(
+                tf.convert_to_tensor(state, dtype=self._tf_dtype), axis=0
+            ),
             real_actions, recommendations, maximum_amount_of_recommendations
         )  # expands state shape to [1, state_dim]
 
@@ -385,7 +375,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
             partial_record_async_task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(
                     partial_record,
-                    {"state": state.numpy(), "action": real_actions[i].numpy()}
+                    {"state": state, "action": real_actions[i].numpy()}
                 )
             )
             partial_record_async_result = await partial_record_async_task
@@ -395,13 +385,28 @@ class RecommendationsAgent(PureRecommendationsAgent):
  
         return recommendations  # TODO get environment result and learning process
 
+    
+    def _concat_state(self, json_params: Dict) -> np.ndarray:
+        state = np.concatenate(
+            (np.asarray(json_params["watch_state"], dtype=self._np_dtype),
+            np.asarray(json_params["visit_state"], dtype=self._np_dtype)),
+            axis=0
+        )
+        json_params.pop("watch_state")
+        json_params.pop("visit_state")
+        return state
+
 
     async def find_recommendations_by_coordinates(self, json_params: Dict):
         try:
             self._json_params_validation(json_params)
             maximum_amount_of_recommendations = json_params["maximum_amount_of_recommendations"]
             json_params.pop("maximum_amount_of_recommendations")
+            if maximum_amount_of_recommendations <= 0:
+                raise ValidationError(f"maximum_amount_of_recommendations must be int > 0, but got {maximum_amount_of_recommendations} instead")
             json_params["limit"] = maximum_amount_of_recommendations * 4  # TODO if 400% is enough
+            
+            state = self._concat_state(json_params)
         except ValidationError as ex:
             await logger.error(f"find_recommendations_by_coordinates, ValidationError({ex.args[0]})")
             return []  # raise ValidationError
@@ -410,18 +415,16 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
         self._remove_nones_from_kb_result(kb_pre_recommendations)
         logger.debug(
-            f"Recommendations agent, find_recommendations_by_coordinates, "
-            f"kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
+            f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
         )
         if not kb_pre_recommendations:
             return kb_pre_recommendations
         self._remove_duplicates_from_kb_result(kb_pre_recommendations)
         logger.debug(
-            f"Recommendations agent, find_recommendations_by_coordinates, "
-            f"kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
+            f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
         )
         return await self._find_recommendations_by_coordinates(
-            kb_pre_recommendations, maximum_amount_of_recommendations
+            state, kb_pre_recommendations, maximum_amount_of_recommendations
         )
 
 
