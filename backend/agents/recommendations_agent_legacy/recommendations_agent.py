@@ -274,7 +274,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
     @staticmethod
     def _json_params_validation(json_params):
         """This method checks values only of special params. Other values will be checked in target agent."""
-        validate(json_params, json_validation.find_recommendations_for_coordinates_and_categories)
+        validate(json_params, json_validation.find_recommendations_for_coordinates)
         if json_params["maximum_amount_of_recommendations"] and json_params["maximum_amount_of_recommendations"] <= 0:
             raise ValidationError("maximum_amount_of_recommendations can\'t be less or equal to zero")
         if json_params["maximum_amount_of_additional_recommendations"] and \

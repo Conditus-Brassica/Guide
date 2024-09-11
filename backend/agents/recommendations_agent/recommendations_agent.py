@@ -11,7 +11,8 @@ from backend.agents.recommendations_agent.pure_recommendations_agent import Pure
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 from backend.broker.agents_tasks.embeddings_crud_agent_tasks import get_landmarks_embeddings_task
-from backend.broker.agents_tasks.trainer_tasks import partial_record
+from backend.broker.agents_tasks.trainer_tasks import partial_record, fill_up_partial_record, record
+
 
 logger = JsonLogger.with_default_handlers(
     level="DEBUG",
@@ -43,7 +44,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
     def __init__(
         self,
         actor_model: keras.Model, critic_model: keras.Model, tf_dtype: tf.DType, np_dtype: np.dtype, noise_object = None,
-        watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9
+        watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9,
+        reward_function = None
     ):
         """
 
@@ -52,12 +54,26 @@ class RecommendationsAgent(PureRecommendationsAgent):
             - Actor network, counts action from the given state in terms of Markov decision process (check https://arxiv.org/pdf/1509.02971 for more details).
         2. critic_model: keras.Model
             - Critic network, counts Q-value from the given state and action (check https://arxiv.org/pdf/1509.02971 for more details).
-        3. dtype: tensorflow.DType
-            - dtype that is used in models layers.
-        4. *noise_object [DEFAULT = None]
-                - Adds noise to the proto-action (is needed to solve exploration/exploitation problem). None by default.
-                    noise_object must be callable type (supports __call__ method) noise_object must return numpy.ndarray 
-                    or the other object whose type has a registered tensorflow.Tensor conversion function. 
+        3. tf_dtype: tensorflow.DType
+            - dtype from tensorflow that is used in models layers.
+        4. np.dtype: numpy.dtype
+            - dtype from numpy that is used in models layers.
+        5. *noise_object [DEFAULT = None]
+            - Adds noise to the proto-action (is needed to solve exploration/exploitation problem). None by default.
+                noise_object must be callable type (supports __call__ method) noise_object must return numpy.ndarray 
+                or the other object whose type has a registered tensorflow.Tensor conversion function. 
+        6. *watch_state_discount_factor: float [DEFAULT = 0.9]
+            - discount factor of watch state (check RecommendationsAgent.count_new_watch_state method)
+        7. *visit_state_discount_factor: float [DEFAULT = 0.9]
+            - discount factor of visit state (check RecommendationsAgent.count_new_visit_state method)
+        8. *reward_function: [DEFAULT = None]
+            - Callable object to count final reward using user_reward. 
+                Requirements of function:   
+                    -- reward_function(5) = 0;  
+                    -- reward_function(x) < 0, if x < 5;    
+                    -- reward function is strictly increasing function; 
+                    -- reward function returns float;
+            final_reward = reward_function(user_reward)
         """
         if not self.recommendations_agent_exists():
             self._actor_model = actor_model
@@ -66,6 +82,15 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
             self._watch_state_discount_factor = watch_state_discount_factor
             self._visit_state_discount_factor = visit_state_discount_factor
+
+            self._reward_function = reward_function
+
+            if reward_function:
+                self._min_reward = reward_function(0)
+                self._max_reward = reward_function(5)
+            else:
+                self._min_reward = 0
+                self._max_reward = 5
 
             self._tf_dtype = tf_dtype
             self._np_dtype = np_dtype
@@ -76,23 +101,23 @@ class RecommendationsAgent(PureRecommendationsAgent):
       
         
     @property
-    def actor_model(cls) -> keras.Model:
-        return cls._actor_model
+    def actor_model(self) -> keras.Model:
+        return self._actor_model
     
 
     @actor_model.setter
-    async def actor_model(cls, actor_model: keras.Model):
-        cls._actor_model.set_weights(actor_model.get_weights())
+    async def actor_model(self, actor_model: keras.Model):
+        self._actor_model.set_weights(actor_model.get_weights())
 
 
     @property
-    def critic_model(cls) -> keras.Model:
-        return cls._critic_model
+    def critic_model(self) -> keras.Model:
+        return self._critic_model
 
     
     @critic_model.setter
-    async def critic_model(cls, critic_model: keras.Model):
-        cls._critic_model.set_weights(critic_model.get_weights())
+    async def critic_model(self, critic_model: keras.Model):
+        self._critic_model.set_weights(critic_model.get_weights())
 
     
     async def count_new_watch_state(
@@ -142,7 +167,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         """
         Concatenate the given states in the given order.
 
-        result = base_states[0] * mask[0] \/ base_states[1] * mask[1] \/ ... \/ base_states[n] * mask[n]
+        result = base_states[0] * mask[0] \\\/ base_states[1] * mask[1] \\\/ ... \\\/ base_states[n] * mask[n]
         ###
         1. base_states: Tuple[numpy.ndarray]
             - States to concatenate, presented in the numpy.ndarray
@@ -221,11 +246,21 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
 
     @staticmethod
-    def _json_params_validation(json_params):
+    def _find_recommendations_validation(json_params):
         """This method checks values only of special params. Other values will be checked in target agent."""
-        validate(json_params, json_validation.find_recommendations_for_coordinates_and_categories)
+        validate(json_params, json_validation.find_recommendations_for_coordinates)
         if json_params["maximum_amount_of_recommendations"] and json_params["maximum_amount_of_recommendations"] <= 0:
             raise ValidationError("maximum_amount_of_recommendations can\'t be less or equal to zero")
+
+
+    @staticmethod
+    def _post_result_of_recommendations_validation(json_params):
+        """This method checks values only of special params. Other values will be checked in target agent."""
+        validate(json_params, json_validation.post_result_of_recommendations)
+        if json_params["user_reward"] and (
+            json_params["user_reward"] < 0 or json_params["user_reward"] > 5
+        ):
+            raise ValidationError("user_reward must be value in range [0, 5]")
 
 
     @staticmethod
@@ -377,7 +412,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
                     partial_record,
                     {"state": state, "action": real_actions[i].numpy()}
                 )
-            )
+            )  # TODO partial record for list of landmarks
             partial_record_async_result = await partial_record_async_task
             index, uuid = partial_record_async_result.return_value
             recommendations[i]["buffer_index"] = index
@@ -385,31 +420,22 @@ class RecommendationsAgent(PureRecommendationsAgent):
  
         return recommendations  # TODO get environment result and learning process
 
-    
-    def _concat_state(self, json_params: Dict) -> np.ndarray:
-        state = np.concatenate(
-            (np.asarray(json_params["watch_state"], dtype=self._np_dtype),
-            np.asarray(json_params["visit_state"], dtype=self._np_dtype)),
-            axis=0
-        )
-        json_params.pop("watch_state")
-        json_params.pop("visit_state")
-        return state
-
 
     async def find_recommendations_by_coordinates(self, json_params: Dict):
         try:
-            self._json_params_validation(json_params)
-            maximum_amount_of_recommendations = json_params["maximum_amount_of_recommendations"]
-            json_params.pop("maximum_amount_of_recommendations")
-            if maximum_amount_of_recommendations <= 0:
-                raise ValidationError(f"maximum_amount_of_recommendations must be int > 0, but got {maximum_amount_of_recommendations} instead")
-            json_params["limit"] = maximum_amount_of_recommendations * 4  # TODO if 400% is enough
-            
-            state = self._concat_state(json_params)
+            self._find_recommendations_validation(json_params)
         except ValidationError as ex:
             await logger.error(f"find_recommendations_by_coordinates, ValidationError({ex.args[0]})")
             return []  # raise ValidationError
+        
+        maximum_amount_of_recommendations = json_params.pop("maximum_amount_of_recommendations")
+        
+        json_params["limit"] = maximum_amount_of_recommendations * 4  # TODO if 400% is enough
+        
+        state = await self.concat_state(
+            (json_params.pop("watch_state"), json_params.pop("visit_state")), return_tf_tensor=False
+        )            
+
 
         kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates(json_params)
 
@@ -426,6 +452,99 @@ class RecommendationsAgent(PureRecommendationsAgent):
         return await self._find_recommendations_by_coordinates(
             state, kb_pre_recommendations, maximum_amount_of_recommendations
         )
+
+
+    def _count_final_reward(self, user_reward: float):
+        if self._reward_function:
+            return self._reward_function(user_reward)
+        else:
+            return user_reward
+        
+
+    def _give_reward_to_recommendations(
+        self, primary_recommendations, result_recommendations, user_reward
+    ):
+        """
+        Remove from result_recommendations landmarks that included in primary_recommendations 
+        (primary_recommendations and result_recommendations will be modified) 
+        """
+        for primary_recommendation in primary_recommendations:
+            for index_in_result in range(len(result_recommendations)):
+                if self._landmarks_are_equal(primary_recommendation, result_recommendations[index_in_result]):
+                    primary_recommendation["reward"] = user_reward
+                    result_recommendations.pop(index_in_result)
+                    break
+                else:
+                    primary_recommendation["reward"] = self._min_reward  # Min reward for landmarks, removed from route by user
+        return primary_recommendations, result_recommendations
+    
+
+    async def _post_primary_recs_to_sars_buffer(self, primary_recommendations, next_state):
+        """
+        returns: Tuple[state, completed_records_amount]   
+            state: numpy.ndarray | None (array, if at least one partial record was filled up, state(n) of this record)
+            completed_records_amount: int (amount of partial record, that had been filled up)
+        """
+        completed_records_amount = 0
+        state = None
+        for primary_recommendation in primary_recommendations:
+            fill_up_partial_record_async_task = asyncio.create_task(
+                AbstractAgentsBroker.call_agent_task(
+                    fill_up_partial_record,
+                    {
+                        "buffer_index": primary_recommendation["buffer_index"],
+                        "buffer_uuid": primary_recommendation["buffer_uuid"],
+                        "reward": self._np_dtype(primary_recommendation["reward"]),
+                        "next_state": next_state
+                    }
+                )  # TODO fill_up for list of landmarks
+            )
+            fill_up_partial_record_async_result = await fill_up_partial_record_async_task
+            uuid_correct = fill_up_partial_record_async_result.return_value
+            if uuid_correct and not state:
+                pass
+                # TODO state = task to get state from this row(add methods to trainer and sars buffer)
+            completed_records_amount += uuid_correct
+        return state, completed_records_amount
+
+
+    async def _post_result_recs_to_sars_buffer(self, result_recommendations, state: None | np.ndarray, next_state: np.ndarray):
+        if state:
+            pass
+            # TODO get embeddings of result_recommendations
+            # TODO add records (state, embedding of result recommendation, max_reward, next_state)
+            # TODO record for list of landmarks (add method to trainer)
+
+    @staticmethod
+    async def _start_training(amount_of_repeats):
+        pass
+        # TODO start training
+
+    async def post_result_of_recommendations(
+            self, json_params
+    ):
+        try:
+            self._post_result_of_recommendations_validation(json_params)
+        except ValidationError as ex:
+            await logger.error(f"post_result_of_recommendations, ValidationError({ex.args[0]})")
+            return  # raise ValidationError
+        user_reward = self._count_final_reward(json_params.pop("user_reward"))
+
+        primary_recommendations, result_recommendations = self._give_reward_to_recommendations(
+            json_params.pop("primary_recommendations"), json_params.pop("result_recommendations"), user_reward
+        )
+
+        next_state = await self.concat_state(
+            (json_params.pop("new_watch_state"), json_params.pop("new_visit_state")), return_tf_tensor=False
+        )
+        
+        state, filled_up_amount = await self._post_primary_recs_to_sars_buffer(primary_recommendations, next_state)
+        await self._post_result_recs_to_sars_buffer(result_recommendations, state, next_state)
+
+        await self._start_training(len(primary_recommendations) + len(result_recommendations))
+
+
+
 
 
  

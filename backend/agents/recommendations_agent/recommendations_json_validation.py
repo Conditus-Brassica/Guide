@@ -1,11 +1,7 @@
 """
-recommendations_agent_coefficients_json
+find_recommendations_for_coordinates
 """
-
-"""
-find_recommendations_for_coordinates_and_categories
-"""
-find_recommendations_for_coordinates_and_categories = \
+find_recommendations_for_coordinates = \
  {
         "type": "object",
         "properties": {
@@ -21,16 +17,87 @@ find_recommendations_for_coordinates_and_categories = \
                 ],
                 "additionalProperties": False
             },
-            "watch_state": {"type": "array"},
-            "visit_state": {"type": "array"},
+            "watch_state": {
+                "type": "array",
+                "items": {
+                    "type": "number"
+                }
+            },
+            "visit_state": {
+                "type": "array",
+                "items": {
+                    "type": "number"
+                }
+            },
             "maximum_amount_of_recommendations": {"type": "number"}
         },
         "required": [
             "coordinates_of_points",
-            "categories_names",
-            "user_login",
-            "amount_of_recommendations_for_point",
+            "watch_state",
+            "visit_state",
             "maximum_amount_of_recommendations"
         ],
         "additionalProperties": False
  }
+
+
+"""
+post_result_of_recommendations
+"""
+post_result_of_recommendations = \
+{
+    "type": "object",
+    "properties": {
+        "primary_recommendations": {
+            "type": "array",
+            "items": {
+                "name": "string",
+                "latitude": "number",
+                "longitude": "number",
+                "buffer_index": "number",
+                "buffer_uuid": "string"  # uuid 
+            },
+            "required": [
+                "name",
+                "latitude",
+                "longitude",
+                "buffer_index",
+                "buffer_uuid"
+            ],
+            "additionalProperties": False
+        },
+        "result_recommendations": {
+            "type": "array",
+            "items": {
+                "name": "string",
+                "latitude": "number",
+                "longitude": "number"
+            },
+            "required": [
+                "name",
+                "latitude",
+                "longitude"
+            ],
+            "additionalProperties": True
+        },
+        "new_watch_state": {
+                "type": "array",
+                "items": {
+                    "type": "number"
+                }
+            },
+            "new_visit_state": {
+                "type": "array",
+                "items": {
+                    "type": "number"
+                }
+            },
+        "recommendations_reward": {"type": "number"}
+    },
+    "required": [
+        "primary_recommendations",
+        "result_recommendations",
+        "recommendations_reward"
+    ],
+    "additionalProperties": False
+}

@@ -6,9 +6,11 @@ SELECT, INSERT, UPDATE and DELETE queries to embeddings database
 https://www.youtube.com/watch?v=kDnJf-bFTaY&t=1311s
 """
 from typing import Dict
+from jsonschema import validate, ValidationError
 from sqlalchemy.ext.asyncio import AsyncEngine
 from backend.agents.embeddings_crud.pure_embeddings_crud_agent import PureEmbeddingsCRUDAgent
 from backend.agents.embeddings_crud.embeddings_reader import EmbeddingsReader
+from backend.agents.embeddings_crud.embeddings_crud_validation import get_landmarks_embeddings
 
 
 class EmbeddingsCRUD(PureEmbeddingsCRUDAgent):
@@ -74,9 +76,12 @@ class EmbeddingsCRUD(PureEmbeddingsCRUDAgent):
             - landmarks, for wich the embedding is returned
         returns: Coroutine List[NamedTuple["embedding": List[float]]]
         """
-        # TODO validate json_params
+        try:
+            validate(json_params, get_landmarks_embeddings)
+        except ValidationError as ex:
+            return [] # raise ValidationError
     
         async with cls._db_engine.begin() as connection:
-            embeddings_list = EmbeddingsReader.read_landmarks_embeddings(connection, json_params["landmarks"])
+            embeddings_list = await EmbeddingsReader.read_landmarks_embeddings(connection, json_params["landmarks"])
         return embeddings_list
 
