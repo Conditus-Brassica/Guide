@@ -124,6 +124,10 @@ class SARSReplayBuffer:
             self._current_index = 0
         
         return row_index, row_uuid
+    
+
+    def completed_record_exist(self) -> bool:
+        return len(self._completed_rows_indexes) > 0
 
 
     def sample_sars_batch(
@@ -151,6 +155,12 @@ class SARSReplayBuffer:
                 self._reward_buffer[batch_indices],
                 self._next_state_buffer[batch_indices]
             )
+        
+    
+    def get_state(self, row_index, row_uuid) -> np.ndarray | None:
+        if self._row_uuids[row_index] == row_uuid:
+            return self._state_buffer[row_index]
+
 
 
 if __name__ == "__main__":

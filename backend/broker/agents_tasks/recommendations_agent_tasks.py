@@ -33,10 +33,10 @@ async def find_recommendations_for_coordinates_and_categories_task(json_params: 
         List[
             {
                 recommendation: Dict,
-                buffer_index: int,
-                buffer_uuid: uuid4
+                row_index: int,
+                row_uuid: uuid4
             }
         ] or empty List
     """
-    return await RECOMMENDATIONS_AGENT.find_recommendations_for_coordinates_and_categories(json_params)
+    return await RECOMMENDATIONS_AGENT.find_recommendations_by_coordinates(json_params)
 

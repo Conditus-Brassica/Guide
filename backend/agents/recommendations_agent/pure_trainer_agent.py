@@ -45,15 +45,44 @@ class PureTrainerAgent(ABC):
     
     async def set_tau(self, json_params):
         raise NotImplementedError
+    
 
     async def partial_record(self, json_params):
         raise NotImplementedError
     
+
+    async def partial_record_list(self, json_params):
+        raise NotImplementedError
+    
+
     async def fill_up_partial_record(self, json_params):
         raise NotImplementedError 
+    
+
+    async def fill_up_partial_record_list(self, json_params):
+        raise NotImplementedError 
+
 
     async def fill_up_partial_record_no_index(self, json_params):
         raise NotImplementedError
+
+
+    async def fill_up_partial_record_list_no_index(self, json_params):
+        raise NotImplementedError
+
         
     async def record(self, json_params):
         raise NotImplementedError
+    
+
+    async def record_list(self, json_params):
+        raise NotImplementedError
+    
+
+    async def train(self, json_params):
+        raise NotImplementedError
+    
+
+    async def get_state(self, json_params):
+        raise NotImplementedError
+

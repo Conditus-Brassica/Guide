@@ -119,11 +119,15 @@ class PureRecommendationsAgent(ABC):
         },
         :return: Coroutine
             List[
-                {
-                    "recommendation": Dict,
-                    "buffer_index": int,
-                    "buffer_uuid": uuid4
-                }
+                Dict[
+                    "recommendation": Dict[
+                        "name": str,
+                        "latitude": float,
+                        "longitude": float,
+                        "row_index": int,
+                        "row_uuid": uuid4
+                    ]
+                ]
             ] | empty list
         """
         raise NotImplementedError
@@ -135,7 +139,7 @@ class PureRecommendationsAgent(ABC):
     ):
         """
         Method to post result of recommendations.
-        :json_params["primary_recommendations"] - landmarks, given by the recommendations agent + buffer_index + buffer_uuid
+        :json_params["primary_recommendations"] - landmarks, given by the recommendations agent + row_index + row_uuid
         :json_params["result_recommendations"] - landmarks, that were included in the result route (index and uuid are not required)
         :json_params["new_watch_state"] - new watch state of user
         :json_params["new_visit_state"] - new visit state of user
@@ -147,8 +151,8 @@ class PureRecommendationsAgent(ABC):
                 "name": str,
                 "latitude": float,
                 "longitude": float,
-                "buffer_index": int,
-                "buffer_uuid": uuid4
+                "row_index": int,
+                "row_uuid": uuid4
             ],
             "result_recommendations": Dict [
                 "name": str,

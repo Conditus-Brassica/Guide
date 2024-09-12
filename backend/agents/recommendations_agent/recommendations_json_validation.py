@@ -54,15 +54,15 @@ post_result_of_recommendations = \
                 "name": "string",
                 "latitude": "number",
                 "longitude": "number",
-                "buffer_index": "number",
-                "buffer_uuid": "string"  # uuid 
+                "row_index": "number",
+                "row_uuid": "string"  # uuid 
             },
             "required": [
                 "name",
                 "latitude",
                 "longitude",
-                "buffer_index",
-                "buffer_uuid"
+                "row_index",
+                "row_uuid"
             ],
             "additionalProperties": False
         },

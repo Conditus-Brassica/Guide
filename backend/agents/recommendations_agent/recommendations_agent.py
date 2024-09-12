@@ -5,13 +5,14 @@ import keras
 import numpy as np
 import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
 from typing import Dict, List, Tuple
+from copy import copy
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 from backend.broker.agents_tasks.embeddings_crud_agent_tasks import get_landmarks_embeddings_task
-from backend.broker.agents_tasks.trainer_tasks import partial_record, fill_up_partial_record, record
+from backend.broker.agents_tasks.trainer_tasks import partial_record_list, fill_up_partial_record_list, record_list, train, get_state
 
 
 logger = JsonLogger.with_default_handlers(
@@ -406,19 +407,20 @@ class RecommendationsAgent(PureRecommendationsAgent):
             real_actions, recommendations, maximum_amount_of_recommendations
         )  # expands state shape to [1, state_dim]
 
-        for i in range(len(recommendations)):
-            partial_record_async_task = asyncio.create_task(
-                AbstractAgentsBroker.call_agent_task(
-                    partial_record,
-                    {"state": state, "action": real_actions[i].numpy()}
-                )
-            )  # TODO partial record for list of landmarks
-            partial_record_async_result = await partial_record_async_task
-            index, uuid = partial_record_async_result.return_value
-            recommendations[i]["buffer_index"] = index
-            recommendations[i]["buffer_uuid"] = uuid
+        partial_record_list_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                partial_record_list,
+                {"state": state, "action_list": [real_actions[i].numpy() for i in range(real_actions.shape[0])]}
+            )
+        )
+        partial_record_async_result = await partial_record_list_async_task
+
+        index_list, uuid_list = partial_record_async_result.return_value
+        for i in range(len(index_list)):
+            recommendations[i]["row_index"] = index_list[i]
+            recommendations[i]["row_uuid"] = uuid_list[i]
  
-        return recommendations  # TODO get environment result and learning process
+        return recommendations
 
 
     async def find_recommendations_by_coordinates(self, json_params: Dict):
@@ -435,7 +437,6 @@ class RecommendationsAgent(PureRecommendationsAgent):
         state = await self.concat_state(
             (json_params.pop("watch_state"), json_params.pop("visit_state")), return_tf_tensor=False
         )            
-
 
         kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates(json_params)
 
@@ -479,46 +480,90 @@ class RecommendationsAgent(PureRecommendationsAgent):
         return primary_recommendations, result_recommendations
     
 
+    async def _fill_up_partial_record_task(self, row_index_list, row_uuid_list, reward_list, next_state):
+        fill_up_partial_record_list_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                fill_up_partial_record_list,
+                {"row_index_list": row_index_list, "row_uuid_list": row_uuid_list,
+                 "reward_list": reward_list, "next_state": next_state}
+            )
+        )
+        return (await fill_up_partial_record_list_async_task).return_value
+    
+
+    async def _get_state_task(self, row_index, row_uuid):
+        get_state_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                get_state, {"row_index": row_index, "row_uuid": row_uuid}
+            )
+        )
+        return (await get_state_async_task).return_value
+    
+
+    async def _record_task(self, sars_tuple_list):
+        record_list_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                record_list, {"sars_tuple_list": sars_tuple_list}
+            )
+        )
+        return (await record_list_async_task).return_value
+
+
     async def _post_primary_recs_to_sars_buffer(self, primary_recommendations, next_state):
         """
-        returns: Tuple[state, completed_records_amount]   
+        returns: state
             state: numpy.ndarray | None (array, if at least one partial record was filled up, state(n) of this record)
-            completed_records_amount: int (amount of partial record, that had been filled up)
         """
-        completed_records_amount = 0
         state = None
-        for primary_recommendation in primary_recommendations:
-            fill_up_partial_record_async_task = asyncio.create_task(
-                AbstractAgentsBroker.call_agent_task(
-                    fill_up_partial_record,
-                    {
-                        "buffer_index": primary_recommendation["buffer_index"],
-                        "buffer_uuid": primary_recommendation["buffer_uuid"],
-                        "reward": self._np_dtype(primary_recommendation["reward"]),
-                        "next_state": next_state
-                    }
-                )  # TODO fill_up for list of landmarks
-            )
-            fill_up_partial_record_async_result = await fill_up_partial_record_async_task
-            uuid_correct = fill_up_partial_record_async_result.return_value
-            if uuid_correct and not state:
-                pass
-                # TODO state = task to get state from this row(add methods to trainer and sars buffer)
-            completed_records_amount += uuid_correct
-        return state, completed_records_amount
+        row_index_list = [None for _ in range(len(primary_recommendations))]
+        row_uuid_list = copy(row_index_list)
+        reward_list = copy(row_index_list)
+        for i in range(len(primary_recommendations)):
+            row_index_list[i] = primary_recommendations[i]["row_index"]
+            row_uuid_list[i] = primary_recommendations[i]["row_uuid"]
+            reward_list[i] = self._np_dtype(primary_recommendations[i]["reward"])
+
+        uuid_correct_list = await self._fill_up_partial_record_task(
+            row_index_list, row_uuid_list, reward_list, next_state
+        )
+        for i in range(len(uuid_correct_list)):
+            if uuid_correct_list[i]:
+                state = await self._get_state_task(
+                    primary_recommendations[i]["row_index"], primary_recommendations[i]["row_uuid"]
+                )
+                if state:
+                    break
+        return state
 
 
     async def _post_result_recs_to_sars_buffer(self, result_recommendations, state: None | np.ndarray, next_state: np.ndarray):
         if state:
-            pass
-            # TODO get embeddings of result_recommendations
-            # TODO add records (state, embedding of result recommendation, max_reward, next_state)
-            # TODO record for list of landmarks (add method to trainer)
+            actions = np.asarray(
+                await self._embeddings_for_landmarks(result_recommendations), dtype=self._np_dtype
+            )
+
+            reward = self._np_dtype(self._max_reward)
+
+            sars_tuple_list = [None for _ in range(len(result_recommendations))]
+            for i in range(len(sars_tuple_list)):
+                sars_tuple_list[i] = (
+                    state,
+                    actions[i],
+                    reward,
+                    next_state
+                )
+
+            await self._record_task(sars_tuple_list)
+    
 
     @staticmethod
-    async def _start_training(amount_of_repeats):
-        pass
-        # TODO start training
+    async def _start_training(repeat_amount):
+        train_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                train, {"repeat_amount": repeat_amount}
+            )
+        )
+        return (await train_async_task).return_value
 
     async def post_result_of_recommendations(
             self, json_params
@@ -538,17 +583,8 @@ class RecommendationsAgent(PureRecommendationsAgent):
             (json_params.pop("new_watch_state"), json_params.pop("new_visit_state")), return_tf_tensor=False
         )
         
-        state, filled_up_amount = await self._post_primary_recs_to_sars_buffer(primary_recommendations, next_state)
+        state = await self._post_primary_recs_to_sars_buffer(primary_recommendations, next_state)
         await self._post_result_recs_to_sars_buffer(result_recommendations, state, next_state)
 
         await self._start_training(len(primary_recommendations) + len(result_recommendations))
 
-
-
-
-
- 
-# TODO state пользователя в качестве входного параметра при подсчёте достопримечательностей (либо получать с помощью запроса)
-# TODO вовзрат в агента того, что он отправил + то, что оставил пользователь + оценка пользователя
-# TODO после получения оценки пересчёт нового сотояния + дополнение частичной записи в буфере
-# TODO если в буфере есть хотя бы одна полная запись, то выполняется запуск обучения
