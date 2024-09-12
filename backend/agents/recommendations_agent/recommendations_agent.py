@@ -457,8 +457,11 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
     def _count_final_reward(self, user_reward: float):
         if self._reward_function:
-            return self._reward_function(user_reward)
+            user_reward = self._reward_function(user_reward)
+            logger.debug(f"final reward: {user_reward}")
+            return user_reward
         else:
+            logger.debug(f"final reward: {user_reward}")
             return user_reward
         
 
@@ -526,6 +529,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         uuid_correct_list = await self._fill_up_partial_record_task(
             row_index_list, row_uuid_list, reward_list, next_state
         )
+        logger.debug(f"_post_primary_recs_to_sars_buffer; filled_up {uuid_correct_list.count(True)}/{len(uuid_correct_list)} of primary recommendations")
         for i in range(len(uuid_correct_list)):
             if uuid_correct_list[i]:
                 state = await self._get_state_task(
@@ -554,10 +558,13 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 )
 
             await self._record_task(sars_tuple_list)
+
+            logger.debug(f"_post_result_recs_to_sars_buffer; {len(result_recommendations)} records added from landmarks, given by user")
     
 
     @staticmethod
     async def _start_training(repeat_amount):
+        logger.debug(f"{repeat_amount} training cycles")
         train_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 train, {"repeat_amount": repeat_amount}
@@ -568,6 +575,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
     async def post_result_of_recommendations(
             self, json_params
     ):
+        logger.debug(f"post_result_of_recommendations")
         try:
             self._post_result_of_recommendations_validation(json_params)
         except ValidationError as ex:
