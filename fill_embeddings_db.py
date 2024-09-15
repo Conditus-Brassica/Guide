@@ -1,4 +1,4 @@
-from transformers import BertTokenizer, BertModel
+from transformers import BertTokenizerFast, BertModel
 import torch
 import sqlalchemy
 import neo4j
@@ -14,18 +14,22 @@ postgres_port = 5432
 postgres_user = "postgres"
 postgres_password = "ostisGovno"
 
+
 postgres_engine = sqlalchemy.create_engine(
     f"postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/postgres"
 )
 
+
 neo4j_driver = neo4j.GraphDatabase.driver(f"bolt://{neo4j_host}:{neo4j_port}", auth=(neo4j_user, neo4j_password))
+
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")
 else:
     device = torch.device("cpu")
 
-tokenizer = BertTokenizer.from_pretrained("DeepPavlov/rubert-base-cased")
+
+tokenizer = BertTokenizerFast.from_pretrained("DeepPavlov/rubert-base-cased")
 model = BertModel.from_pretrained("DeepPavlov/rubert-base-cased")
 model = model.to(device)
 
@@ -38,14 +42,20 @@ with postgres_engine.begin() as tx:
         with torch.no_grad():
             # Get the embedding tensor
             tokenized_landmark_summary = tokenizer(
-                json_landmark["summary"], return_tensors='pt', padding=True, truncation=True, max_length=512
+                json_landmark["summary"],
+                padding="max_length", truncation=True, max_length=512, stride=256,
+                return_tensors='pt', return_overflowing_tokens=True, 
             )
+
+            tokenized_landmark_summary.pop("overflow_to_sample_mapping")
 
             for key, value in tokenized_landmark_summary.items():
                 tokenized_landmark_summary[key] = tokenized_landmark_summary[key].type(torch.int32).to(device)
 
             # mean of last hidden state of model is used as embedding
-            landmark_embedding_torch = model(**tokenized_landmark_summary).last_hidden_state.mean(dim=1)[0]
+            landmark_embedding_torch = model(**tokenized_landmark_summary).last_hidden_state.mean(dim=1)
+            print(landmark_embedding_torch.shape)
+            landmark_embedding_torch = landmark_embedding_torch.mean(dim=0)
 
             landmark_embedding = landmark_embedding_torch.detach().cpu().tolist()
             del landmark_embedding_torch

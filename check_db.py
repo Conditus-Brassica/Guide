@@ -10,9 +10,10 @@ with engine.begin() as tx:
     res2 = tx.execute(sqlalchemy.text('SELECT count(*) FROM ostis_govno.landmarks_embeddings;'))
     for r in res1:
         print(r)
-
     for r in res2:
         print(r)
+
+    # tx.execute(sqlalchemy.text("DROP SCHEMA ostis_govno CASCADE"))
 
     # tx.execute(sqlalchemy.text('CREATE SCHEMA c;'))
     #   tx.execute(sqlalchemy.text("CREATE TABLE c.check_table (v TEXT);"))

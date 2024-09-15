@@ -74,7 +74,7 @@ class EmbeddingsCRUD(PureEmbeddingsCRUDAgent):
             ]
         ]
             - landmarks, for wich the embedding is returned
-        returns: Coroutine List[NamedTuple["embedding": List[float]]]
+        returns: Coroutine List[List[float]]
         """
         try:
             validate(json_params, get_landmarks_embeddings)

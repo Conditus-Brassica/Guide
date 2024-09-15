@@ -41,3 +41,25 @@ class PureEmbeddingsCRUDAgent(ABC):
         """
         raise NotImplementedError
     
+
+    @classmethod
+    @abstractmethod
+    async def get_landmarks_embeddings(cls, json_params: Dict):
+        """
+        Read query to get embeddings of the given landmarks.
+        Works asynchronously.
+
+        ###
+        1. json_params: Dict[
+            "landmarks": List[
+                Dict[
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float
+                ]
+            ]
+        ]
+            - landmarks, for wich the embedding is returned
+        returns: Coroutine List[List[float]]
+        """
+        raise NotImplementedError

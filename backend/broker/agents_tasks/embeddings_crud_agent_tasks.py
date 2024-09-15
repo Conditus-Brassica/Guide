@@ -5,7 +5,7 @@ Tasks to work with embeddings crud agent
 
 from typing import Dict
 from backend.broker.broker_initializer import BROKER
-from backend.agents.embeddings_crud.embeddings_crud_agent import EmbeddingsCRUD
+from backend.agents.embeddings_crud.embeddings_crud_initializer import EMBEDDINGS_CRUD_AGENT
 
 # Read tasks
 @BROKER.task
@@ -26,6 +26,6 @@ async def get_landmarks_embeddings_task(json_params: Dict):
             ]
         ]
     ]
-    returns: Coroutine List[NamedTuple["embedding": List[float]]]
+    returns: Coroutine List[List[float]]
     """
-    return await EmbeddingsCRUD.get_landmarks_embeddings(json_params)
+    return await EMBEDDINGS_CRUD_AGENT.get_landmarks_embeddings(json_params)

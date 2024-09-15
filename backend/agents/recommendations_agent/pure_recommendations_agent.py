@@ -30,7 +30,7 @@ class PureRecommendationsAgent(ABC):
       
     @property
     @abstractmethod
-    def actor_model(self) -> keras.Model:
+    async def actor_model(self) -> keras.Model:
         raise NotImplementedError
     
 
@@ -42,7 +42,7 @@ class PureRecommendationsAgent(ABC):
 
     @property
     @abstractmethod
-    def critic_model(self) -> keras.Model:
+    async def critic_model(self) -> keras.Model:
         raise NotImplementedError
 
     
@@ -165,4 +165,4 @@ class PureRecommendationsAgent(ABC):
         ]
         """
         raise NotImplementedError
-
+    

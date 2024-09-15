@@ -102,7 +102,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
       
         
     @property
-    def actor_model(self) -> keras.Model:
+    async def actor_model(self) -> keras.Model:
         return self._actor_model
     
 
@@ -112,7 +112,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
 
     @property
-    def critic_model(self) -> keras.Model:
+    async def critic_model(self) -> keras.Model:
         return self._critic_model
 
     
@@ -595,4 +595,6 @@ class RecommendationsAgent(PureRecommendationsAgent):
         await self._post_result_recs_to_sars_buffer(result_recommendations, state, next_state)
 
         await self._start_training(len(primary_recommendations) + len(result_recommendations))
+        
+        # TODO update actor and critic
 

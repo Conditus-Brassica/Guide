@@ -256,6 +256,7 @@ class Trainer:
                 self._update_target_model(
                     self._target_critic_model, self._critic_model, self._tau
                 )
+        return self._actor_model, self._critic_model
     
 
     async def get_state(self, row_index: int, row_uuid) -> np.ndarray | None:
