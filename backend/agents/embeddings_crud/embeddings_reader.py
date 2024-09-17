@@ -14,7 +14,7 @@ class EmbeddingsReader:
         ###
         1. db_connection: sqlalchemy.ext.asyncio.AsyncConnection
             - async connection to the embeddings database
-        2. landmarks_list: List[
+        2. landmarks: List[
             Dict[
                 "name": str,
                 "latitude": float,
