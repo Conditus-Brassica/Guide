@@ -9,7 +9,11 @@ HE_INIT = keras.initializers.HeNormal()
 TANH_INIT = keras.initializers.RandomUniform(minval=-0.003, maxval=0.003)
 
 
-class ActorModel(keras.Model):
+def get_actor_model(
+    dtype: tf.DType,
+    state_size:int, input_units: int, action_size: int,
+    hidden_units = None
+):
     """
     Model to generate actions. Model works using Wolpertinger policy
     (check https://arxiv.org/pdf/1512.07679 for more details)
@@ -17,9 +21,7 @@ class ActorModel(keras.Model):
     The base for the Wolpertinger actor model is DDPG actor model from https://arxiv.org/pdf/1509.02971
     """
 
-    def _init_hidden_layers(
-        self, hidden_units: List[int], dtype: tf.DType
-    ):
+    def init_hidden_layers(hidden_units: List[int], dtype: tf.DType):
         hidden_layers = [
             None for _ in range(2 * len(hidden_units))
         ]
@@ -33,46 +35,26 @@ class ActorModel(keras.Model):
 
             i += 1
 
-        self._hidden_network = keras.Sequential(hidden_layers)
+        return keras.Sequential(hidden_layers)
 
-    def __init__(
-            self,
-            dtype: tf.DType,
-            input_units: int, action_size: int,
-            hidden_units: List[int] | None = None
-    ):
-        super().__init__()
-        self._hidden_network = None  # if hidden_units is None, else - Sequential
+    input_state = layers.Input((state_size,), dtype=dtype)
+    
+    hidden =  layers.Dense(input_units, use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)(input_state)
+    hidden = layers.LeakyReLU(negative_slope=0.3)(hidden)
 
-        self._input_dense = layers.Dense(
-            input_units, use_bias=True, kernel_initializer=HE_INIT, dtype=dtype
-        ) 
+    if hidden_units:
+        hidden = init_hidden_layers(hidden_units, dtype)(hidden)  # _hidden_network = Sequential()
 
-        if hidden_units:
-            self._init_hidden_layers(hidden_units, dtype)  # _hidden_network = Sequential()
+    output = layers.Dense(
+        action_size, use_bias=True, kernel_initializer=TANH_INIT, dtype=dtype, activation="tanh"
+    )(hidden)
 
-            self._output_dense = layers.Dense(
-                action_size, use_bias=True, kernel_initializer=TANH_INIT, dtype=dtype
-            )  # tanh activation
-        else:
-            self._output_dense = layers.Dense(
-                action_size, use_bias=True, kernel_initializer=TANH_INIT, dtype=dtype
-            )  # tanh activation
 
-    def __call__(self, x: tf.Tensor):      
-        x = self._input_dense(x)
-        x = tf.nn.leaky_relu(x, alpha=0.3)
-
-        if self._hidden_network:
-            x = self._hidden_network(x)
-
-        x = self._output_dense(x)
-        x = tf.nn.tanh(x)
-        return x
+    return keras.Model(input_state, output)
 
 
 if __name__ == "__main__":
-    a = ActorModel(tf.float32, 64, 1, [256, 256])
+    a = get_actor_model(tf.float32, 3, 64, 1, [256, 256])
     print(a.trainable_weights)
 
     state = tf.convert_to_tensor([[1., 1., 1.]], dtype=tf.float32)
