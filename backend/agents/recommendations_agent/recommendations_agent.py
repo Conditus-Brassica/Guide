@@ -535,13 +535,13 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 state = await self._get_state_task(
                     primary_recommendations[i]["row_index"], primary_recommendations[i]["row_uuid"]
                 )
-                if state:
+                if state is not None:
                     break
         return state
 
 
     async def _post_result_recs_to_sars_buffer(self, result_recommendations, state: None | np.ndarray, next_state: np.ndarray):
-        if state:
+        if result_recommendations and state is not None:
             actions = np.asarray(
                 await self._embeddings_for_landmarks(result_recommendations), dtype=self._np_dtype
             )
