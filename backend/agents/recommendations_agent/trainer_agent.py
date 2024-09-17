@@ -1,4 +1,5 @@
 # Author: Vodohleb04
+import numpy as np
 from backend.agents.recommendations_agent.pure_trainer_agent import PureTrainerAgent
 from backend.agents.recommendations_agent.trainer import Trainer
 
@@ -26,6 +27,7 @@ class TrainerAgent(PureTrainerAgent):
         cls._trainer = trainer
 
     def __init__(self, trainer: Trainer):
+        
         if not self._single_trainer:
             self._class_init(trainer)
             self._single_trainer = self
@@ -33,16 +35,32 @@ class TrainerAgent(PureTrainerAgent):
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
         
     
-    async def get_actor_model(self):
-        return {"actor_model": self._trainer.actor_model}
+    async def get_actor_model_config(self):
+        return {"actor_model_config": self._trainer.get_actor_model_config()}
     
+
+    async def get_actor_model(self):
+        return {
+            "actor_model": [
+                weight.tolist() for weight in self._trainer.actor_model.get_weights()
+            ]
+        }
+
     
     async def set_actor_model(self, json_params):
         self._trainer.actor_model = json_params["actor_model"]
 
+
+    async def get_critic_model_config(self):
+        return {"critic_model_config": self._trainer.get_critic_model_config()}
+
     
     async def get_critic_model(self):
-        return {"critic_model": self._trainer.critic_model}
+        return {
+            "critic_model": [
+                weight.tolist() for weight in self._trainer.critic_model.get_weights()
+            ]
+        }
     
     
     async def set_critic_model(self, json_params):
@@ -56,18 +74,22 @@ class TrainerAgent(PureTrainerAgent):
     async def set_tau(self, json_params):
         self._trainer.tau = json_params["tau"]
 
+
     async def partial_record(self, json_params):
         """
         Is used to write first part of sars tuple. This tuple will be saved, but won't be used in training samples
 
         ###
-        1. state: numpy.ndarray
-        2. action: numpy.ndarray
+        1. state: List[float]
+        2. action: List[float]
 
         returns: Tuple[int, uuid] - index of row in buffer and uuid of row.
         """
         
-        return await self._trainer.partial_record(json_params["state"], json_params["action"])
+        return self._trainer.partial_record(
+            np.asarray(json_params["state"], dtype=self._trainer.np_dtype),
+            np.asarray(json_params["action"], dtype=self._trainer.np_dtype)
+        )
     
     async def partial_record_list(self, json_params):
         """
@@ -75,12 +97,18 @@ class TrainerAgent(PureTrainerAgent):
         Common state for multiple actions
 
         ###
-        1. state: numpy.ndarray
-        2. action_list: List[numpy.ndarray]
+        1. state: List[float]
+        2. action_list: List[List[float]]
 
         returns: Tuple[List[int], List[uuid]] - indices of rows in buffer and uuids of rows in buffer.
         """
-        return await self._trainer.partial_record_list(json_params["state"], json_params["action_list"])
+        return self._trainer.partial_record_list(
+            np.asarray(json_params["state"], dtype=self._trainer.np_dtype), 
+            [
+                np.asarray(json_params["action_list"][i], dtype=self._trainer.np_dtype)
+                for i in range(len(json_params["action_list"]))
+            ]
+        )
     
     async def fill_up_partial_record(self, json_params):
         """
@@ -91,13 +119,16 @@ class TrainerAgent(PureTrainerAgent):
             - index of the row in buffer (such index is returned as result of partial_record method) 
         2. row_uuid_list: uuid
             - uuid of the row in buffer (such uuid is returned as result of partial_record method)
-        3. reward: numpy.ndarray
-        4. next_state: numpy.ndarray
+        3. reward: float
+        4. next_state: List[float]
 
         returns: bool - True if uuid is correct, False otherwise
         """
-        return await self._trainer.fill_up_partial_record(
-            json_params["row_index"], json_params["row_uuid"], json_params["reward"], json_params["next_state"]
+        return self._trainer.fill_up_partial_record(
+            json_params["row_index"],
+            json_params["row_uuid"],
+            self._trainer.np_dtype(json_params["reward"]),
+            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
         )
     
     async def fill_up_partial_record_list(self, json_params):
@@ -109,13 +140,19 @@ class TrainerAgent(PureTrainerAgent):
             - indices of the rows in buffer (such indices are returned as result of partial_record method) 
         2. row_uuid_list: List[uuid]
             - uuids of the rows in buffer (such uuids are returned as result of partial_record method)
-        3. reward_list: List[numpy.ndarray]
-        4. next_state: numpy.ndarray
+        3. reward_list: List[float]
+        4. next_state: List[float]
 
         returns: List[bool] - True if uuid is correct, False otherwise
         """
-        return await self._trainer.fill_up_partial_record_list(
-            json_params["row_index_list"], json_params["row_uuid_list"], json_params["reward_list"], json_params["next_state"]
+        return self._trainer.fill_up_partial_record_list(
+            json_params["row_index_list"],
+            json_params["row_uuid_list"],
+            [
+                self._trainer.np_dtype(json_params["reward_list"][i])
+                for i in range(len(json_params["reward_list"]))
+            ],
+            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
         )  
 
     async def fill_up_partial_record_no_index(self, json_params):
@@ -125,13 +162,15 @@ class TrainerAgent(PureTrainerAgent):
 
         1. row_uuid: uuid
             - uuid of the row in buffer (such uuid is returned as result of partial_record method)
-        2. reward: numpy.ndarray
-        3. next_state: numpy.ndarray
+        2. reward: float
+        3. next_state: List[float]
 
         returns: bool - True if uuid was found out, False otherwise
         """
-        return await self._trainer.fill_up_partial_record_no_index(
-            json_params["row_uuid"], json_params["reward"], json_params["next_state"]
+        return self._trainer.fill_up_partial_record_no_index(
+            json_params["row_uuid"],
+            self._trainer.np_dtype(json_params["reward"]),
+            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
         )
     
 
@@ -142,13 +181,18 @@ class TrainerAgent(PureTrainerAgent):
 
         1. row_uuid_list: List[uuid]
             - uuids of the rows in buffer (such uuids are returned as result of partial_record method)
-        2. reward_list: numpy.ndarray
-        3. next_state: numpy.ndarray
+        2. reward_list: List[float]
+        3. next_state: List[float]
 
         returns: List[bool] - True if uuid was found out, False otherwise
         """
-        return await self._trainer.fill_up_partial_record_list_no_index(
-            json_params["row_uuid_list"], json_params["reward_list"], json_params["next_state"]
+        return self._trainer.fill_up_partial_record_list_no_index(
+            json_params["row_uuid_list"],
+            [
+                self._trainer.np_dtype(json_params["reward_list"][i])
+                for i in range(len(json_params["reward_list"]))
+            ],
+            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
         )
         
 
@@ -157,11 +201,18 @@ class TrainerAgent(PureTrainerAgent):
         SARS - state, action, reward, state (next state)
         If the buffer is full, the oldest record will be replaced with the new one
 
-        sars_tuple: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
+        sars_tuple: Tuple[List[float], List[float], float, List[float]]
 
         :returns: Tuple[int, uuid] - row index, row uuid
         """
-        return await self._trainer.record(json_params["sars_tuple"])
+        return self._trainer.record(
+            (
+                np.asarray(json_params["sars_tuple"][0], dtype=self._trainer.np_dtype),
+                np.asarray(json_params["sars_tuple"][1], dtype=self._trainer.np_dtype),
+                self._trainer.np_dtype(json_params["sars_tuple"][2]),
+                np.asarray(json_params["sars_tuple"][3], dtype=self._trainer.np_dtype),
+            )
+        )
     
 
     async def record_list(self, json_params):
@@ -169,11 +220,21 @@ class TrainerAgent(PureTrainerAgent):
         SARS - state, action, reward, state (next state)
         If the buffer is full, the oldest record will be replaced with the new one
 
-        sars_tuple_list: List[Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]
+        sars_tuple_list: List[Tuple[List[float], List[float], float, List[float]]]
 
         :returns: Tuple[List[int], List[uuid]] - row index, row uuid
         """
-        return await self._trainer.record_list(json_params["sars_tuple_list"])
+        return self._trainer.record_list(
+            [
+                (
+                    np.asarray(json_params["sars_tuple_list"][i][0], dtype=self._trainer.np_dtype),
+                    np.asarray(json_params["sars_tuple_list"][i][1], dtype=self._trainer.np_dtype),
+                    self._trainer.np_dtype(json_params["sars_tuple_list"][i][2]),
+                    np.asarray(json_params["sars_tuple_list"][i][3], dtype=self._trainer.np_dtype),
+                )
+                for i in range(len(json_params["sars_tuple_list"]))
+            ]
+        )
 
 
     async def train(self, json_params):
@@ -182,7 +243,17 @@ class TrainerAgent(PureTrainerAgent):
 
         :repeat_amount: int > 0 - amount of repeats of training
         """
-        return await self._trainer.train(json_params["repeat_amount"])
+
+        self._trainer.train(json_params["repeat_amount"])
+
+        return {
+            "actor_model": [
+                weight.tolist() for weight in self._trainer.actor_model.get_weights()
+            ],
+            "critic_model": [
+                weight.tolist() for weight in self._trainer.critic_model.get_weights()
+            ]
+        }
     
 
     async def get_state(self, json_params):
@@ -192,6 +263,11 @@ class TrainerAgent(PureTrainerAgent):
         :row_index: int
         :row_uuid: uuid4
 
-        :returns: numpy.ndarray | None
+        :returns: List[float] | None
         """
-        return await self._trainer.get_state(json_params["row_index"], json_params["row_uuid"])
+        state = self._trainer.get_state(json_params["row_index"], json_params["row_uuid"])
+        if state is not None:
+            return state.tolist()
+        else:
+            return state    
+        

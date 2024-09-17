@@ -2,12 +2,8 @@ from backend.broker.broker_initializer import BROKER
 from backend.agents.recommendations_agent.trainer_initializer import TRAINER_AGENT
 
 
-
-# Read tasks
-
-
 @BROKER.task
-async def get_actor_model():
+async def get_actor_model(json_params):
     return await TRAINER_AGENT.get_actor_model()
 
 @BROKER.task
@@ -15,7 +11,11 @@ async def set_actor_model(json_params):
     return await TRAINER_AGENT.set_actor_model(json_params)
 
 @BROKER.task
-async def get_critic_model():
+async def get_actor_model_config(json_params):
+    return await TRAINER_AGENT.get_actor_model_config()
+
+@BROKER.task
+async def get_critic_model(json_params):
     return await TRAINER_AGENT.get_critic_model()
 
 @BROKER.task
@@ -23,7 +23,11 @@ async def set_critic_model(json_params):
     return await TRAINER_AGENT.set_critic_model(json_params)
 
 @BROKER.task
-async def get_tau():
+async def get_critic_model_config(json_params):
+    return await TRAINER_AGENT.get_critic_model_config()
+
+@BROKER.task
+async def get_tau(json_params):
     return await TRAINER_AGENT.get_tau()
 
 @BROKER.task
@@ -69,4 +73,5 @@ async def train(json_params):
 @BROKER.task
 async def get_state(json_params):
     return await TRAINER_AGENT.get_state(json_params)
+
 

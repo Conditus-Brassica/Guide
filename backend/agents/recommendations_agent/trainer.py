@@ -14,8 +14,15 @@ class Trainer:
             actor_model: keras.Model, critic_model: keras.Model, gamma: float,
             actor_optimizer: keras.optimizers.Optimizer, critic_optimizer: keras.optimizers.Optimizer,
             target_actor_model: keras.Model, target_critic_model: keras.Model, tau: float,
-            sars_buffer: SARSReplayBuffer
+            sars_buffer: SARSReplayBuffer,
+            np_dtype: np.dtype
     ):
+        """
+        1. actor_model: keras.Model
+            - Actor network, counts action from the given state in terms of Markov decision process (check https://arxiv.org/pdf/1509.02971 for more details).
+        2. critic_model: keras.Model
+            - Critic network, counts Q-value from the given state and action (check https://arxiv.org/pdf/1509.02971 for more details).
+        """
         self._actor_model = actor_model
         self._critic_model = critic_model
 
@@ -29,6 +36,8 @@ class Trainer:
         self.tau = tau
 
         self._sars_buffer = sars_buffer
+        
+        self.np_dtype = np_dtype
 
 
     @property
@@ -37,8 +46,12 @@ class Trainer:
     
 
     @actor_model.setter
-    async def actor_model(self, actor_model: keras.Model):
+    def actor_model(self, actor_model: keras.Model):
         self._actor_model.set_weights(actor_model.get_weights())
+
+
+    def get_actor_model_config(self):
+        return self._actor_model.to_json()
 
 
     @property
@@ -47,8 +60,12 @@ class Trainer:
     
     
     @critic_model.setter
-    async def critic_model(self, critic_model: keras.Model):
+    def critic_model(self, critic_model: keras.Model):
         self._critic_model.set_weights(critic_model.get_weights())
+
+
+    def get_critic_model_config(self):
+        return self._critic_model.to_json()
 
 
     @property
@@ -61,7 +78,7 @@ class Trainer:
         self._tau = tau
 
 
-    async def partial_record(self, state: np.ndarray, action: np.ndarray):
+    def partial_record(self, state: np.ndarray, action: np.ndarray):
         """
         Is used to write first part of sars tuple. This tuple will be saved, but won't be used in training samples
 
@@ -75,7 +92,7 @@ class Trainer:
         return self._sars_buffer.partial_record(state, action)
 
 
-    async def partial_record_list(self, state: np.ndarray, action_list: List[np.ndarray]):
+    def partial_record_list(self, state: np.ndarray, action_list: List[np.ndarray]):
         """
         Is used to write first part of sars tuple. This tuple will be saved, but won't be used in training samples
         Common state for multiple actions
@@ -95,7 +112,7 @@ class Trainer:
         return index_list, uuid_list
     
 
-    async def fill_up_partial_record(self, row_index, row_uuid, reward: np.ndarray, next_state: np.ndarray):
+    def fill_up_partial_record(self, row_index, row_uuid, reward: np.ndarray, next_state: np.ndarray):
         """
         Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
             and the row may be used in training batch.
@@ -112,7 +129,7 @@ class Trainer:
         return self._sars_buffer.fill_up_partial_record(row_index, row_uuid, reward, next_state)  
 
 
-    async def fill_up_partial_record_list(self, row_index_list, row_uuid_list, reward_list: List[np.ndarray], next_state: np.ndarray):
+    def fill_up_partial_record_list(self, row_index_list, row_uuid_list, reward_list: List[np.ndarray], next_state: np.ndarray):
         """
         Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
             and the row may be used in training batch.
@@ -138,7 +155,7 @@ class Trainer:
         return record_filled_up_list        
 
 
-    async def fill_up_partial_record_no_index(self, row_uuid, reward: np.ndarray, next_state: np.ndarray):
+    def fill_up_partial_record_no_index(self, row_uuid, reward: np.ndarray, next_state: np.ndarray):
         """
         Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
             and the row may be used in training batch. Linear search is used to find out uuid.
@@ -153,7 +170,7 @@ class Trainer:
         return self._sars_buffer.fill_up_partial_record_no_index(row_uuid, reward, next_state)
     
 
-    async def fill_up_partial_record_list_no_index(self, row_uuid_list, reward_list: np.ndarray, next_state: np.ndarray):
+    def fill_up_partial_record_list_no_index(self, row_uuid_list, reward_list: np.ndarray, next_state: np.ndarray):
         """
         Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
             and the row may be used in training batch. Linear search is used to find out uuid.
@@ -177,7 +194,7 @@ class Trainer:
         return record_filled_up_list
 
 
-    async def record(self, sars_tuple: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
+    def record(self, sars_tuple: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
         """
         SARS - state, action, reward, state (next state)
         If the buffer is full, the oldest record will be replaced with the new one
@@ -187,7 +204,7 @@ class Trainer:
         return self._sars_buffer.record(sars_tuple)
     
 
-    async def record_list(self, sars_tuple_list: List[Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]):
+    def record_list(self, sars_tuple_list: List[Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]):
         """
         SARS - state, action, reward, state (next state)
         If the buffer is full, the oldest record will be replaced with the new one
@@ -238,7 +255,7 @@ class Trainer:
         self._actor_optimizer.apply_gradients(zip(actor_gradients, self._actor_model.trainable_weights))
 
 
-    async def train(self, repeat_amount: int = 1):
+    def train(self, repeat_amount: int = 1):
         if repeat_amount <= 0:
             raise ValueError(f"repeat_amount is expected to be int value > 0, got {repeat_amount} instead")
         if self._sars_buffer.completed_record_exist():
@@ -250,14 +267,9 @@ class Trainer:
                 self._train_critic(state_batch, action_batch, reward_batch, next_state_batch)
                 self._train_actor(state_batch)
 
-                self._update_target_model(
-                    self._target_actor_model, self._actor_model, self._tau
-                )
-                self._update_target_model(
-                    self._target_critic_model, self._critic_model, self._tau
-                )
-        return self._actor_model, self._critic_model
+                self._update_target_model(self._target_actor_model, self._actor_model, self._tau)
+                self._update_target_model(self._target_critic_model, self._critic_model, self._tau)
     
 
-    async def get_state(self, row_index: int, row_uuid) -> np.ndarray | None:
+    def get_state(self, row_index: int, row_uuid) -> np.ndarray | None:
         return self._sars_buffer.get_state(row_index, row_uuid)

@@ -3,16 +3,22 @@ import asyncio
 import tensorflow as tf
 import keras
 import numpy as np
-import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
 from typing import Dict, List, Tuple
 from copy import copy
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
+import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
 from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 from backend.broker.agents_tasks.embeddings_crud_agent_tasks import get_landmarks_embeddings_task
-from backend.broker.agents_tasks.trainer_tasks import partial_record_list, fill_up_partial_record_list, record_list, train, get_state
+from backend.broker.agents_tasks.trainer_tasks import (
+    partial_record_list, fill_up_partial_record_list,
+    record_list,
+    train,
+    get_state,
+    get_actor_model, get_critic_model, get_actor_model_config, get_critic_model_config
+)
 
 
 logger = JsonLogger.with_default_handlers(
@@ -44,30 +50,26 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
     def __init__(
         self,
-        actor_model: keras.Model, critic_model: keras.Model, tf_dtype: tf.DType, np_dtype: np.dtype, noise_object = None,
+        tf_dtype: tf.DType, np_dtype: np.dtype, noise_object = None,
         watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9,
         reward_function = None
     ):
         """
 
         ###
-        1. actor_model: keras.Model
-            - Actor network, counts action from the given state in terms of Markov decision process (check https://arxiv.org/pdf/1509.02971 for more details).
-        2. critic_model: keras.Model
-            - Critic network, counts Q-value from the given state and action (check https://arxiv.org/pdf/1509.02971 for more details).
-        3. tf_dtype: tensorflow.DType
+        1. tf_dtype: tensorflow.DType
             - dtype from tensorflow that is used in models layers.
-        4. np.dtype: numpy.dtype
+        2. np.dtype: numpy.dtype
             - dtype from numpy that is used in models layers.
-        5. *noise_object [DEFAULT = None]
+        3. *noise_object [DEFAULT = None]
             - Adds noise to the proto-action (is needed to solve exploration/exploitation problem). None by default.
                 noise_object must be callable type (supports __call__ method) noise_object must return numpy.ndarray 
                 or the other object whose type has a registered tensorflow.Tensor conversion function. 
-        6. *watch_state_discount_factor: float [DEFAULT = 0.9]
+        4. *watch_state_discount_factor: float [DEFAULT = 0.9]
             - discount factor of watch state (check RecommendationsAgent.count_new_watch_state method)
-        7. *visit_state_discount_factor: float [DEFAULT = 0.9]
+        5. *visit_state_discount_factor: float [DEFAULT = 0.9]
             - discount factor of visit state (check RecommendationsAgent.count_new_visit_state method)
-        8. *reward_function: [DEFAULT = None]
+        6. *reward_function: [DEFAULT = None]
             - Callable object to count final reward using user_reward. 
                 Requirements of function:   
                     -- reward_function(5) = 0;  
@@ -77,8 +79,10 @@ class RecommendationsAgent(PureRecommendationsAgent):
             final_reward = reward_function(user_reward)
         """
         if not self.recommendations_agent_exists():
-            self._actor_model = actor_model
-            self._critic_model = critic_model
+            self._actor_critic_are_inited = False
+            self._actor_model: keras.Model | None = None
+            self._critic_model: keras.Model | None = None
+
             self._noise_object = noise_object
 
             self._watch_state_discount_factor = watch_state_discount_factor
@@ -102,7 +106,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
       
         
     @property
-    async def actor_model(self) -> keras.Model:
+    async def actor_model(self) -> keras.Model | None:
         return self._actor_model
     
 
@@ -112,7 +116,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
 
     @property
-    async def critic_model(self) -> keras.Model:
+    async def critic_model(self) -> keras.Model | None:
         return self._critic_model
 
     
@@ -120,51 +124,52 @@ class RecommendationsAgent(PureRecommendationsAgent):
     async def critic_model(self, critic_model: keras.Model):
         self._critic_model.set_weights(critic_model.get_weights())
 
+
+    @staticmethod
+    def _update_model(model, py_weigths, dtype):
+        model.set_weights(
+            [
+                np.asarray(py_weigths[i], dtype=dtype)
+                for i in range(len(py_weigths))
+            ]
+        )
+
     
-    async def count_new_watch_state(
-        self, new_watched_landmark: Dict, watch_state: np.ndarray
-    ) -> np.ndarray:
-        """
-        Counts new watch state using old state. 
-        s(n + 1) = s(n) * disc_fact + new_watched_landmark
+    async def count_new_watch_state(self, json_params) -> List[float]:
+        try:
+            validate(json_params, json_validation.count_new_watch_state)
+        except ValidationError as ex:
+            await logger.error(f"count_new_watch_state, ValidationError({ex.args[0]})")
+            return []  # raise ValidationError
 
-        ###
-        1. new_watched_landmark: Dict["name": str, "latitude": float, "longitude": float]
-            - landmark, that causes changing of the state
-        2. watch_state: numpy.ndarray
-            - float ndarray, old state        
-            returns: numpy.ndarray - new state
-        """
-        watch_state = watch_state.astype(dtype=self._np_dtype)
-        new_landmark_embedding = await self._embeddings_for_landmarks(new_watched_landmark) # returns List[embedding]
-        new_landmark_embedding = np.asarray(new_landmark_embedding[0], dtype=self._np_dtype)
+        watch_state = np.asarray(json_params["watch_state"], dtype=self._np_dtype)
+        new_landmarks_embeddings = await self._embeddings_for_landmarks(json_params["new_watched_landmarks"]) # returns List[embedding]
+        new_landmarks_embeddings = np.asarray(new_landmarks_embeddings, dtype=self._np_dtype)
 
-        return watch_state * self._watch_state_discount_factor + new_landmark_embedding
+        for i in range(new_landmarks_embeddings.shape[0]):
+            watch_state = watch_state * self._watch_state_discount_factor + new_landmarks_embeddings[i]
+
+        return watch_state.tolist()
         
     
-    async def count_new_visit_state(
-        self, new_visited_landmark: Dict, visit_state: np.ndarray
-    ) -> np.ndarray:
-        """
-        Counts new visit state using old state. 
-        s(n + 1) = s(n) * disc_fact + new_visited_landmark
+    async def count_new_visit_state(self, json_params: Dict) -> List[float]:
+        try:
+            validate(json_params, json_validation.count_new_visit_state)
+        except ValidationError as ex:
+            await logger.error(f"count_new_visit_state, ValidationError({ex.args[0]})")
+            return []  # raise ValidationError
 
-        ###
-        1. new_visited_landmark: Dict["name": str, "latitude": float, "longitude": float]
-            - landmark, that causes changing of the state
-        2. visit_state: numpy.ndarray
-            - float ndarray, old state
-        
-            returns: numpy.ndarray - new state
-        """
-        visit_state = visit_state.astype(dtype=self._np_dtype)
-        new_landmark_embedding = await self._embeddings_for_landmarks(new_visited_landmark) # returns List[embedding]
-        new_landmark_embedding = np.asarray(new_landmark_embedding[0], dtype=self._np_dtype)
+        visit_state = np.asarray(json_params["visit_state"], dtype=self._np_dtype)
+        new_landmarks_embeddings = await self._embeddings_for_landmarks(json_params["new_visited_landmark"]) # returns List[embedding]
+        new_landmarks_embeddings = np.asarray(new_landmarks_embeddings, dtype=self._np_dtype)
 
-        return visit_state * self._visit_state_discount_factor + new_landmark_embedding
+        for i in range(new_landmarks_embeddings.shape[0]):
+            visit_state = visit_state * self._visit_state_discount_factor + new_landmarks_embeddings[i]
+
+        return visit_state.tolist()
     
     
-    async def concat_state(self, base_states: Tuple[np.ndarray], mask: Tuple[float] | None = None, return_tf_tensor=False):
+    def _concat_state(self, base_states: Tuple[np.ndarray], mask: Tuple[float] | None = None, return_tf_tensor=False):
         """
         Concatenate the given states in the given order.
 
@@ -191,6 +196,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
             return tf.convert_to_tensor(result)
         else:
             return result
+
 
     @staticmethod
     def _outdated_remove_nones_from_kb_result(kb_pre_recommendations: List) -> List:
@@ -264,8 +270,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
             raise ValidationError("user_reward must be value in range [0, 5]")
 
 
-    @staticmethod
-    async def _kb_pre_recommendation_by_coordinates(json_params: Dict):
+    async def _kb_pre_recommendation_by_coordinates(self, json_params: Dict):
         recommendations_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(crud_recommendations_by_coordinates_task, json_params)
         )
@@ -275,6 +280,11 @@ class RecommendationsAgent(PureRecommendationsAgent):
             f"kb_pre_recommendation_asyncio_result: {kb_pre_recommendation_asyncio_result}"
         )
         kb_pre_recommendations = kb_pre_recommendation_asyncio_result.return_value
+
+        self._remove_nones_from_kb_result(kb_pre_recommendations)
+        logger.debug(
+            f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
+        )
         return kb_pre_recommendations
 
 
@@ -410,17 +420,58 @@ class RecommendationsAgent(PureRecommendationsAgent):
         partial_record_list_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 partial_record_list,
-                {"state": state, "action_list": [real_actions[i].numpy() for i in range(real_actions.shape[0])]}
+                {"state": state.tolist(), "action_list": [real_actions[i].numpy().tolist() for i in range(real_actions.shape[0])]}
             )
         )
-        partial_record_async_result = await partial_record_list_async_task
 
-        index_list, uuid_list = partial_record_async_result.return_value
+        index_list, uuid_list = (await partial_record_list_async_task).return_value
         for i in range(len(index_list)):
             recommendations[i]["row_index"] = index_list[i]
             recommendations[i]["row_uuid"] = uuid_list[i]
  
         return recommendations
+
+
+    async def _init_actor(self):
+        actor_model_config_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(get_actor_model_config, {})
+        )
+        actor_model_weights_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(get_actor_model, {})
+        )
+        actor_model_config_async_result = await actor_model_config_async_task
+        actor_model_weights_async_result = await actor_model_weights_async_task
+
+        self._actor_model = keras.models.model_from_json(
+            actor_model_config_async_result.return_value["actor_model_config"]
+        )
+        self._update_model(
+            self._actor_model, actor_model_weights_async_result.return_value["actor_model"], self._np_dtype
+        )
+
+    
+    async def _init_critic(self):
+        critic_model_config_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(get_critic_model_config, {})
+        )
+        critic_model_weights_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(get_critic_model, {})
+        )
+        critic_model_config_async_result = await critic_model_config_async_task
+        critic_model_weights_async_result = await critic_model_weights_async_task
+        
+        self._critic_model = keras.models.model_from_json(
+            critic_model_config_async_result.return_value["critic_model_config"]
+        )
+        self._update_model(
+            self._critic_model, critic_model_weights_async_result.return_value["critic_model"], self._np_dtype
+        )
+
+    
+    async def _init_actor_critic_models(self):
+        await self._init_actor()
+        await self._init_critic()
+        self._actor_critic_are_inited = True
 
 
     async def find_recommendations_by_coordinates(self, json_params: Dict):
@@ -431,25 +482,27 @@ class RecommendationsAgent(PureRecommendationsAgent):
             return []  # raise ValidationError
         
         maximum_amount_of_recommendations = json_params.pop("maximum_amount_of_recommendations")
-        
         json_params["limit"] = maximum_amount_of_recommendations * 4  # TODO if 400% is enough
         
-        state = await self.concat_state(
-            (json_params.pop("watch_state"), json_params.pop("visit_state")), return_tf_tensor=False
+        state = self._concat_state(
+            (
+                np.asarray(json_params.pop("watch_state"), dtype=self._np_dtype),
+                np.asarray(json_params.pop("visit_state"), dtype=self._np_dtype)
+            ), return_tf_tensor=False
         )            
 
         kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates(json_params)
-
-        self._remove_nones_from_kb_result(kb_pre_recommendations)
-        logger.debug(
-            f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
-        )
         if not kb_pre_recommendations:
             return kb_pre_recommendations
+        
         self._remove_duplicates_from_kb_result(kb_pre_recommendations)
         logger.debug(
             f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
         )
+
+        if not self._actor_critic_are_inited:
+            await self._init_actor_critic_models()
+            
         return await self._find_recommendations_by_coordinates(
             state, kb_pre_recommendations, maximum_amount_of_recommendations
         )
@@ -483,7 +536,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         return primary_recommendations, result_recommendations
     
 
-    async def _fill_up_partial_record_task(self, row_index_list, row_uuid_list, reward_list, next_state):
+    async def _fill_up_partial_record_list_task(self, row_index_list, row_uuid_list, reward_list, next_state):
         fill_up_partial_record_list_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 fill_up_partial_record_list,
@@ -500,10 +553,10 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 get_state, {"row_index": row_index, "row_uuid": row_uuid}
             )
         )
-        return (await get_state_async_task).return_value
+        return np.asarray((await get_state_async_task).return_value, dtype=self._np_dtype)
     
 
-    async def _record_task(self, sars_tuple_list):
+    async def _record_list_task(self, sars_tuple_list):
         record_list_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 record_list, {"sars_tuple_list": sars_tuple_list}
@@ -524,9 +577,9 @@ class RecommendationsAgent(PureRecommendationsAgent):
         for i in range(len(primary_recommendations)):
             row_index_list[i] = primary_recommendations[i]["row_index"]
             row_uuid_list[i] = primary_recommendations[i]["row_uuid"]
-            reward_list[i] = self._np_dtype(primary_recommendations[i]["reward"])
+            reward_list[i] = primary_recommendations[i]["reward"]
 
-        uuid_correct_list = await self._fill_up_partial_record_task(
+        uuid_correct_list = await self._fill_up_partial_record_list_task(
             row_index_list, row_uuid_list, reward_list, next_state
         )
         logger.debug(f"_post_primary_recs_to_sars_buffer; filled_up {uuid_correct_list.count(True)}/{len(uuid_correct_list)} of primary recommendations")
@@ -540,13 +593,11 @@ class RecommendationsAgent(PureRecommendationsAgent):
         return state
 
 
-    async def _post_result_recs_to_sars_buffer(self, result_recommendations, state: None | np.ndarray, next_state: np.ndarray):
+    async def _post_result_recs_to_sars_buffer(self, result_recommendations, state: None | List[float], next_state: List[float]):
         if result_recommendations and state is not None:
-            actions = np.asarray(
-                await self._embeddings_for_landmarks(result_recommendations), dtype=self._np_dtype
-            )
+            actions = await self._embeddings_for_landmarks(result_recommendations)
 
-            reward = self._np_dtype(self._max_reward)
+            reward = self._max_reward
 
             sars_tuple_list = [None for _ in range(len(result_recommendations))]
             for i in range(len(sars_tuple_list)):
@@ -557,7 +608,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
                     next_state
                 )
 
-            await self._record_task(sars_tuple_list)
+            await self._record_list_task(sars_tuple_list)
 
             logger.debug(f"_post_result_recs_to_sars_buffer; {len(result_recommendations)} records added from landmarks, given by user")
     
@@ -571,6 +622,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
             )
         )
         return (await train_async_task).return_value
+
 
     async def post_result_of_recommendations(
             self, json_params
@@ -587,14 +639,19 @@ class RecommendationsAgent(PureRecommendationsAgent):
             json_params.pop("primary_recommendations"), json_params.pop("result_recommendations"), user_reward
         )
 
-        next_state = await self.concat_state(
-            (json_params.pop("new_watch_state"), json_params.pop("new_visit_state")), return_tf_tensor=False
-        )
+        next_state = self._concat_state(
+            (
+                np.asarray(json_params.pop("new_watch_state"), dtype=self._np_dtype),
+                np.asarray(json_params.pop("new_visit_state"),  dtype=self._np_dtype)
+            ), return_tf_tensor=False
+        ).tolist()
         
         state = await self._post_primary_recs_to_sars_buffer(primary_recommendations, next_state)
         await self._post_result_recs_to_sars_buffer(result_recommendations, state, next_state)
-
-        await self._start_training(len(primary_recommendations) + len(result_recommendations))
         
-        # TODO update actor and critic
+        new_models_json = await self._start_training(
+            len(primary_recommendations) + len(result_recommendations)
+        )
+        self._update_model(self._actor_model, new_models_json["actor_model"], self._np_dtype)
+        self._update_model(self._critic_model, new_models_json["critic_model"], self._np_dtype)
 

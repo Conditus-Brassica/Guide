@@ -1,6 +1,6 @@
 #Author: Vodohleb04
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple
+from typing import Dict, List
 import keras
 import numpy as np
 import tensorflow as tf
@@ -51,52 +51,54 @@ class PureRecommendationsAgent(ABC):
         raise NotImplementedError
 
     
-    async def count_new_watch_state(
-        self, new_watched_landmark: Dict, watch_state: np.ndarray
-    ) -> np.ndarray:
+    async def count_new_watch_state(self, json_params: Dict) -> List[float]:
         """
         Counts new watch state using old state. 
         s(n + 1) = s(n) * disc_fact + new_watched_landmark
 
         ###
-        1. new_watched_landmark: Dict["name": str, "latitude": float, "longitude": float]
-            - landmark, that causes changing of the state
-        2. watch_state: numpy.ndarray
-            - float ndarray, old state        
-            returns: numpy.ndarray - new state
+        1. json_params: Dict[
+            "new_watched_landmarks": List[
+                Dict[
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float
+                ]
+            ] 
+            "watch_state": List[float]
+        ]   
+
+        new_watched_landmarks - landmarks, that causes changing of the state (the most left is the most old watched from the new watched)
+            
+        watch_state - List of float, old state 
+                   
+        returns: List[float] - new state
         """
         raise NotImplementedError
     
-    async def count_new_visit_state(
-        self, new_visited_landmark: Dict, visit_state: np.ndarray
-    ) -> np.ndarray:
+
+    async def count_new_visit_state(self, json_params: Dict) -> List[float]:
         """
         Counts new visit state using old state. 
         s(n + 1) = s(n) * disc_fact + new_visited_landmark
 
         ###
-        1. new_visited_landmark: Dict["name": str, "latitude": float, "longitude": float]
-            - landmark, that causes changing of the state
-        2. visit_state: numpy.ndarray
-            - float ndarray, old state
-        
-            returns: numpy.ndarray - new state
-        """
-        raise NotImplementedError
-    
-    
-    async def concat_state(self, base_states: Tuple[np.ndarray], mask: Tuple[float] | None = None, return_tf_tensor=False) -> np.ndarray | tf.Tensor:
-        """
-        Concatenate the given states in the given order.
+        1. json_params: Dict[
+            "new_visited_landmarks": List[
+                Dict[
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float
+                ]
+            ] 
+            "visit_state": List[float]
+        ]   
 
-        result = base_states[0] * mask[0] \\\/ base_states[1] * mask[1] \\\/ ... \\\/ base_states[n] * mask[n]
-        ###
-        1. base_states: Tuple[numpy.ndarray]
-            - States to concatenate, presented in the numpy.ndarray
-        2.* mask: Tuple[float] [DEFAULT] = None
-            - Float factors in range [0, 1] to mask the states. 
-        3.* return_tf_tensor: bool [DEFAULT = False]
-            - Returns tensorflow.Tensor if True, numpy.ndarray otherwise
+        new_visited_landmarks - landmarks, that causes changing of the state (the most left is the most old visited from the new visited)
+            
+        visit_state - List of float, old state 
+                   
+        returns: List[float] - new state
         """
         raise NotImplementedError
 

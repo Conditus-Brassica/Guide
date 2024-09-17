@@ -1,6 +1,6 @@
 # Author: Vodohleb04
 """Tasks to work with recommendations agent. Use broker to run tasks"""
-from typing import Dict
+from typing import Dict, List
 from ..broker_initializer import BROKER
 from backend.agents.recommendations_agent.recommendations_agent_initializer import RECOMMENDATIONS_AGENT
 
@@ -72,4 +72,58 @@ async def post_result_of_recommendations(
         ]
         """
         return await RECOMMENDATIONS_AGENT.post_result_of_recommendations(json_params)
+
+
+@BROKER.task
+async def count_new_watch_state(json_params) -> List[float]:
+    """
+    Counts new watch state using old state. 
+    s(n + 1) = s(n) * disc_fact + new_watched_landmark
+
+    ###
+    1. json_params: Dict[
+        "new_watched_landmarks": List[
+            Dict[
+                "name": str,
+                "latitude": float,
+                "longitude": float
+            ]
+        ] 
+        "watch_state": List[float]
+    ]   
+
+    new_watched_landmarks - landmarks, that causes changing of the state (the most left is the most old watched from the new watched)
+        
+    watch_state - List of float, old state 
+                
+    returns: List[float] - new state
+    """
+    return await RECOMMENDATIONS_AGENT.count_new_watch_state(json_params)
+        
+
+@BROKER.task   
+async def count_new_visit_state(json_params: Dict) -> List[float]:
+    """
+    Counts new visit state using old state. 
+    s(n + 1) = s(n) * disc_fact + new_visited_landmark
+
+    ###
+    1. json_params: Dict[
+        "new_visited_landmarks": List[
+            Dict[
+                "name": str,
+                "latitude": float,
+                "longitude": float
+            ]
+        ] 
+        "visit_state": List[float]
+    ]   
+
+    new_visited_landmarks - landmarks, that causes changing of the state (the most left is the most old visited from the new visited)
+        
+    visit_state - List of float, old state 
+                
+    returns: List[float] - new state
+    """
+    return await RECOMMENDATIONS_AGENT.count_new_visit_state(json_params)
 

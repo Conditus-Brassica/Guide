@@ -103,3 +103,75 @@ post_result_of_recommendations = \
     ],
     "additionalProperties": False
 }
+
+
+"""
+count_new_watch_state
+"""
+count_new_watch_state = \
+{
+    "type": "object",
+    "properties": {
+        "new_watched_landmarks": {
+            "type": "array",
+            "items": {
+                "name": "string",
+                "latitude": "number",
+                "longitude": "number"
+            },
+            "required": [
+                "latitude",
+                "longitude",
+                "name"
+            ],
+            "additionalProperties": False
+        },
+        "watch_state": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        }
+    },
+    "required": [
+        "new_watched_landmarks",
+        "watch_state"
+    ],
+    "additionalProperties": False
+}
+
+
+"""
+count_new_visit_state
+"""
+count_new_visit_state = \
+{
+    "type": "object",
+    "properties": {
+        "new_visited_landmarks": {
+            "type": "array",
+            "items": {
+                "name": "string",
+                "latitude": "number",
+                "longitude": "number"
+            },
+            "required": [
+                "latitude",
+                "longitude",
+                "name"
+            ],
+            "additionalProperties": False
+        },
+        "visit_state": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        }
+    },
+    "required": [
+        "new_visited_landmarks",
+        "visit_state"
+    ],
+    "additionalProperties": False
+}
