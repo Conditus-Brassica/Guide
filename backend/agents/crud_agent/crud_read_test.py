@@ -2,10 +2,10 @@
 import asyncio
 import datetime
 
-import sys
-sys.path.append("/home/vodohleb/PycharmProjects/Guide")
-for path in sys.path:
-    print(repr(path))
+# import sys
+# sys.path.append("/home/vodohleb/PycharmProjects/Guide")
+# for path in sys.path:
+#     print(repr(path))
 
 from backend.broker.agents_tasks import crud_agent_tasks as crud_tasks
 from pprint import pprint
