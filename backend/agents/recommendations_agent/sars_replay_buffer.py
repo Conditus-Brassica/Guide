@@ -160,6 +160,8 @@ class SARSReplayBuffer:
     def get_state(self, row_index, row_uuid) -> np.ndarray | None:
         if self._row_uuids[row_index] == row_uuid:
             return self._state_buffer[row_index]
+        else:
+            return None
 
 
 
