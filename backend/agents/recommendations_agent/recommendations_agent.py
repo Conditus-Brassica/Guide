@@ -316,10 +316,10 @@ class RecommendationsAgent(PureRecommendationsAgent):
         )
         
         # Finds k nearest actions
-        min_distance_list = []
+        min_distance_list = [None for _ in range(k)]
         for i in range(l2_distance.shape[0]):
-            if len(min_distance_list) < k:
-                min_distance_list.append((l2_distance[i], i))  # pair of distance and index in the real_actions
+            if i < k:
+                min_distance_list[i] = (l2_distance[i], i)  # pair of distance and index in the real_actions
             else:
                 max_from_min = max(min_distance_list, key=lambda x: x[0])  # finds maximal distance in the list of minimal distances
 
