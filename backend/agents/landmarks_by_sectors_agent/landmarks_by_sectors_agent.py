@@ -1,5 +1,6 @@
 import asyncio
 import json
+import redis
 
 from aiologger.loggers.json import JsonLogger
 from jsonschema import validate
@@ -19,8 +20,9 @@ logger = JsonLogger.with_default_handlers(
 
 class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     _cache = None
-    _result = None
-    _sectors = None
+    _result = {}
+    _sectors = {}
+    _cache_expiry=3600
 
     LAT_DIFFERENCE = 0.312
     LONG_DIFFERENCE = 0.611
@@ -30,9 +32,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     _single_landmarks_agent = None
 
     def __init__(self):
-        self._cache = {"map_sectors_names": set(), "categories_names": set()}
-        self._result = {}
-        self._sectors = {}
+        self._cache = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
 
     @classmethod
     def get_landmarks_by_sectors_agent(cls):
@@ -116,26 +116,14 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     @classmethod
     def _set_cache(cls, squares_in_sector: dict):
         """
-        self._cache is set to prevent repeated elements in cache
+        cls._cache is set from redis that prevents repeating of elements
         """
         for sector_name in squares_in_sector["map_sectors_names"]:
-            cls._cache["map_sectors_names"].add(sector_name)
+            cls._cache.set("map_sectors_names", sector_name, ex=cls.cache_expiry)
         if "categories_names" in squares_in_sector.keys():
             for category in squares_in_sector["categories_names"]:
-                cls._cache["categories_names"].add(category)
-        """
-        Shorten cache to the desired size.
-        """
-        if len(cls._cache.get("map_sectors_names", [])) > cls.CACHE_SECTORS_MAX_SIZE:
-            i = 0
-            while i <= (len(cls._cache["map_sectors_names"]) - cls.CACHE_SECTORS_MAX_SIZE):
-                cls._cache["map_sectors_names"].pop()
-                i += 1
-        if len(cls._cache.get("categories_names", [])) > cls.CACHE_CATEGORIES_MAX_SIZE:
-            i = 0
-            while i <= (len(cls._cache["categories_names"]) - cls.CACHE_CATEGORIES_MAX_SIZE):
-                cls._cache["categories_names"].pop()
-                i += 1
+                cls._cache.set("categories_names", category, ex=cls.cache_expiry)
+        
 
     @classmethod
     async def get_necessary_sectors(cls, coords_of_sector: dict):
