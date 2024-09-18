@@ -314,9 +314,11 @@ class RecommendationsAgent(PureRecommendationsAgent):
                 axis=1
             )
         )
-        
+
         # Finds k nearest actions
-        min_distance_list = [None for _ in range(k)]
+        min_distance_list = [
+            None for _ in range(k if k < l2_distance.shape[0] else l2_distance.shape[0])
+        ]
         for i in range(l2_distance.shape[0]):
             if i < k:
                 min_distance_list[i] = (l2_distance[i], i)  # pair of distance and index in the real_actions
@@ -332,10 +334,13 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
     def _max_critic_values_indexes(self, critic_values, recommendations_amount: int):
         # Finds indexes of recommendations with the highest Critic value
-        max_critic_values_list = []
+        if recommendations_amount < critic_values.shape[0]:
+            max_critic_values_list = [None for _ in range(recommendations_amount)]
+        else:
+            max_critic_values_list = [None for _ in range(critic_values.shape[0])]
         for i in range(critic_values.shape[0]):
-            if len(max_critic_values_list) < recommendations_amount:
-                max_critic_values_list.append((critic_values[i][0], i))  #  pair of critic value and index in the real_actions
+            if i < recommendations_amount:
+                max_critic_values_list[i] = (critic_values[i][0], i)  #  pair of critic value and index in the real_actions
             else:
                 # finds minimal critic value in the list of maximal critic values
                 min_from_max = min(max_critic_values_list, key=lambda x: x[0])
