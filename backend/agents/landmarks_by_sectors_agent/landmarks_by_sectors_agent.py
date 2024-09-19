@@ -1,6 +1,5 @@
 import asyncio
 import json
-import redis
 
 from aiologger.loggers.json import JsonLogger
 from jsonschema import validate
@@ -19,10 +18,9 @@ logger = JsonLogger.with_default_handlers(
 
 
 class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
-    _cache = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
-    _result = {}
-    _sectors = {}
-    _cache_expiry = 3600
+    _cache = None
+    _result = None
+    _sectors = None
 
     LAT_DIFFERENCE = 0.312
     LONG_DIFFERENCE = 0.611
@@ -34,7 +32,9 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     _single_landmarks_agent = None
 
     def __init__(self):
-        super().__init__()
+        self._cache = {"map_sectors_names": set(), "categories_names": set()}
+        self._result = {}
+        self._sectors = {}
 
     @classmethod
     def get_landmarks_by_sectors_agent(cls):
@@ -101,13 +101,13 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
         squares_in_sector = await cls.get_necessary_sectors(jsom_params)
         squares_in_sector[cls.CATEGORIES_NAMES] = jsom_params[cls.CATEGORIES_NAMES]
         squares_in_sector[cls.MAP_SECTORS_NAMES] = [
-            i for i in squares_in_sector[cls.MAP_SECTORS_NAMES] if i not in cls._cache.get(cls.MAP_SECTORS_NAMES)
+            i for i in squares_in_sector[cls.MAP_SECTORS_NAMES] if i not in cls._cache[cls.MAP_SECTORS_NAMES]
         ]
         squares_in_sector[cls.CATEGORIES_NAMES] = [
-            i for i in squares_in_sector[cls.CATEGORIES_NAMES] if i not in cls._cache.get(cls.CATEGORIES_NAMES)
+            i for i in squares_in_sector[cls.CATEGORIES_NAMES] if i not in cls._cache[cls.CATEGORIES_NAMES]
         ]
         cls._set_cache(squares_in_sector)
-        if len(squares_in_sector[cls.MAP_SECTORS_NAMES]) != 0:
+        if len(squares_in_sector["map_sectors_names"]) != 0:
             landmarks_sectors_categories_async_task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(
                     landmarks_of_categories_in_map_sectors_task, squares_in_sector
@@ -120,19 +120,24 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     @classmethod
     def _set_cache(cls, squares_in_sector: dict):
         """
-        cls._cache is set from redis that prevents repeating of elements
+        self._cache is set to prevent repeated elements in cache
         """
-        cls._cache.ltrim(cls.MAP_SECTORS_NAMES, -cls.CACHE_SECTORS_MAX_SIZE, -1)
-        cls._cache.ltrim(cls.CATEGORIES_NAMES, -cls.CACHE_CATEGORIES_MAX_SIZE, -1)
-        for sector_name in squares_in_sector[cls.MAP_SECTORS_NAMES]:
-            cls._cache.sadd(cls.MAP_SECTORS_NAMES, sector_name)
-        if cls.CATEGORIES_NAMES in squares_in_sector.keys():
-            for category in squares_in_sector[cls.CATEGORIES_NAMES]:
-                cls._cache.sadd(cls.CATEGORIES_NAMES, category)
-        
-        cls._cache.expire(cls.MAP_SECTORS_NAMES, cls._cache_expiry)
-        cls._cache.expire(cls.CATEGORIES_NAMES, cls._cache_expiry)
-        
+        for sector_name in squares_in_sector["map_sectors_names"]:
+            cls._cache["map_sectors_names"].add(sector_name)
+        if "categories_names" in squares_in_sector.keys():
+            for category in squares_in_sector["categories_names"]:
+                cls._cache["categories_names"].add(category)
+        """
+        Shorten cache to the desired size.
+        """
+        map_sectors = cls._cache.get(cls.MAP_SECTORS_NAMES, [])
+        while len(map_sectors) > cls.CACHE_SECTORS_MAX_SIZE:
+             cls._cache["map_sectors_names"].pop()
+
+        # Manage categories_names cache
+        categories = cls._cache.get(cls.CATEGORIES_NAMES, [])
+        while len(categories) > cls.CACHE_CATEGORIES_MAX_SIZE:
+             cls._cache[cls.CATEGORIES_NAMES].pop()
 
     @classmethod
     async def get_necessary_sectors(cls, coords_of_sector: dict):
