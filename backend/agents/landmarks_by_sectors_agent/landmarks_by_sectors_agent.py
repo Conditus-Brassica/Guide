@@ -19,20 +19,22 @@ logger = JsonLogger.with_default_handlers(
 
 
 class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
-    _cache = None
+    _cache = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
     _result = {}
     _sectors = {}
-    _cache_expiry=3600
+    _cache_expiry = 3600
 
     LAT_DIFFERENCE = 0.312
     LONG_DIFFERENCE = 0.611
     CACHE_SECTORS_MAX_SIZE = 60
     CACHE_CATEGORIES_MAX_SIZE = 10
+    MAP_SECTORS_NAMES = "map_sectors_names"
+    CATEGORIES_NAMES = "categories_names"
 
     _single_landmarks_agent = None
 
     def __init__(self):
-        self._cache = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
+        super().__init__()
 
     @classmethod
     def get_landmarks_by_sectors_agent(cls):
@@ -70,15 +72,17 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     async def get_landmarks_in_sector(cls, json_params: dict):
         if not cls._sectors:
             await cls.get_sectors()
+
         # Check if format of dictionary is right using validator
         await cls._coords_of_square_validation(json_params)
         squares_in_sector = await cls.get_necessary_sectors(json_params)
+
         # Comparing with cache, then updating cache
-        squares_in_sector["map_sectors_names"] = [
-            i for i in squares_in_sector["map_sectors_names"] if i not in cls._cache["map_sectors_names"]
+        squares_in_sector[cls.MAP_SECTORS_NAMES] = [
+            i for i in squares_in_sector[cls.MAP_SECTORS_NAMES] if i not in cls._cache.get(cls.MAP_SECTORS_NAMES)
         ]
         cls._set_cache(squares_in_sector)
-        if len(squares_in_sector["map_sectors_names"]) != 0:
+        if len(squares_in_sector[cls.MAP_SECTORS_NAMES]) != 0:
             landmarks_sectors_async_task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(
                     landmarks_in_map_sectors_task,
@@ -95,15 +99,15 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
             await cls.get_sectors()
         await cls._coords_of_square_with_categories_validation(jsom_params)
         squares_in_sector = await cls.get_necessary_sectors(jsom_params)
-        squares_in_sector["categories_names"] = jsom_params["categories_names"]
-        squares_in_sector["map_sectors_names"] = [
-            i for i in squares_in_sector["map_sectors_names"] if i not in cls._cache["map_sectors_names"]
+        squares_in_sector[cls.CATEGORIES_NAMES] = jsom_params[cls.CATEGORIES_NAMES]
+        squares_in_sector[cls.MAP_SECTORS_NAMES] = [
+            i for i in squares_in_sector[cls.MAP_SECTORS_NAMES] if i not in cls._cache.get(cls.MAP_SECTORS_NAMES)
         ]
-        squares_in_sector["categories_names"] = [
-            i for i in squares_in_sector["categories_names"] if i not in cls._cache["categories_names"]
+        squares_in_sector[cls.CATEGORIES_NAMES] = [
+            i for i in squares_in_sector[cls.CATEGORIES_NAMES] if i not in cls._cache.get(cls.CATEGORIES_NAMES)
         ]
         cls._set_cache(squares_in_sector)
-        if len(squares_in_sector["map_sectors_names"]) != 0:
+        if len(squares_in_sector[cls.MAP_SECTORS_NAMES]) != 0:
             landmarks_sectors_categories_async_task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(
                     landmarks_of_categories_in_map_sectors_task, squares_in_sector
@@ -118,16 +122,21 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
         """
         cls._cache is set from redis that prevents repeating of elements
         """
-        for sector_name in squares_in_sector["map_sectors_names"]:
-            cls._cache.set("map_sectors_names", sector_name, ex=cls.cache_expiry)
-        if "categories_names" in squares_in_sector.keys():
-            for category in squares_in_sector["categories_names"]:
-                cls._cache.set("categories_names", category, ex=cls.cache_expiry)
+        cls._cache.ltrim(cls.MAP_SECTORS_NAMES, -cls.CACHE_SECTORS_MAX_SIZE, -1)
+        cls._cache.ltrim(cls.CATEGORIES_NAMES, -cls.CACHE_CATEGORIES_MAX_SIZE, -1)
+        for sector_name in squares_in_sector[cls.MAP_SECTORS_NAMES]:
+            cls._cache.sadd(cls.MAP_SECTORS_NAMES, sector_name)
+        if cls.CATEGORIES_NAMES in squares_in_sector.keys():
+            for category in squares_in_sector[cls.CATEGORIES_NAMES]:
+                cls._cache.sadd(cls.CATEGORIES_NAMES, category)
+        
+        cls._cache.expire(cls.MAP_SECTORS_NAMES, cls._cache_expiry)
+        cls._cache.expire(cls.CATEGORIES_NAMES, cls._cache_expiry)
         
 
     @classmethod
     async def get_necessary_sectors(cls, coords_of_sector: dict):
-        squares_in_sector = {"map_sectors_names": []}
+        squares_in_sector = {cls.MAP_SECTORS_NAMES: []}
         for element in cls._sectors:
             if (coords_of_sector["TL"]["longitude"] - cls.LONG_DIFFERENCE <= element["TL"]["longitude"] <
                 element["BR"]["longitude"] <=
@@ -135,7 +144,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
                     coords_of_sector["BR"]["latitude"] - cls.LAT_DIFFERENCE <= element["BR"]["latitude"] <
                     element["TL"]["latitude"] <=
                     coords_of_sector["TL"]["latitude"] + cls.LAT_DIFFERENCE):
-                squares_in_sector["map_sectors_names"].append(element["name"])
+                squares_in_sector[cls.MAP_SECTORS_NAMES].append(element["name"])
         return squares_in_sector
 
     @staticmethod
@@ -145,7 +154,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
         except ValidationError as e:
             await logger.info(
                 f"Validation error on json, args: {e.args[0]}, json_params: {get_coords_of_map_sectors_json}")
-            raise ValidationError
+            raise ValidationError("Validation error")
 
     @staticmethod
     async def _coords_of_square_with_categories_validation(json_params: dict):
@@ -154,7 +163,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
         except ValidationError as e:
             await logger.info(
                 f"Validation error on json, args: {e.args[0]}, json_params: {json_params}")
-            raise ValidationError
+            raise ValidationError("Validation error")
 
     @classmethod
     def get_landmarks_by_sectors_agent(cls):
