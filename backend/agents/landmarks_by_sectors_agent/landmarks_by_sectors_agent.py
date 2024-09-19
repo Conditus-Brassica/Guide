@@ -32,7 +32,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     _single_landmarks_agent = None
 
     def __init__(self):
-        self._cache = {"map_sectors_names": set(), "categories_names": set()}
+        self._cache = {self.MAP_SECTORS_NAMES: set(), self.CATEGORIES_NAMES: set()}
         self._result = {}
         self._sectors = {}
 
@@ -107,7 +107,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
             i for i in squares_in_sector[cls.CATEGORIES_NAMES] if i not in cls._cache[cls.CATEGORIES_NAMES]
         ]
         cls._set_cache(squares_in_sector)
-        if len(squares_in_sector["map_sectors_names"]) != 0:
+        if len(squares_in_sector[cls.MAP_SECTORS_NAMES]) != 0:
             landmarks_sectors_categories_async_task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(
                     landmarks_of_categories_in_map_sectors_task, squares_in_sector
@@ -122,17 +122,16 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
         """
         self._cache is set to prevent repeated elements in cache
         """
-        for sector_name in squares_in_sector["map_sectors_names"]:
-            cls._cache["map_sectors_names"].add(sector_name)
-        if "categories_names" in squares_in_sector.keys():
-            for category in squares_in_sector["categories_names"]:
-                cls._cache["categories_names"].add(category)
+        for sector_name in squares_in_sector[cls.MAP_SECTORS_NAMES]:
+            cls._cache[cls.MAP_SECTORS_NAMES].add(sector_name)
+        for category in squares_in_sector[cls.CATEGORIES_NAMES]:
+            cls._cache[cls.CATEGORIES_NAMES].add(category)
         """
         Shorten cache to the desired size.
         """
         map_sectors = cls._cache.get(cls.MAP_SECTORS_NAMES, [])
         while len(map_sectors) > cls.CACHE_SECTORS_MAX_SIZE:
-             cls._cache["map_sectors_names"].pop()
+             cls._cache[cls.MAP_SECTORS_NAMES].pop()
 
         # Manage categories_names cache
         categories = cls._cache.get(cls.CATEGORIES_NAMES, [])
