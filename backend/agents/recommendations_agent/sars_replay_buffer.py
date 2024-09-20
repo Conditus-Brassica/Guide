@@ -13,6 +13,8 @@ class SARSReplayBuffer:
         """
         load_json_dict is used in case of loading sars_buffer from file,
         load_json_dict: {
+            "_buffer_capacity": int,
+            "_batch_size": int,
             "_current_index": int,
             "_buffer_is_filled": bool,
             "_state_buffer": List[List[float]],
@@ -23,6 +25,9 @@ class SARSReplayBuffer:
             "_row_uuids": List[uuid]
         }
         """
+        self._buffer_capacity = int(load_json_dict["_buffer_capacity"])
+        self._batch_size = load_json_dict["_batch_size"]
+        
         self._current_index = load_json_dict["_current_index"]
         self._buffer_is_filled = load_json_dict["_buffer_is_filled"]
 
@@ -42,6 +47,8 @@ class SARSReplayBuffer:
         """
         load_json_dict is used in case of loading sars_buffer from file,
         load_json_dict: {
+            "_buffer_capacity": int,
+            "_batch_size": int,
             "_current_index": int,
             "_buffer_is_filled": bool,
             "_state_buffer": List[List[float]],
@@ -52,10 +59,10 @@ class SARSReplayBuffer:
             "_row_uuids": List[uuid]
         }
         """
-        self._buffer_capacity = int(buffer_capacity)
-        self._batch_size = batch_size
-
         if load_json_dict is None:
+            self._buffer_capacity = int(buffer_capacity)
+            self._batch_size = batch_size
+
             self._current_index = 0
             self._buffer_is_filled = False
 
@@ -82,7 +89,7 @@ class SARSReplayBuffer:
 
         returns: Tuple[int, uuid] - index of row in buffer and uuid of row.
         """
-        row_uuid = uuid4()
+        row_uuid = uuid4().hex
         row_index = self._current_index
         self._state_buffer[row_index] = state
         self._action_buffer[row_index] = action
@@ -156,7 +163,7 @@ class SARSReplayBuffer:
         SARS - state, action, reward, state (next state)
         If the buffer is full, the oldest record will be replaced with the new one
         """
-        row_uuid = uuid4()
+        row_uuid = uuid4().hex
         row_index = self._current_index
 
         self._state_buffer[row_index] = sars_tuple[0]
@@ -218,6 +225,7 @@ class SARSReplayBuffer:
             await fout.write(
                 json.dumps(
                     {
+                        "_buffer_capacity": self._buffer_capacity,
                         "_batch_size": self._batch_size,
                         "_current_index": self._current_index,
                         "_buffer_is_filled": self._buffer_is_filled,
@@ -233,21 +241,28 @@ class SARSReplayBuffer:
 
 
     @staticmethod
-    async def load(save_file, dtype):
-        async with aiofiles.open(save_file, 'r') as fin:
-            sras_buffer_dict = json.load(
-                await fin.read()
+    def load(dtype, save_file):
+        """
+        returns: SARSReplayBuffer | None
+        """
+        with open(save_file, 'r') as fin:
+            load_json_dict = json.load(fin)
+
+        if load_json_dict:
+            sars_replay_buffer = SARSReplayBuffer(
+                dtype, save_file, load_json_dict=load_json_dict
             )
-        sars_replay_buffer = SARSReplayBuffer(
-            dtype, save_file, load_json_dict=sars_replay_buffer
-        )
-        return sars_replay_buffer
+            return sars_replay_buffer
+        else:
+            return None
 
 # TODO check if load and save are working correctly
 
-if __name__ == "__main__":
-    buffer = SARSReplayBuffer(3, 2, np.float32, 3, 5)
 
+async def main():
+    #buffer = SARSReplayBuffer.load(np.float32,"./chep.save")
+    buffer = SARSReplayBuffer(np.float32, "./chep.save", 3, 2, buffer_capacity=10)
+    #print()
     state1 = np.array([1, 1, 1], dtype=np.float32)
     action1 = np.array([1, 1], dtype=np.float32)
     reward1 = np.array([1], dtype=np.float32) 
@@ -304,3 +319,10 @@ if __name__ == "__main__":
 
     s5, a5, r5, ns5 = buffer.sample_sars_batch()
 
+    await buffer.save()
+
+
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
