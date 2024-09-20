@@ -297,10 +297,10 @@ class Trainer:
     def _save_models_and_buffer(self):
         save_threads = [
             threading.Thread(target=self._sars_buffer.save, args=()),
-            threading.Thread(target=self._actor_model.save, args=(self._actor_save_file)),
-            threading.Thread(target=self._critic_model.save, args=(self._critic_save_file)),
-            threading.Thread(target=self._target_actor_model.save, args=(self._target_actor_save_file)),
-            threading.Thread(target=self._target_critic_model.save, args=(self._target_critic_save_file)),
+            threading.Thread(target=self._actor_model.save, args=(self._actor_save_file,)),
+            threading.Thread(target=self._critic_model.save, args=(self._critic_save_file,)),
+            threading.Thread(target=self._target_actor_model.save, args=(self._target_actor_save_file,)),
+            threading.Thread(target=self._target_critic_model.save, args=(self._target_critic_save_file,)),
         ]
         for i in range(len(save_threads)):
             save_threads[i].start()
