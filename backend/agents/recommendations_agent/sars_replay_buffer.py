@@ -2,7 +2,6 @@
 import json
 from typing import Tuple, List
 from uuid import uuid4
-import aiofiles
 import tensorflow as tf
 import numpy as np
 
@@ -220,23 +219,22 @@ class SARSReplayBuffer:
             return None
         
 
-    async def save(self):
-        async with aiofiles.open(self._save_file, 'w') as fout:
-            await fout.write(
-                json.dumps(
-                    {
-                        "_buffer_capacity": self._buffer_capacity,
-                        "_batch_size": self._batch_size,
-                        "_current_index": self._current_index,
-                        "_buffer_is_filled": self._buffer_is_filled,
-                        "_state_buffer": self._state_buffer.tolist(),
-                        "_action_buffer": self._action_buffer.tolist(),
-                        "_reward_buffer": self._reward_buffer.tolist(),
-                        "_next_state_buffer": self._next_state_buffer.tolist(),
-                        "_completed_rows_indexes": self._completed_rows_indexes,
-                        "_row_uuids": self._row_uuids,
-                    }
-                )
+    def save(self):
+        with open(self._save_file, 'w') as fout:
+            json.dump(
+                {
+                    "_buffer_capacity": self._buffer_capacity,
+                    "_batch_size": self._batch_size,
+                    "_current_index": self._current_index,
+                    "_buffer_is_filled": self._buffer_is_filled,
+                    "_state_buffer": self._state_buffer.tolist(),
+                    "_action_buffer": self._action_buffer.tolist(),
+                    "_reward_buffer": self._reward_buffer.tolist(),
+                    "_next_state_buffer": self._next_state_buffer.tolist(),
+                    "_completed_rows_indexes": self._completed_rows_indexes,
+                    "_row_uuids": self._row_uuids,
+                },
+                fout
             )
 
 
@@ -256,7 +254,6 @@ class SARSReplayBuffer:
         else:
             return None
 
-# TODO check if load and save are working correctly
 
 
 async def main():
@@ -319,7 +316,7 @@ async def main():
 
     s5, a5, r5, ns5 = buffer.sample_sars_batch()
 
-    await buffer.save()
+    buffer.save()
 
 
 
