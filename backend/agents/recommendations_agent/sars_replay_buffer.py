@@ -1,26 +1,75 @@
 # Author: Vodohleb04
+import json
 from typing import Tuple, List
 from uuid import uuid4
+import aiofiles
 import tensorflow as tf
 import numpy as np
 
 
 class SARSReplayBuffer:
     """Buffer to save SARS records (check https://arxiv.org/pdf/1509.02971 to get more information)"""
-    def __init__(self, state_size, action_size, dtype, buffer_capacity=1e6, batch_size=64):
+    def _init_on_load(self, dtype, load_json_dict):
+        """
+        load_json_dict is used in case of loading sars_buffer from file,
+        load_json_dict: {
+            "_current_index": int,
+            "_buffer_is_filled": bool,
+            "_state_buffer": List[List[float]],
+            "_action_buffer": List[List[float]],
+            "_reward_buffer": List[List[float]],
+            "_next_state_buffer": List[List[float]],
+            "_completed_rows_indexes": List[int],
+            "_row_uuids": List[uuid]
+        }
+        """
+        self._current_index = load_json_dict["_current_index"]
+        self._buffer_is_filled = load_json_dict["_buffer_is_filled"]
+
+        self._state_buffer = np.asarray(load_json_dict["_state_buffer"], dtype=dtype)
+        self._action_buffer = np.asarray(load_json_dict["_action_buffer"], dtype=dtype)
+        self._reward_buffer = np.asarray(load_json_dict["_reward_buffer"], dtype=dtype)
+        self._next_state_buffer = np.asarray(load_json_dict["_next_state_buffer"], dtype=dtype)
+
+        self._completed_rows_indexes = load_json_dict["_completed_rows_indexes"]
+        self._row_uuids: List = load_json_dict["_row_uuids"]
+
+
+    def __init__(
+        self, dtype, save_file,
+        state_size = None, action_size = None, buffer_capacity=1e7, batch_size=64, load_json_dict=None
+    ):
+        """
+        load_json_dict is used in case of loading sars_buffer from file,
+        load_json_dict: {
+            "_current_index": int,
+            "_buffer_is_filled": bool,
+            "_state_buffer": List[List[float]],
+            "_action_buffer": List[List[float]],
+            "_reward_buffer": List[List[float]],
+            "_next_state_buffer": List[List[float]],
+            "_completed_rows_indexes": List[int],
+            "_row_uuids": List[uuid]
+        }
+        """
         self._buffer_capacity = int(buffer_capacity)
         self._batch_size = batch_size
 
-        self._current_index = 0
-        self._buffer_is_filled = False
+        if load_json_dict is None:
+            self._current_index = 0
+            self._buffer_is_filled = False
 
-        self._state_buffer = np.zeros((self._buffer_capacity, state_size), dtype=dtype)
-        self._action_buffer = np.zeros((self._buffer_capacity, action_size), dtype=dtype)
-        self._reward_buffer = np.zeros((self._buffer_capacity, 1), dtype=dtype)
-        self._next_state_buffer = np.zeros((self._buffer_capacity, state_size), dtype=dtype)
+            self._state_buffer = np.zeros((self._buffer_capacity, state_size), dtype=dtype)
+            self._action_buffer = np.zeros((self._buffer_capacity, action_size), dtype=dtype)
+            self._reward_buffer = np.zeros((self._buffer_capacity, 1), dtype=dtype)
+            self._next_state_buffer = np.zeros((self._buffer_capacity, state_size), dtype=dtype)
 
-        self._completed_rows_indexes = []
-        self._row_uuids: List = [None for _ in range(self._buffer_capacity)]
+            self._completed_rows_indexes = []
+            self._row_uuids: List = [None for _ in range(self._buffer_capacity)]
+        else:
+            self._init_on_load(dtype, load_json_dict)
+
+        self._save_file = save_file
 
 
     def partial_record(self, state: np.ndarray, action: np.ndarray):
@@ -162,8 +211,39 @@ class SARSReplayBuffer:
             return self._state_buffer[row_index]
         else:
             return None
+        
+
+    async def save(self):
+        async with aiofiles.open(self._save_file, 'w') as fout:
+            await fout.write(
+                json.dumps(
+                    {
+                        "_batch_size": self._batch_size,
+                        "_current_index": self._current_index,
+                        "_buffer_is_filled": self._buffer_is_filled,
+                        "_state_buffer": self._state_buffer.tolist(),
+                        "_action_buffer": self._action_buffer.tolist(),
+                        "_reward_buffer": self._reward_buffer.tolist(),
+                        "_next_state_buffer": self._next_state_buffer.tolist(),
+                        "_completed_rows_indexes": self._completed_rows_indexes,
+                        "_row_uuids": self._row_uuids,
+                    }
+                )
+            )
 
 
+    @staticmethod
+    async def load(save_file, dtype):
+        async with aiofiles.open(save_file, 'r') as fin:
+            sras_buffer_dict = json.load(
+                await fin.read()
+            )
+        sars_replay_buffer = SARSReplayBuffer(
+            dtype, save_file, load_json_dict=sars_replay_buffer
+        )
+        return sars_replay_buffer
+
+# TODO check if load and save are working correctly
 
 if __name__ == "__main__":
     buffer = SARSReplayBuffer(3, 2, np.float32, 3, 5)
