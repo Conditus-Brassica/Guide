@@ -65,7 +65,7 @@ class PureTrainerAgent(ABC):
         1. state: List[float]
         2. action: List[float]
 
-        returns: Tuple[int, uuid] - index of row in buffer and uuid of row.
+        returns: Tuple[int, uuid.hex] - index of row in buffer and hex of uuid of the row.
         """
         raise NotImplementedError
     
@@ -79,71 +79,71 @@ class PureTrainerAgent(ABC):
         1. state: List[float]
         2. action_list: List[List[float]]
 
-        returns: Tuple[List[int], List[uuid]] - indices of rows in buffer and uuids of rows in buffer.
+        returns: Tuple[List[int], List[uuid.hex]] - indices of rows in buffer and hex of uuids of the rows in buffer.
         """
         raise NotImplementedError
     
     
     async def fill_up_partial_record(self, json_params):
         """
-        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
+        Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
             and the row may be used in training batch.
 
         1. row_index_list: int
             - index of the row in buffer (such index is returned as result of partial_record method) 
-        2. row_uuid_list: uuid
-            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
+        2. row_uuid_list: uuid.hex
+            - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
         3. reward: float
         4. next_state: List[float]
 
-        returns: bool - True if uuid is correct, False otherwise
+        returns: bool - True if hex of uuid is correct, False otherwise
         """
         raise NotImplementedError
     
     
     async def fill_up_partial_record_list(self, json_params):
         """
-        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
+        Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
             and the row may be used in training batch.
 
         1. row_index_list: List[int]
             - indices of the rows in buffer (such indices are returned as result of partial_record method) 
-        2. row_uuid_list: List[uuid]
-            - uuids of the rows in buffer (such uuids are returned as result of partial_record method)
+        2. row_uuid_list: List[uuid.hex]
+            - hex of uuids of the rows in buffer (such hex of uuids are returned as result of partial_record method)
         3. reward_list: List[float]
         4. next_state: List[float]
 
-        returns: List[bool] - True if uuid is correct, False otherwise
+        returns: List[bool] - True if hex of uuid is correct, False otherwise
         """
         raise NotImplementedError
     
 
     async def fill_up_partial_record_no_index(self, json_params):
         """
-        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
-            and the row may be used in training batch. Linear search is used to find out uuid.
+        Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
+            and the row may be used in training batch. Linear search is used to find out hex of uuid.
 
-        1. row_uuid: uuid
-            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
+        1. row_uuid: uuid.hex
+            - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
         2. reward: float
         3. next_state: List[float]
 
-        returns: bool - True if uuid was found out, False otherwise
+        returns: bool - True if hex of uuid was found out, False otherwise
         """
         raise NotImplementedError
     
 
     async def fill_up_partial_record_list_no_index(self, json_params):
         """
-        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
-            and the row may be used in training batch. Linear search is used to find out uuid.
+        Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
+            and the row may be used in training batch. Linear search is used to find out hex of uuid.
 
-        1. row_uuid_list: List[uuid]
-            - uuids of the rows in buffer (such uuids are returned as result of partial_record method)
+        1. row_uuid_list: List[uuid.hex]
+            - hex of uuids of the rows in buffer (such hex of uuids are returned as result of partial_record method)
         2. reward_list: List[float]
         3. next_state: List[float]
 
-        returns: List[bool] - True if uuid was found out, False otherwise
+        returns: List[bool] - True if hex of uuid was found out, False otherwise
         """
         raise NotImplementedError
     
@@ -155,7 +155,7 @@ class PureTrainerAgent(ABC):
 
         sars_tuple: Tuple[List[float], List[float], float, List[float]]
 
-        :returns: Tuple[int, uuid] - row index, row uuid
+        :returns: Tuple[int, uuid.hex] - row index, hex of uuid of the row
         """
         raise NotImplementedError
     
@@ -167,7 +167,7 @@ class PureTrainerAgent(ABC):
 
         sars_tuple_list: List[Tuple[List[float], List[float], float, List[float]]]
 
-        :returns: Tuple[List[int], List[uuid]] - row index, row uuid
+        :returns: Tuple[List[int], List[uuid.hex]] - row index, hex of uuid of the row
         """
         raise NotImplementedError
 
@@ -183,10 +183,10 @@ class PureTrainerAgent(ABC):
 
     async def get_state(self, json_params):
         """
-        Returns state of the sars tuple if the given uuid is correct
+        Returns state of the sars tuple if the given hex of uuid is correct
 
         :row_index: int
-        :row_uuid: uuid4
+        :row_uuid: uuid.hex
 
         :returns: List[float] | None
         """

@@ -32,7 +32,7 @@ async def find_recommendations_for_coordinates_task(json_params: Dict):
                     "latitude": float,
                     "longitude": float,
                     "row_index": int,
-                    "row_uuid": uuid4
+                    "row_uuid": string
                 ]
             }
         ] or empty List
@@ -59,7 +59,7 @@ async def post_result_of_recommendations(
                 "latitude": float,
                 "longitude": float,
                 "row_index": int,
-                "row_uuid": uuid4
+                "row_uuid": string
             ],
             "result_recommendations": Dict [
                 "name": str,

@@ -55,7 +55,7 @@ post_result_of_recommendations = \
                 "latitude": "number",
                 "longitude": "number",
                 "row_index": "number",
-                "row_uuid": "string"  # uuid 
+                "row_uuid": "string"  # hex of uuid 
             },
             "required": [
                 "name",

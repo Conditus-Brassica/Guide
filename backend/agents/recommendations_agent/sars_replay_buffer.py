@@ -22,7 +22,7 @@ class SARSReplayBuffer:
             "_reward_buffer": List[List[float]],
             "_next_state_buffer": List[List[float]],
             "_completed_rows_indexes": List[int],
-            "_row_uuids": List[uuid]
+            "_row_uuids": List[uuid.hex]
         }
         """
         self._buffer_capacity = int(load_json_dict["_buffer_capacity"])
@@ -56,7 +56,7 @@ class SARSReplayBuffer:
             "_reward_buffer": List[List[float]],
             "_next_state_buffer": List[List[float]],
             "_completed_rows_indexes": List[int],
-            "_row_uuids": List[uuid]
+            "_row_uuids": List[uuid.hex]
         }
         """
         if load_json_dict is None:

@@ -127,7 +127,7 @@ class PureRecommendationsAgent(ABC):
                         "latitude": float,
                         "longitude": float,
                         "row_index": int,
-                        "row_uuid": uuid4
+                        "row_uuid": uuid.hex
                     ]
                 ]
             ] | empty list
@@ -154,7 +154,7 @@ class PureRecommendationsAgent(ABC):
                 "latitude": float,
                 "longitude": float,
                 "row_index": int,
-                "row_uuid": uuid4
+                "row_uuid": uuid.hex
             ],
             "result_recommendations": Dict [
                 "name": str,
