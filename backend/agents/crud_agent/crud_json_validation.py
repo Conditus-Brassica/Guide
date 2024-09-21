@@ -63,28 +63,29 @@ get_landmarks_refers_to_categories_json = \
 """
 get_landmarks_by_coordinates
 """
-get_landmarks_by_coordinates_json = \
+get_landmarks_by_coordinates_and_name_json = \
     {
         "type": "object",
         "properties": {
-            "coordinates": {
+            "coordinates_name_list": {
                 "type": "array",
                 "items":
                     {
                         "type": "object",
                         "properties": {
                             "latitude": {"type": "number"},
-                            "longitude": {"type": "number"}
+                            "longitude": {"type": "number"},
+                            "name": {"type": "string"}
                         },
-                        "required": ["latitude", "longitude"],
-                        "maxProperties": 2,
+                        "required": ["latitude", "longitude", "name"],
+                        "maxProperties": 3,
                         "additionalProperties": False
                     },
                 "additionalProperties": False
             },
             "optional_limit": {"type": ["number", "null"]}
         },
-        "required": ["coordinates"],
+        "required": ["coordinates_name_list"],
         "maxProperties": 2,
         "additionalProperties": False
     }

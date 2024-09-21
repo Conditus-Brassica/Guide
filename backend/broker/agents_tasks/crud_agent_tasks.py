@@ -76,17 +76,18 @@ async def landmarks_refers_to_categories_task(json_params: Dict):
 
 
 @BROKER.task
-async def landmarks_by_coordinates_task(json_params: Dict):
+async def landmarks_by_coordinates_and_name_task(json_params: Dict):
     """
-    Task to get landmarks with the given coordinates.
+    Task to get landmarks with the given coordinates and name.
     Do NOT call this task directly. Give it as the first argument (agent_task) of AgentsBroker.call_agent_task instead.
     Works asynchronously.
 
     Params for target function of agent Dict in form {
-            "coordinates": List [
+            "coordinates_name_list": List [
                 Dict [
                     "latitude": float,
-                    "longitude": float
+                    "longitude": float,
+                    "name": str
                 ]
             ],
             "optional_limit": int | None
@@ -95,11 +96,12 @@ async def landmarks_by_coordinates_task(json_params: Dict):
         List [
             Dict[
                 "landmark": Dict | None,
-                "categories_names": List[str] | [] (empty list)
+                "categories_names": List[str] | [] (empty list),
+                "in_regions": List["str"] | []
             ]
-        ],  where categories_names are categories of landmark
+        ],  where categories_names are categories of landmark, in_regions - names of regions, where landmark is located
     """
-    return await CRUD_AGENT.get_landmarks_by_coordinates(json_params)
+    return await CRUD_AGENT.get_landmarks_by_coordinates_and_name(json_params)
 
 
 @BROKER.task
@@ -116,9 +118,10 @@ async def landmarks_by_name_list_task(json_params: Dict):
         List [
             Dict[
                 "landmark": Dict | None,
-                "categories_names": List[str] | [] (empty list)
+                "categories_names": List[str] | [] (empty list),
+                "in_regions": List["str"] | []
             ]
-        ],  where categories_names are categories of landmark
+        ],  where categories_names are categories of landmark, in_regions - names of regions, where landmark is located
     """
     return await CRUD_AGENT.get_landmarks_by_name_list(json_params)
 
@@ -138,9 +141,10 @@ async def landmarks_by_name_task(json_params: Dict):
         List [
             Dict[
                 "landmark": Dict | None,
-                "categories_names": List[str] | [] (empty list)
+                "categories_names": List[str] | [] (empty list),
+                "in_regions": List["str"] | []
             ]
-        ],  where categories_names are categories of landmark
+        ],  where categories_names are categories of landmark, in_regions - names of regions, where landmark is located
     """
     return await CRUD_AGENT.get_landmarks_by_name(json_params)
 

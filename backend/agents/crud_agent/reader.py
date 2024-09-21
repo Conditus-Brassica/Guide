@@ -109,44 +109,57 @@ class Reader:
         return result
 
     @staticmethod
-    async def _read_landmarks_by_coordinates(tx, coordinates: List[Dict[str, float]], optional_limit: int = None):
-        """Transaction handler for read_landmarks_by_coordinates"""
+    async def _read_landmarks_by_coordinates_and_name(
+        tx, coordinates_name_list: List[Dict[str, float | str]], optional_limit: int = None
+    ):
+        """Transaction handler for read_landmarks_by_coordinates_and_name"""
         result = await tx.run(
             """
-            UNWIND $coordinates AS coordinate
-            OPTIONAL MATCH (landmark: Landmark)
+            UNWIND $coordinates_name_list AS coordinates_name
+                MATCH (landmark: Landmark)
                 WHERE
-                    landmark.latitude = toFloat(coordinate.latitude) AND 
-                    landmark.longitude = toFloat(coordinate.longitude)
-            RETURN
-                landmark,
-                COLLECT {
-                    MATCH (landmark)-[:REFERS]->(category:LandmarkCategory)
-                    RETURN category.name AS category_name
-                } AS categories_names;
+                    landmark.latitude = toFloat(coordinates_name.latitude) AND 
+                    landmark.longitude = toFloat(coordinates_name.longitude) AND
+                    landmark.name STARTS WITH coordinates_name.name
+                MATCH in_regions_path=((region)<-[:INCLUDE*0..]-(r:Country))
+                WITH landmark, nodes(in_regions_path) AS in_regions_list
+                    ORDER BY landmark.name
+                    LIMIT 1
+                RETURN
+                    landmark,
+                    COLLECT {
+                        MATCH (landmark)-[:REFERS]->(category:LandmarkCategory)
+                        RETURN category.name AS category_name
+                    } AS categories_names,
+                    COLLECT {
+                        UNWIND in_regions_list AS in_region
+                            RETURN in_region.name
+                    } AS in_regions;
             """,
-            coordinates=coordinates
+            coordinates_name_list=coordinates_name_list
         )
         try:
             if optional_limit:
                 result_values = [
-                    record.data("landmark", "categories_names") for record in await result.fetch(optional_limit)
+                    record.data("landmark", "categories_names", "in_regions") for record in await result.fetch(optional_limit)
                 ]
             else:
-                result_values = [record.data("landmark", "categories_names") async for record in result]
+                result_values = [record.data("landmark", "categories_names", "in_regions") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
 
-        await logger.debug(f"method:\t_read_landmarks_by_coordinates,\nresult:\t{await result.consume()}")
+        await logger.debug(f"method:\t_read_landmarks_by_coordinates_and_name,\nresult:\t{await result.consume()}")
         return result_values
 
     @staticmethod
-    async def read_landmarks_by_coordinates(
-            session: AsyncSession, coordinates: List[Dict[str, float]], optional_limit: int = None
+    async def read_landmarks_by_coordinates_and_name(
+            session: AsyncSession, coordinates_name_list: List[Dict[str, float | str]], optional_limit: int = None
     ):
-        result = await session.execute_read(Reader._read_landmarks_by_coordinates, coordinates, optional_limit)
-        await logger.debug(f"method:\tread_landmarks_by_coordinates,\nresult:\t{result}")
+        result = await session.execute_read(
+            Reader._read_landmarks_by_coordinates_and_name, coordinates_name_list, optional_limit
+        )
+        await logger.debug(f"method:\tread_landmarks_by_coordinates_and_name,\nresult:\t{result}")
         return result
 
     @staticmethod
@@ -201,21 +214,30 @@ class Reader:
                 WITH landmark_name
                 MATCH (landmark: Landmark)
                     WHERE landmark.name STARTS WITH landmark_name
-                RETURN landmark
-                    ORDER BY landmark.name ASC
-                    LIMIT 1
+                MATCH (region: Region)<-[:LOCATED]-(landmark)
+                MATCH in_regions_path=((region)<-[:INCLUDE*0..]-(r:Country))
+                RETURN
+                    landmark,
+                    COLLECT {
+                        WITH nodes(in_regions_path) AS in_regions
+                        UNWIND in_regions AS in_region
+                            RETURN in_region.name
+                    } AS in_regions
+                        ORDER BY landmark.name ASC
+                        LIMIT 1
             }
             RETURN
                 landmark,
+                in_regions,
                 COLLECT {
                     MATCH (landmark)-[:REFERS]->(category:LandmarkCategory)
                     RETURN category.name AS category_name
-                } AS categories_names;
+                } AS categories_names; 
             """,
             landmark_names=landmark_names
         )
         try:
-            result_values = [record.data("landmark", "categories_names") async for record in result]
+            result_values = [record.data("landmark", "categories_names", "in_regions") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -236,12 +258,19 @@ class Reader:
             """
             MATCH (landmark: Landmark)
                 WHERE landmark.name STARTS WITH $landmark_name
+            MATCH (region: Region)<-[:LOCATED]-(landmark)
+            MATCH in_regions_path=((region)<-[:INCLUDE*0..]-(r:Country))
             RETURN
                 landmark,
                 COLLECT {
                     MATCH (landmark)-[:REFERS]->(category:LandmarkCategory)
                     RETURN category.name AS category_name
-                } AS categories_names 
+                } AS categories_names,
+                COLLECT {
+                    WITH nodes(in_regions_path) AS in_regions
+                    UNWIND in_regions AS in_region
+                        RETURN in_region.name
+                } AS in_regions
                     ORDER BY landmark.name ASC
                     LIMIT $limit
             """,
@@ -249,7 +278,7 @@ class Reader:
             limit=limit
         )
         try:
-            result_values = [record.data("landmark", "categories_names") async for record in result]
+            result_values = [record.data("landmark", "categories_names", "in_regions") async for record in result]
         except IndexError as ex:
             await logger.error(f"Index error, args: {ex.args[0]}")
             result_values = []
@@ -654,7 +683,6 @@ class Reader:
                     OPTIONAL MATCH (note_category: NoteCategory)<-[:NOTE_REFERS]-(note)
                     RETURN note_category.name
                 } AS note_category_names
-                    ORDER BY route.index_id
             """,
             note_title=note_title
         )
@@ -702,8 +730,7 @@ class Reader:
                 RETURN note_category.name
             } AS note_category_names
                 ORDER BY 
-                    note.last_update DESC,
-                    route.index_id ASC
+                    note.last_update DESC
             """,
             skip=skip, limit=limit
         )
@@ -760,8 +787,7 @@ class Reader:
                         RETURN note_category.name
                     } AS note_category_names
                         ORDER BY 
-                            note.last_update DESC,
-                            route.index_id ASC
+                            note.last_update DESC;
             """,
             note_categories_names=note_categories_names, skip=skip, limit=limit
         )

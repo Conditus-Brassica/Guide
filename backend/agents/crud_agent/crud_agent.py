@@ -135,26 +135,30 @@ class CRUDAgent(PureCRUDAgent):
             return []  # raise ValidationError
 
     @classmethod
-    async def get_landmarks_by_coordinates(cls, json_params: Dict):
-        async def session_runner(coordinates: List[Dict[str, float]], optional_limit: int = None):
+    async def get_landmarks_by_coordinates_and_name(cls, json_params: Dict):
+        async def session_runner(
+            coordinates_name_list: List[Dict[str, float | str]], optional_limit: int = None
+        ):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
-                return await cls._reader.read_landmarks_by_coordinates(session, coordinates, optional_limit)
+                return await cls._reader.read_landmarks_by_coordinates_and_name(
+                    session, coordinates_name_list, optional_limit
+                )
 
         try:
-            validate(json_params, get_landmarks_by_coordinates_json)
+            validate(json_params, get_landmarks_by_coordinates_and_name_json)
             json_params["optional_limit"] = json_params.get("optional_limit", None)
             if json_params["optional_limit"] and json_params["optional_limit"] <= 0:
                 raise ValidationError("optional_limit can\'t be less or equal to zero")
             return await asyncio.shield(
-                session_runner(json_params["coordinates"], json_params["optional_limit"])
+                session_runner(json_params["coordinates_name_list"], json_params["optional_limit"])
             )
         except ValidationError as ex:
-            await logger.error(f"get_landmarks_by_coordinates. "
+            await logger.error(f"get_landmarks_by_coordinates_and_name. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
             return []  # raise ValidationError
 
     @classmethod
-    async def ge86t_landmarks_by_name_list(cls, json_params: Dict):
+    async def get_landmarks_by_name_list(cls, json_params: Dict):
         async def session_runner(landmark_names: List[str]):
             async with cls._kb_driver.session(database=cls._knowledgebase_name) as session:
                 return await cls._reader.read_landmarks_by_name_list(session, landmark_names)

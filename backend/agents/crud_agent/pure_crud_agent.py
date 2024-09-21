@@ -106,16 +106,17 @@ class PureCRUDAgent(ABC):
 
     @classmethod
     @abstractmethod
-    async def get_landmarks_by_coordinates(cls, json_params: Dict):
+    async def get_landmarks_by_coordinates_and_name(cls, json_params: Dict):
         """
-        Returns from kb landmarks with given coordinates.
+        Returns from kb landmarks with given coordinates and name.
         Works asynchronously.
 
         :param json_params: Dict in form {
-                "coordinates": List [
+                "coordinates_name_list": List [
                     Dict [
                         "latitude": float,
-                        "longitude": float
+                        "longitude": float,
+                        "name": str
                     ]
                 ],
                 "optional_limit": int | None
@@ -124,9 +125,10 @@ class PureCRUDAgent(ABC):
             List [
                 Dict[
                     "landmark": Dict | None,
-                    "categories_names": List[str] | [] (empty list)
+                    "categories_names": List[str] | [] (empty list),
+                    "in_regions": List["str"] | []
                 ]
-            ],  where categories_names are categories of landmark
+            ],  where categories_names are categories of landmark, in_regions - names of regions, where landmark is located
         """
         raise NotImplementedError
 
@@ -144,9 +146,10 @@ class PureCRUDAgent(ABC):
             List [
                 Dict[
                     "landmark": Dict | None,
-                    "categories_names": List[str] | [] (empty list)
+                    "categories_names": List[str] | [] (empty list),
+                    "in_regions": List["str"] | []
                 ]
-            ],  where categories_names are categories of landmark
+            ],  where categories_names are categories of landmark, in_regions - names of regions, where landmark is located
         """
         raise NotImplementedError
 
@@ -165,9 +168,10 @@ class PureCRUDAgent(ABC):
             List [
                 Dict[
                     "landmark": Dict | None,
-                    "categories_names": List[str] | [] (empty list)
+                    "categories_names": List[str] | [] (empty list),
+                    "in_regions": List["str"] | []
                 ]
-            ],  where categories_names are categories of landmark
+            ],  where categories_names are categories of landmark, in_regions - names of regions, where landmark is located
         """
         raise NotImplementedError
 
