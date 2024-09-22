@@ -50,14 +50,14 @@ class Creator:
         result = await tx.run(
             """
             MATCH (guideAccount: UserAccount&GuideAccount WHERE guideAccount.login STARTS WITH $guide_login)
-            WITH guideAccount
+            WITH guideAccount, datetime() AS now_time
                 ORDER BY guideAccount.login ASC
                 LIMIT 1
                 
-            CREATE (guideAccount)-[:AUTHOR]->(note: Note {title: $note_title, last_update: datetime(), id_code: guideAccount.last_note_id_code + 1})
+            CREATE (guideAccount)-[:AUTHOR]->(note: Note {title: $note_title, created_at: now_time, last_update: now_time, id_code: guideAccount.last_note_id_code + 1})
             
             WITH guideAccount, note
-    
+            
             WITH 
                 note,
                 guideAccount,
