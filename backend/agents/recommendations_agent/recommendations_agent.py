@@ -199,25 +199,12 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
 
     @staticmethod
-    def _outdated_remove_nones_from_kb_result(kb_pre_recommendations: List) -> List:
-        """Changes list"""
+    def _remove_nones_from_kb_result(kb_pre_recommendations: List) -> List:
+        """Returns changed list, that doesn't include None values"""
         return [
             kb_pre_recommendations[i] for i in range(len(kb_pre_recommendations))
             if kb_pre_recommendations[i]["recommendation"]
         ]
-
-
-    @staticmethod
-    def _remove_nones_from_kb_result(kb_pre_recommendations: List) -> None:
-        """Changes list"""
-        i = 0
-        len_bound = len(kb_pre_recommendations)
-        while i < len_bound:
-            if kb_pre_recommendations[i]["recommendation"] is None:
-                kb_pre_recommendations.pop(i)
-                len_bound -= 1
-                continue
-            i += 1
 
 
     @staticmethod
@@ -230,26 +217,20 @@ class RecommendationsAgent(PureRecommendationsAgent):
             return False
         return True
 
-
+    
     @staticmethod
-    def _remove_duplicates_from_kb_result(kb_pre_recommendations: List):
+    def _remove_duplicates_from_kb_result(kb_pre_recommendations: List) -> List:
         """Changes list"""
-        i = 0
-        len_bound = len(kb_pre_recommendations)
-        while i < len_bound:
-            j = 0
-            while j < len_bound:
-                if i == j:
-                    j += 1
-                    continue
+        result = []
+        for i in range(len(kb_pre_recommendations)):
+            for j in range(len(result)):
                 if RecommendationsAgent._landmarks_are_equal(
-                        kb_pre_recommendations[i]["recommendation"], kb_pre_recommendations[j]["recommendation"]
+                    kb_pre_recommendations[i]["recommendation"], result[j]["recommendation"]
                 ):
-                    len_bound -= 1
-                    kb_pre_recommendations.pop(j)
-                    continue
-                j += 1
-            i += 1
+                    break
+            else:
+                result.append(kb_pre_recommendations[i])
+        return result
 
 
     @staticmethod
@@ -281,7 +262,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         )
         kb_pre_recommendations = kb_pre_recommendation_asyncio_result.return_value
 
-        self._remove_nones_from_kb_result(kb_pre_recommendations)
+        kb_pre_recommendations = self._remove_nones_from_kb_result(kb_pre_recommendations)
         logger.debug(
             f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
         )
@@ -500,7 +481,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         if not kb_pre_recommendations:
             return kb_pre_recommendations
         
-        self._remove_duplicates_from_kb_result(kb_pre_recommendations)
+        kb_pre_recommendations = self._remove_duplicates_from_kb_result(kb_pre_recommendations)
         logger.debug(
             f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
         )
