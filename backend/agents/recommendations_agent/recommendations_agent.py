@@ -270,13 +270,29 @@ class RecommendationsAgent(PureRecommendationsAgent):
 
 
     @staticmethod
-    def _k_nearest_actions(
-        proto_action: tf.Tensor,
-        real_actions: tf.Tensor,
-        k: int
-    ):
+    def _cosine_distance(proto_action: tf.Tensor, real_actions: tf.Tensor):
         """
-            Finds k actions nearest to the proto-action from the given real_actions_tensor. L2 distance is used to define distance.
+        Scos = (proto_action * real_actions[i]) / ( ||proto_action|| * ||real_actions[i]|| )
+
+        returns: 1 - Scos(proto_actions, real_actions)
+        """
+        proto_action_length = tf.sqrt(
+            tf.reduce_sum(tf.square(proto_action))
+        )  # L2 norm of proto-action
+
+        return 1 - tf.divide(
+            tf.reduce_sum(tf.multiply(proto_action, real_actions), axis=1),  # scalar multiplication
+            tf.multiply(
+                proto_action_length,
+                tf.sqrt(tf.reduce_sum(tf.square(real_actions), axis=1))  # L2 norms of real_actions
+            )  # || proto_action || * || real_actions[i] ||
+        )
+
+
+    @staticmethod
+    def _k_nearest_actions(proto_action: tf.Tensor, real_actions: tf.Tensor, k: int):
+        """
+            Finds k actions nearest to the proto-action from the given real_actions_tensor. Cosine distance is used to define distance.
 
             ###
             1. proto_action: tensorflow.Tensor
@@ -289,31 +305,28 @@ class RecommendationsAgent(PureRecommendationsAgent):
         """
         if k < 1:
             raise AttributeError("k must be int value grater then zero.")
-        l2_distance = tf.sqrt(
-            tf.reduce_sum(
-                tf.square(real_actions, proto_action),
-                axis=1
-            )
-        )
+        distances = RecommendationsAgent._cosine_distance(proto_action, real_actions)
 
         # Finds k nearest actions
         min_distance_list = [
-            None for _ in range(k if k < l2_distance.shape[0] else l2_distance.shape[0])
+            None for _ in range(k if k < distances.shape[0] else distances.shape[0])
         ]
-        for i in range(l2_distance.shape[0]):
+
+        for i in range(distances.shape[0]):
             if i < k:
-                min_distance_list[i] = (l2_distance[i], i)  # pair of distance and index in the real_actions
+                min_distance_list[i] = (distances[i], i)  # pair of distance and index in the real_actions
             else:
                 max_from_min = max(min_distance_list, key=lambda x: x[0])  # finds maximal distance in the list of minimal distances
 
-                if l2_distance[i] < max_from_min[0]:  # max_from_min is pair (distance, index)
+                if distances[i] < max_from_min[0]:  # max_from_min is pair (distance, index)
                     max_from_min_index = min_distance_list.index(max_from_min)
-                    min_distance_list[max_from_min_index] = (l2_distance[i], i)
+                    min_distance_list[max_from_min_index] = (distances[i], i)
 
         return [dist_index[1] for dist_index in min_distance_list]
 
 
-    def _max_critic_values_indexes(self, critic_values, recommendations_amount: int):
+    @staticmethod
+    def _max_critic_values_indexes(critic_values, recommendations_amount: int):
         # Finds indexes of recommendations with the highest Critic value
         if recommendations_amount < critic_values.shape[0]:
             max_critic_values_list = [None for _ in range(recommendations_amount)]
@@ -366,15 +379,17 @@ class RecommendationsAgent(PureRecommendationsAgent):
         # state_for_actions shape is [n, state_dim]. The same state is copied for multiple actions
         state_for_actions = tf.tile(state, [real_actions.shape[0], 1])
 
-        critic_values = self._critic_model(state_for_actions, real_actions)  # critic_values shape is [n, 1]
+        critic_values = self._critic_model([state_for_actions, real_actions])  # critic_values shape is [n, 1]
 
-        max_critic_values_indexes = self._max_critic_values_indexes(critic_values, recommendations_amount)
-        recommendations = [recommendations[index] for index in max_critic_values_indexes]
-        real_actions = tf.gather(real_actions, max_critic_values_indexes)
+        max_critic_value_index_list = self._max_critic_values_indexes(critic_values, recommendations_amount)
+        recommendations = [recommendations[index] for index in max_critic_value_index_list]
+        real_actions = tf.gather(real_actions, max_critic_value_index_list)
                 
         return real_actions, recommendations
 
-    async def _embeddings_for_landmarks(self, landmarks):
+
+    @staticmethod
+    async def _embeddings_for_landmarks(landmarks):
         json_params = {"landmarks": landmarks}
         embeddings_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(get_landmarks_embeddings_task, json_params)
