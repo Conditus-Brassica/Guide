@@ -1,10 +1,10 @@
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 
 const Articles = () => {
   return (
-    <Text style={{ alignItems: "center", justifyContent: "center" }}>
-      Articles!
-    </Text>
+    <View style={{ flex: 1, alignItems: "center", alignSelf: "center" }}>
+      <Text style={{ color: "white" }}>Articles!</Text>
+    </View>
   );
 };
 
