@@ -2,7 +2,6 @@ import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
-import Config from "react-native-config";
 
 const initialPosition = {
   latitude: 53.893009,
@@ -10,9 +9,11 @@ const initialPosition = {
   latitudeDelta: 0.5,
   longitudeDelta: 0.2,
 };
+
+// A lot of test values to ensure everything works as it should
 const origin = { latitude: 37.3318456, longitude: -122.0296002 };
 const destination = { latitude: 37.771707, longitude: -122.4053769 };
-console.log(Config.GOOGLE_MAPS_API_KEY);
+
 export default function App() {
   return (
     <View style={styles.container}>
@@ -24,7 +25,7 @@ export default function App() {
         <MapViewRoute
           origin={origin}
           destination={destination}
-          apiKey={Config.GOOGLE_MAPS_API_KEY ?? ""}
+          apiKey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""}
         />
       </MapView>
     </View>
