@@ -1,7 +1,7 @@
 # Author: Vodohleb04
 import numpy as np
-from backend.agents.recommendations_agent.pure_trainer_agent import PureTrainerAgent
-from backend.agents.recommendations_agent.trainer import Trainer
+from backend.agents.landmarks_recommendation_agent.pure_trainer_agent import PureTrainerAgent
+from backend.agents.landmarks_recommendation_agent.trainer import Trainer
 
 
 class TrainerAgent(PureTrainerAgent):

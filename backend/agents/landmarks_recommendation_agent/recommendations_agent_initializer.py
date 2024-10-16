@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
-from backend.agents.recommendations_agent.ornstein_uhlenbeck_action_noise import OrnsteinUhlenbeckNoise
-from backend.agents.recommendations_agent.recommendations_agent import RecommendationsAgent
+from backend.agents.landmarks_recommendation_agent.ornstein_uhlenbeck_action_noise import OrnsteinUhlenbeckNoise
+from backend.agents.landmarks_recommendation_agent.recommendations_agent import RecommendationsAgent
 
 
 if RecommendationsAgent.recommendations_agent_exists():

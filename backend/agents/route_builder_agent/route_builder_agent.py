@@ -2,7 +2,7 @@ import asyncio
 
 from backend.agents.route_builder_agent.pure_route_builder_agent import PureRouteBuilder
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
-from backend.broker.agents_tasks.recommendations_agent_tasks import \
+from backend.broker.agents_tasks.landmarks_recommendation_agent_tasks import \
     find_recommendations_for_coordinates_and_categories_task
 from backend.broker.agents_tasks.route_generating_tasks import get_optimized_route_task, \
     get_optimized_route_main_points_task

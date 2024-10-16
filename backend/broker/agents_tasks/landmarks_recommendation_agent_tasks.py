@@ -2,7 +2,7 @@
 """Tasks to work with recommendations agent. Use broker to run tasks"""
 from typing import Dict, List
 from ..broker_initializer import BROKER
-from backend.agents.recommendations_agent.recommendations_agent_initializer import RECOMMENDATIONS_AGENT
+from backend.agents.landmarks_recommendation_agent.recommendations_agent_initializer import RECOMMENDATIONS_AGENT
 
 
 @BROKER.task

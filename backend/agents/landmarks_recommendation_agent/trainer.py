@@ -5,7 +5,7 @@ from typing import Tuple, List
 import keras
 import tensorflow as tf
 import numpy as np
-from backend.agents.recommendations_agent.sars_replay_buffer import SARSReplayBuffer
+from backend.agents.landmarks_recommendation_agent.sars_replay_buffer import SARSReplayBuffer
 
 
 class Trainer:

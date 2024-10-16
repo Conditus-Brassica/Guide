@@ -7,8 +7,8 @@ from typing import Dict, List, Tuple
 from copy import copy
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
-import backend.agents.recommendations_agent.recommendations_json_validation as json_validation
-from backend.agents.recommendations_agent.pure_recommendations_agent import PureRecommendationsAgent
+import backend.agents.landmarks_recommendation_agent.recommendations_json_validation as json_validation
+from backend.agents.landmarks_recommendation_agent.pure_recommendations_agent import PureRecommendationsAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 from backend.broker.agents_tasks.embeddings_crud_agent_tasks import get_landmarks_embeddings_task

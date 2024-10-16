@@ -1,12 +1,12 @@
-from recommendations_agent.actor_model import get_actor_model
-from recommendations_agent.critic_model import get_critic_model
-from recommendations_agent.trainer_agent import TrainerAgent
-from recommendations_agent.trainer import Trainer
-from recommendations_agent.sars_replay_buffer import SARSReplayBuffer
+from backend.agents.landmarks_recommendation_agent.actor_model import get_actor_model
+from backend.agents.landmarks_recommendation_agent.critic_model import get_critic_model
+from backend.agents.landmarks_recommendation_agent.trainer_agent import TrainerAgent
+from backend.agents.landmarks_recommendation_agent.trainer import Trainer
+from backend.agents.landmarks_recommendation_agent.sars_replay_buffer import SARSReplayBuffer
 import numpy as np
 import tensorflow as tf
 import keras
-from backend.agents.recommendations_agent.trainer_agent import TrainerAgent
+from backend.agents.landmarks_recommendation_agent.trainer_agent import TrainerAgent
 
 
 if TrainerAgent.trainer_agent_exists():
