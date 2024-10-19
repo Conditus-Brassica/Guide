@@ -5,7 +5,7 @@ Tasks to work with embeddings crud agent
 
 from typing import Dict
 from backend.broker.broker_initializer import BROKER
-from backend.agents.embeddings_crud.embeddings_crud_initializer import EMBEDDINGS_CRUD_AGENT
+from backend.agents.landmark_embeddings_crud.landmark_embeddings_crud_initializer import EMBEDDINGS_CRUD_AGENT
 
 # Read tasks
 @BROKER.task
