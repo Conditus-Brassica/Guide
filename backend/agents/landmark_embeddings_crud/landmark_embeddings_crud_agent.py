@@ -113,8 +113,8 @@ class LandmarkEmbeddingsCRUD(PureLandmarkEmbeddingsCRUDAgent):
                 ]
             ]
         ]
-            - landmarks, for wich the embedding is returned
-        returns: Coroutine List[List[float]]
+            - landmarks, for which the embeddings are returned
+        :returns: Coroutine List[List[float]]
         """
         try:
             validate(json_params, get_landmarks_embeddings)
