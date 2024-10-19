@@ -21,7 +21,7 @@ class Creator:
     """
 
     @staticmethod
-    async def _write_user(tx, user_login: str) -> bool:
+    async def _write_user(tx, user_login: str):
         """Transaction handler for write_user"""
         result = await tx.run(
             """
