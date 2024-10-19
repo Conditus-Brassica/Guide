@@ -2,11 +2,9 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List
 import keras
-import numpy as np
-import tensorflow as tf
 
 
-class PureRecommendationsAgent(ABC):
+class PureLandmarkRecAgent(ABC):
     """
     Pure abstract class of Recommendations agent. Provides methods for commands from the other agents.
 

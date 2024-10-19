@@ -1,78 +1,60 @@
 # Author: Vodohleb04
-import numpy as np
-from backend.agents.landmarks_recommendation_agent.pure_trainer_agent import PureTrainerAgent
-from backend.agents.landmarks_recommendation_agent.trainer import Trainer
+from abc import ABC, abstractmethod
 
 
-class TrainerAgent(PureTrainerAgent):
-    _single_trainer = None
-    _trainer: Trainer = None
+class PureLandmarkTrainerAgent(ABC):
+    """
+    Pure abstract class of Trainer agent. Provides methods for commands from the other agents.
+
+    All methods work asynchronously.
+    """
 
     @classmethod
+    @abstractmethod
     def get_trainer_agent(cls):
-        return cls._single_trainer
+        """
+        Method to take landmark_trainer agent object. Returns None in case when landmark_trainer agent is not exists.
+        :return: None | PureRecommendationsAgent
+        """
+        raise NotImplementedError
 
     @classmethod
+    @abstractmethod
     def trainer_agent_exists(cls) -> bool:
-        """Method to check if trainer object already exists"""
-        if cls._single_trainer:
-            return True
-        else:
-            return False
+        """Method to check if landmark_trainer agent object already exists"""
+        raise NotImplementedError
 
-    @classmethod
-    def _class_init(
-            cls, trainer: Trainer
-    ):
-        cls._trainer = trainer
 
-    def __init__(self, trainer: Trainer):
-        
-        if not self._single_trainer:
-            self._class_init(trainer)
-            self._single_trainer = self
-        else:
-            raise RuntimeError("Unexpected behaviour, this class can have only one instance")
-        
-    
     async def get_actor_model_config(self):
-        return {"actor_model_config": self._trainer.get_actor_model_config()}
+        raise NotImplementedError
     
 
     async def get_actor_model(self):
-        return {
-            "actor_model": [
-                weight.tolist() for weight in self._trainer.actor_model.get_weights()
-            ]
-        }
+        raise NotImplementedError
 
     
     async def set_actor_model(self, json_params):
-        self._trainer.actor_model = json_params["actor_model"]
+        raise NotImplementedError
 
 
     async def get_critic_model_config(self):
-        return {"critic_model_config": self._trainer.get_critic_model_config()}
+        raise NotImplementedError
 
     
     async def get_critic_model(self):
-        return {
-            "critic_model": [
-                weight.tolist() for weight in self._trainer.critic_model.get_weights()
-            ]
-        }
+        raise NotImplementedError
     
     
     async def set_critic_model(self, json_params):
-        self._trainer.critic_model = json_params["actor_model"]
-
+        raise NotImplementedError
+    
     
     async def get_tau(self):
-        return {"tau": self._trainer.tau}
+        raise NotImplementedError
     
     
     async def set_tau(self, json_params):
-        self._trainer.tau = json_params["tau"]
+        raise NotImplementedError
 
 
     async def partial_record(self, json_params):
@@ -85,11 +67,8 @@ class TrainerAgent(PureTrainerAgent):
 
         returns: Tuple[int, uuid.hex] - index of row in buffer and hex of uuid of the row.
         """
-        
-        return self._trainer.partial_record(
-            np.asarray(json_params["state"], dtype=self._trainer.np_dtype),
-            np.asarray(json_params["action"], dtype=self._trainer.np_dtype)
-        )
+        raise NotImplementedError
+    
     
     async def partial_record_list(self, json_params):
         """
@@ -102,13 +81,8 @@ class TrainerAgent(PureTrainerAgent):
 
         returns: Tuple[List[int], List[uuid.hex]] - indices of rows in buffer and hex of uuids of the rows in buffer.
         """
-        return self._trainer.partial_record_list(
-            np.asarray(json_params["state"], dtype=self._trainer.np_dtype), 
-            [
-                np.asarray(json_params["action_list"][i], dtype=self._trainer.np_dtype)
-                for i in range(len(json_params["action_list"]))
-            ]
-        )
+        raise NotImplementedError
+    
     
     async def fill_up_partial_record(self, json_params):
         """
@@ -118,18 +92,14 @@ class TrainerAgent(PureTrainerAgent):
         1. row_index_list: int
             - index of the row in buffer (such index is returned as result of partial_record method) 
         2. row_uuid_list: uuid.hex
-            -hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
+            - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
         3. reward: float
         4. next_state: List[float]
 
         returns: bool - True if hex of uuid is correct, False otherwise
         """
-        return self._trainer.fill_up_partial_record(
-            json_params["row_index"],
-            json_params["row_uuid"],
-            self._trainer.np_dtype(json_params["reward"]),
-            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
-        )
+        raise NotImplementedError
+    
     
     async def fill_up_partial_record_list(self, json_params):
         """
@@ -145,15 +115,8 @@ class TrainerAgent(PureTrainerAgent):
 
         returns: List[bool] - True if hex of uuid is correct, False otherwise
         """
-        return self._trainer.fill_up_partial_record_list(
-            json_params["row_index_list"],
-            json_params["row_uuid_list"],
-            [
-                self._trainer.np_dtype(json_params["reward_list"][i])
-                for i in range(len(json_params["reward_list"]))
-            ],
-            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
-        )  
+        raise NotImplementedError
+    
 
     async def fill_up_partial_record_no_index(self, json_params):
         """
@@ -167,11 +130,7 @@ class TrainerAgent(PureTrainerAgent):
 
         returns: bool - True if hex of uuid was found out, False otherwise
         """
-        return self._trainer.fill_up_partial_record_no_index(
-            json_params["row_uuid"],
-            self._trainer.np_dtype(json_params["reward"]),
-            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
-        )
+        raise NotImplementedError
     
 
     async def fill_up_partial_record_list_no_index(self, json_params):
@@ -186,15 +145,8 @@ class TrainerAgent(PureTrainerAgent):
 
         returns: List[bool] - True if hex of uuid was found out, False otherwise
         """
-        return self._trainer.fill_up_partial_record_list_no_index(
-            json_params["row_uuid_list"],
-            [
-                self._trainer.np_dtype(json_params["reward_list"][i])
-                for i in range(len(json_params["reward_list"]))
-            ],
-            np.asarray(json_params["next_state"], dtype=self._trainer.np_dtype)
-        )
-        
+        raise NotImplementedError
+    
 
     async def record(self, json_params):
         """
@@ -205,14 +157,7 @@ class TrainerAgent(PureTrainerAgent):
 
         :returns: Tuple[int, uuid.hex] - row index, hex of uuid of the row
         """
-        return self._trainer.record(
-            (
-                np.asarray(json_params["sars_tuple"][0], dtype=self._trainer.np_dtype),
-                np.asarray(json_params["sars_tuple"][1], dtype=self._trainer.np_dtype),
-                self._trainer.np_dtype(json_params["sars_tuple"][2]),
-                np.asarray(json_params["sars_tuple"][3], dtype=self._trainer.np_dtype),
-            )
-        )
+        raise NotImplementedError
     
 
     async def record_list(self, json_params):
@@ -224,17 +169,7 @@ class TrainerAgent(PureTrainerAgent):
 
         :returns: Tuple[List[int], List[uuid.hex]] - row index, hex of uuid of the row
         """
-        return self._trainer.record_list(
-            [
-                (
-                    np.asarray(json_params["sars_tuple_list"][i][0], dtype=self._trainer.np_dtype),
-                    np.asarray(json_params["sars_tuple_list"][i][1], dtype=self._trainer.np_dtype),
-                    self._trainer.np_dtype(json_params["sars_tuple_list"][i][2]),
-                    np.asarray(json_params["sars_tuple_list"][i][3], dtype=self._trainer.np_dtype),
-                )
-                for i in range(len(json_params["sars_tuple_list"]))
-            ]
-        )
+        raise NotImplementedError
 
 
     async def train(self, json_params):
@@ -243,17 +178,7 @@ class TrainerAgent(PureTrainerAgent):
 
         :repeat_amount: int > 0 - amount of repeats of training
         """
-
-        self._trainer.train(json_params["repeat_amount"])
-
-        return {
-            "actor_model": [
-                weight.tolist() for weight in self._trainer.actor_model.get_weights()
-            ],
-            "critic_model": [
-                weight.tolist() for weight in self._trainer.critic_model.get_weights()
-            ]
-        }
+        raise NotImplementedError
     
 
     async def get_state(self, json_params):
@@ -265,9 +190,4 @@ class TrainerAgent(PureTrainerAgent):
 
         :returns: List[float] | None
         """
-        state = self._trainer.get_state(json_params["row_index"], json_params["row_uuid"])
-        if state is not None:
-            return state.tolist()
-        else:
-            return state    
-        
+        raise NotImplementedError

@@ -7,11 +7,11 @@ from typing import Dict, List, Tuple
 from copy import copy
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
-import backend.agents.landmarks_recommendation_agent.recommendations_json_validation as json_validation
-from backend.agents.landmarks_recommendation_agent.pure_recommendations_agent import PureRecommendationsAgent
+import backend.agents.recommendation_systems.landmark_rec_agent.landmark_rec_json_validation as json_validation
+from backend.agents.recommendation_systems.landmark_rec_agent.pure_landmark_rec_agent import PureLandmarkRecAgent
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
-from backend.broker.agents_tasks.embeddings_crud_agent_tasks import get_landmarks_embeddings_task
+from backend.broker.agents_tasks.landmark_embeddings_crud_agent_tasks import get_landmarks_embeddings_task
 from backend.broker.agents_tasks.trainer_tasks import (
     partial_record_list, fill_up_partial_record_list,
     record_list,
@@ -27,7 +27,7 @@ logger = JsonLogger.with_default_handlers(
 )
 
 
-class RecommendationsAgent(PureRecommendationsAgent):
+class LandmarkRecAgent(PureLandmarkRecAgent):
     _single_recommendations_agent = None
 
     @classmethod
@@ -224,7 +224,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         result = []
         for i in range(len(kb_pre_recommendations)):
             for j in range(len(result)):
-                if RecommendationsAgent._landmarks_are_equal(
+                if LandmarkRecAgent._landmarks_are_equal(
                     kb_pre_recommendations[i]["recommendation"], result[j]["recommendation"]
                 ):
                     break
@@ -305,7 +305,7 @@ class RecommendationsAgent(PureRecommendationsAgent):
         """
         if k < 1:
             raise AttributeError("k must be int value grater then zero.")
-        distances = RecommendationsAgent._cosine_distance(proto_action, real_actions)
+        distances = LandmarkRecAgent._cosine_distance(proto_action, real_actions)
 
         # Finds k nearest actions
         min_distance_list = [

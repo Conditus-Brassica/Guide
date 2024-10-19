@@ -2,7 +2,7 @@
 """Tasks to work with recommendations agent. Use broker to run tasks"""
 from typing import Dict, List
 from ..broker_initializer import BROKER
-from backend.agents.landmarks_recommendation_agent.recommendations_agent_initializer import RECOMMENDATIONS_AGENT
+from backend.agents.recommendation_systems.landmark_rec_agent.landmark_rec_agent_initializer import LANDMARK_REC_AGENT
 
 
 @BROKER.task
@@ -37,7 +37,7 @@ async def find_recommendations_for_coordinates_task(json_params: Dict):
             }
         ] or empty List
     """
-    return await RECOMMENDATIONS_AGENT.find_recommendations_by_coordinates(json_params)
+    return await LANDMARK_REC_AGENT.find_recommendations_by_coordinates(json_params)
 
 
 @BROKER.task
@@ -71,7 +71,7 @@ async def post_result_of_recommendations(
             "user_reward": float | int 
         ]
         """
-        return await RECOMMENDATIONS_AGENT.post_result_of_recommendations(json_params)
+        return await LANDMARK_REC_AGENT.post_result_of_recommendations(json_params)
 
 
 @BROKER.task
@@ -92,13 +92,13 @@ async def count_new_watch_state(json_params) -> List[float]:
         "watch_state": List[float]
     ]   
 
-    new_watched_landmarks - landmarks, that causes changing of the state (the most left is the most old watched from the new watched)
+    new_watched_landmarks - landmarks, that causes changing of the state (the most left is the oldest watched from the new watched)
         
     watch_state - List of float, old state 
                 
     returns: List[float] - new state
     """
-    return await RECOMMENDATIONS_AGENT.count_new_watch_state(json_params)
+    return await LANDMARK_REC_AGENT.count_new_watch_state(json_params)
         
 
 @BROKER.task   
@@ -119,11 +119,11 @@ async def count_new_visit_state(json_params: Dict) -> List[float]:
         "visit_state": List[float]
     ]   
 
-    new_visited_landmarks - landmarks, that causes changing of the state (the most left is the most old visited from the new visited)
+    new_visited_landmarks - landmarks, that causes changing of the state (the most left is the oldest visited from the new visited)
         
     visit_state - List of float, old state 
                 
     returns: List[float] - new state
     """
-    return await RECOMMENDATIONS_AGENT.count_new_visit_state(json_params)
+    return await LANDMARK_REC_AGENT.count_new_visit_state(json_params)
 
