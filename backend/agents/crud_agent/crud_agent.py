@@ -423,6 +423,7 @@ class CRUDAgent(PureCRUDAgent):
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
             return []  # raise ValidationError
 
+
     # Write queries
 
     @classmethod
@@ -439,7 +440,7 @@ class CRUDAgent(PureCRUDAgent):
         except ValidationError as ex:
             await logger.error(f"put_user. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
-            return []  # raise ValidationError
+            return {"result": False}  # raise ValidationError
 
     @classmethod
     async def put_note(cls, json_params: Dict):
@@ -464,7 +465,7 @@ class CRUDAgent(PureCRUDAgent):
         except ValidationError as ex:
             await logger.error(f"put_note. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
-            return []  # raise ValidationError
+            return {"result": False}  # raise ValidationError
 
     @classmethod
     async def put_route_for_note(cls, json_params: Dict):
@@ -485,7 +486,7 @@ class CRUDAgent(PureCRUDAgent):
         except ValidationError as ex:
             await logger.error(f"put_route_for_note. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
-            return []  # raise ValidationError
+            return {"result": False}  # raise ValidationError
 
     @classmethod
     async def put_route_saved_by_user(cls, json_params: Dict):
@@ -503,7 +504,7 @@ class CRUDAgent(PureCRUDAgent):
         except ValidationError as ex:
             await logger.error(f"put_route_saved_by_user. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
-            return []  # raise ValidationError
+            return {"result": False}  # raise ValidationError
 
     @classmethod
     async def put_saved_relationship_for_existing_route(cls, json_params: Dict):
@@ -521,4 +522,4 @@ class CRUDAgent(PureCRUDAgent):
         except ValidationError as ex:
             await logger.error(f"put_saved_relationship_for_existing_route. "
                                f"Validation error on json, args: {ex.args[0]}, json_params: {json_params}")
-            return []  # raise ValidationError
+            return {"result": False}  # raise ValidationError
