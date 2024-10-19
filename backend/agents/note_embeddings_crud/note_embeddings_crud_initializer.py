@@ -1,14 +1,18 @@
 # Author: Vodohleb04
 
-from sqlalchemy.ext.asyncio import create_async_engine
-from backend.agents.landmark_embeddings_crud.landmark_embeddings_crud_agent import LandmarkEmbeddingsCRUD
+import chromadb
 from backend.agents.note_embeddings_crud.note_embeddings_crud_agent import NoteEmbeddingsCRUD
 
 if LandmarkEmbeddingsCRUD.embeddings_crud_exists():
-    EMBEDDINGS_CRUD_AGENT = NoteEmbeddingsCRUD.get_embeddings_crud()
+    NOTE_EMBEDDINGS_CRUD_AGENT = NoteEmbeddingsCRUD.get_embeddings_crud()
     print("Embeddings crud is already exists")
 else:
-    db_engine = create_async_engine("postgresql+asyncpg://postgres:ostisGovno@0.0.0.0:5432/postgres")
-    EMBEDDINGS_CRUD_AGENT = NoteEmbeddingsCRUD(db_engine)
+    embedding_db_client = await chromadb.AsyncHttpClient(
+        host="localhost", port=1000
+    )
+    embedding_collection = await embedding_db_client.get_or_create_collection(
+        name="note_embedding_collection", metadata={"hnsw:space": "cosine"}
+    )
+    NOTE_EMBEDDINGS_CRUD_AGENT = NoteEmbeddingsCRUD(embedding_collection)
     print("Embeddings crud was created")
     
