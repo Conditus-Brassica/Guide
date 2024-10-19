@@ -18,6 +18,7 @@ logger = JsonLogger.with_default_handlers(
 
 
 class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
+    _asyncio_tasks = None
     _cache = None
     _result = None
     _sectors = None
@@ -32,6 +33,7 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
     _single_landmarks_agent = None
 
     def __init__(self):
+        self._asyncio_tasks = set()
         self._cache = {self.MAP_SECTORS_NAMES: set(), self.CATEGORIES_NAMES: set()}
         self._result = {}
         self._sectors = {}
@@ -65,6 +67,9 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
                 {"region_name": "Беларусь"}
             )
         )
+        cls._asyncio_tasks.add(_region_sectors_async_task)
+        _region_sectors_async_task.add_done_callback(cls._asyncio_tasks.discard)
+
         result_task = await _region_sectors_async_task
         cls._sectors = result_task.return_value
 
@@ -89,6 +94,9 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
                     squares_in_sector
                 )
             )
+            cls._asyncio_tasks.add(landmarks_sectors_async_task)
+            landmarks_sectors_async_task.add_done_callback(cls._asyncio_tasks.discard)
+
             result_task = await landmarks_sectors_async_task
             cls._result = result_task.return_value
         return cls._result
@@ -113,6 +121,9 @@ class LandmarksBySectorsAgent(PURELandmarksBySectorsAgent):
                     landmarks_of_categories_in_map_sectors_task, squares_in_sector
                 )
             )
+            cls._asyncio_tasks.add(landmarks_sectors_categories_async_task)
+            landmarks_sectors_categories_async_task.add_done_callback(cls._asyncio_tasks.discard)
+
             result_task = await landmarks_sectors_categories_async_task
             cls._result = result_task.return_value
         return cls._result

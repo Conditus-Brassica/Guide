@@ -23,6 +23,7 @@ class RequestAgent:
     """
 
     def __init__(self, flask_app: Quart):
+        self._asyncio_tasks = set()
         self.__app__ = flask_app
         self.__handle__()
 
@@ -65,6 +66,8 @@ class RequestAgent:
             task = asyncio.create_task(
                 AbstractAgentsBroker.call_agent_task(get_landmarks_in_sector_task, param)
             )
+            self._asyncio_tasks.add(task)
+            task.add_done_callback(self._asyncio_tasks.discard)
 
             res = await task
             res = res.return_value
@@ -148,6 +151,8 @@ class RequestAgent:
                     build_route, param
                 )
             )
+            self._asyncio_tasks.add(task)
+            task.add_done_callback(self._asyncio_tasks.discard)
 
             res = await task
 

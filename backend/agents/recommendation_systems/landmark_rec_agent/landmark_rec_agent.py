@@ -79,6 +79,8 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             final_reward = reward_function(user_reward)
         """
         if not self.recommendations_agent_exists():
+            self._asyncio_tasks = set()
+
             self._actor_critic_are_inited = False
             self._actor_model: keras.Model | None = None
             self._critic_model: keras.Model | None = None
@@ -255,6 +257,9 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         recommendations_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(crud_recommendations_by_coordinates_task, json_params)
         )
+        self._asyncio_tasks.add(recommendations_async_task)
+        recommendations_async_task.add_done_callback(self._asyncio_tasks.discard)
+
         kb_pre_recommendation_asyncio_result = await recommendations_async_task
         logger.debug(
             f"Recommendations agent, find_recommendations_for_coordinates, "
@@ -388,12 +393,14 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         return real_actions, recommendations
 
 
-    @staticmethod
-    async def _embeddings_for_landmarks(landmarks):
+    async def _embeddings_for_landmarks(self, landmarks):
         json_params = {"landmarks": landmarks}
         embeddings_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(get_landmarks_embeddings_task, json_params)
         )
+        self._asyncio_tasks.add(embeddings_async_task)
+        embeddings_async_task.add_done_callback(self._asyncio_tasks.discard)
+
         embeddings_asyncio_result = await embeddings_async_task
         logger.debug(
             f"Recommendations agent, _embeddings_for_landmarks, "
@@ -537,7 +544,8 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         return primary_recommendations, result_recommendations
     
 
-    async def _fill_up_partial_record_list_task(self, row_index_list, row_uuid_list, reward_list, next_state):
+    @staticmethod
+    async def _fill_up_partial_record_list_task(row_index_list, row_uuid_list, reward_list, next_state):
         fill_up_partial_record_list_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 fill_up_partial_record_list,
@@ -557,7 +565,8 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         return np.asarray((await get_state_async_task).return_value, dtype=self._np_dtype)
     
 
-    async def _record_list_task(self, sars_tuple_list):
+    @staticmethod
+    async def _record_list_task(sars_tuple_list):
         record_list_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 record_list, {"sars_tuple_list": sars_tuple_list}
