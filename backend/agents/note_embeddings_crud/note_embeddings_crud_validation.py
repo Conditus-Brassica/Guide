@@ -15,8 +15,8 @@ get_nearest_notes = \
             },
             "additionalProperties": False
         },
-        "limit": "number",
-        "return_embeddings": "bool"
+        "limit": {"type": "number"},
+        "return_embeddings": {"type": "boolean"}
     },
     "required": [
         "note_embedding", "limit"
@@ -41,7 +41,7 @@ add_note_embedding = \
             },
             "additionalProperties": False
         },
-        "note_title": "string"
+        "note_title": {"type": "string"}
     },
     "required": [
         "note_embedding", "note_title"
@@ -66,7 +66,7 @@ update_note_embedding = \
             },
             "additionalProperties": False
         },
-        "note_title": "string"
+        "note_title": {"type": "string"}
     },
     "required": [
         "note_embedding", "note_title"
