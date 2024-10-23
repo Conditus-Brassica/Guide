@@ -51,8 +51,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
     def __init__(
         self,
         tf_dtype: tf.DType, np_dtype: np.dtype, noise_object = None,
-        watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9,
-        reward_function = None
+        watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9
     ):
         """
 
@@ -69,14 +68,6 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             - discount factor of watch state (check RecommendationsAgent.count_new_watch_state method)
         5. *visit_state_discount_factor: float [DEFAULT = 0.9]
             - discount factor of visit state (check RecommendationsAgent.count_new_visit_state method)
-        6. *reward_function: [DEFAULT = None]
-            - Callable object to count final reward using user_reward. 
-                Requirements of function:   
-                    -- reward_function(5) = 0;  
-                    -- reward_function(x) < 0, if x < 5;    
-                    -- reward function is strictly increasing function; 
-                    -- reward function returns float;
-            final_reward = reward_function(user_reward)
         """
         if not self.recommendations_agent_exists():
             self._asyncio_tasks = set()
@@ -90,14 +81,8 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             self._watch_state_discount_factor = watch_state_discount_factor
             self._visit_state_discount_factor = visit_state_discount_factor
 
-            self._reward_function = reward_function
-
-            if reward_function:
-                self._min_reward = reward_function(0)
-                self._max_reward = reward_function(5)
-            else:
-                self._min_reward = 0
-                self._max_reward = 5
+            self._min_reward = self.reward_function(0, 0)
+            self._max_reward = self.reward_function(5, 1)
 
             self._tf_dtype = tf_dtype
             self._np_dtype = np_dtype
@@ -105,8 +90,23 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             self._single_recommendations_agent = self
         else:
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
-      
-        
+
+
+    @staticmethod
+    def reward_function(user_reward, used_percentage):
+        """
+            Counts immediate reward in Markov decision process. Takes user reward and percentage of recommended landmarks
+            that were included in the final route.
+
+            :param user_reward: float in range[0, 5] - reward, leaved bu user.
+            :param used_percentage: float in range [0, 1] - percentage of recommended landmarks, that were included in
+            the final route
+
+            :returns: float
+        """
+        return 10 * (used_percentage * user_reward - 5)
+
+
     @property
     async def actor_model(self) -> keras.Model | None:
         return self._actor_model
@@ -516,27 +516,33 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         )
 
 
-    def _count_final_reward(self, user_reward: float):
-        if self._reward_function:
-            user_reward = self._reward_function(user_reward)
-            logger.debug(f"final reward: {user_reward}")
-            return user_reward
-        else:
-            logger.debug(f"final reward: {user_reward}")
-            return user_reward
-        
+    @staticmethod
+    def _count_reward(primary_recommendations, result_recommendations, user_reward):
+        used_percentage = len(primary_recommendations)
+        for primary_recommendation in primary_recommendations:
+            for result_index in range(len(result_recommendations)):
+                if LandmarkRecAgent._landmarks_are_equal(primary_recommendation, result_recommendations[result_index]):
+                    break
+            else:
+                used_percentage -= 1
+        used_percentage = used_percentage / len(primary_recommendations)
+        return LandmarkRecAgent.reward_function(user_reward, used_percentage)
+
 
     def _give_reward_to_recommendations(
         self, primary_recommendations, result_recommendations, user_reward
     ):
         """
         Remove from result_recommendations landmarks that included in primary_recommendations 
-        (primary_recommendations and result_recommendations will be modified) 
+        (primary_recommendations and result_recommendations will be modified). Reward for result_recommendations,
+        that were included by user wil be given in _post_result_recs_to_sars_buffer method.
         """
+        reward = self._count_reward(primary_recommendations, result_recommendations, user_reward)
+
         for primary_recommendation in primary_recommendations:
             for index_in_result in range(len(result_recommendations)):
                 if self._landmarks_are_equal(primary_recommendation, result_recommendations[index_in_result]):
-                    primary_recommendation["reward"] = user_reward
+                    primary_recommendation["reward"] = reward
                     result_recommendations.pop(index_in_result)
                     break
                 else:
@@ -611,12 +617,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
             sars_tuple_list = [None for _ in range(len(result_recommendations))]
             for i in range(len(sars_tuple_list)):
-                sars_tuple_list[i] = (
-                    state,
-                    actions[i],
-                    reward,
-                    next_state
-                )
+                sars_tuple_list[i] = (state, actions[i], reward, next_state)
 
             await self._record_list_task(sars_tuple_list)
 
@@ -634,19 +635,18 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         return (await train_async_task).return_value
 
 
-    async def post_result_of_recommendations(
-            self, json_params
-    ):
+    async def post_result_of_recommendations(self, json_params):
         logger.debug(f"post_result_of_recommendations")
         try:
             self._post_result_of_recommendations_validation(json_params)
         except ValidationError as ex:
             await logger.error(f"post_result_of_recommendations, ValidationError({ex.args[0]})")
             return  # raise ValidationError
-        user_reward = self._count_final_reward(json_params.pop("user_reward"))
 
         primary_recommendations, result_recommendations = self._give_reward_to_recommendations(
-            json_params.pop("primary_recommendations"), json_params.pop("result_recommendations"), user_reward
+            json_params.pop("primary_recommendations"),
+            json_params.pop("result_recommendations"),
+            json_params.pop("user_reward")
         )
 
         next_state = self._concat_state(

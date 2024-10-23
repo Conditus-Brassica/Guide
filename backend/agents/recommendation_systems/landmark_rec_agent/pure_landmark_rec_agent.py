@@ -147,17 +147,21 @@ class PureLandmarkRecAgent(ABC):
 
         ###
         1. json_params: Dict[
-            "primary_recommendations": Dict [
-                "name": str,
-                "latitude": float,
-                "longitude": float,
-                "row_index": int,
-                "row_uuid": uuid.hex
+            "primary_recommendations": List[
+                Dict [
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float,
+                    "row_index": int,
+                    "row_uuid": uuid.hex
+                ]
             ],
-            "result_recommendations": Dict [
-                "name": str,
-                "latitude": float,
-                "longitude": float
+            "result_recommendations": List[
+                Dict [
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float
+                ]
             ],
             "new_watch_state": List[float],
             "new_visit_state": List[float],
