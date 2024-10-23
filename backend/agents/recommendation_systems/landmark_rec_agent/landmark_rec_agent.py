@@ -48,10 +48,35 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             return False
 
 
+    def _default_models_init(self):
+        self._actor_critic_are_inited = False
+        self._requires_training = True
+        self._actor_model: keras.Model | None = None
+        self._critic_model: keras.Model | None = None
+
+
+    def _init_models_from_files(self, actor_weights_file, critic_weights_file):
+        if actor_weights_file is None or critic_weights_file is None:
+            raise ValueError("Both of models( actor and critic) must be inited from files or inited with none (in"
+                             " the second case they will be inited by models used by trainer agent)")
+        if not (isinstance(actor_weights_file, str) and actor_weights_file.endswith(".keras")):
+            raise ValueError(f"Expected actor_weights_file to be name of file with .keras extension, "
+                             f"but got {actor_weights_file} instead")
+        if not (isinstance(critic_weights_file, str) and critic_weights_file.endswith(".keras")):
+            raise ValueError(f"Expected critic_weights_file to be name of file with .keras extension, "
+                             f"but got {critic_weights_file} instead")
+
+        self._actor_model = keras.models.load_model(actor_weights_file)
+        self._critic_model = keras.models.load_model(critic_weights_file)
+        self._actor_critic_are_inited = True
+        self._requires_training = False
+
+
     def __init__(
         self,
         tf_dtype: tf.DType, np_dtype: np.dtype, noise_object = None,
-        watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9
+        watch_state_discount_factor: float = 0.9, visit_state_discount_factor: float = 0.9,
+        actor_weights_file=None, critic_weights_file=None
     ):
         """
 
@@ -72,9 +97,10 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         if not self.recommendations_agent_exists():
             self._asyncio_tasks = set()
 
-            self._actor_critic_are_inited = False
-            self._actor_model: keras.Model | None = None
-            self._critic_model: keras.Model | None = None
+            if actor_weights_file is None and critic_weights_file is None:
+                self._default_models_init()
+            else:
+                self._init_models_from_files(actor_weights_file, critic_weights_file)
 
             self._noise_object = noise_object
 
@@ -637,6 +663,10 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
     async def post_result_of_recommendations(self, json_params):
         logger.debug(f"post_result_of_recommendations")
+        if not self._requires_training:
+            logger.info("RecSys agent doesn't requires training.")
+            return
+
         try:
             self._post_result_of_recommendations_validation(json_params)
         except ValidationError as ex:
