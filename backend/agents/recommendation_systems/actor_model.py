@@ -46,8 +46,10 @@ def get_actor_model(
         hidden = init_hidden_layers(hidden_units, dtype)(hidden)  # _hidden_network = Sequential()
 
     output = layers.Dense(
-        action_size, use_bias=True, kernel_initializer=TANH_INIT, dtype=dtype, activation="tanh"
+        action_size, use_bias=True, kernel_initializer=TANH_INIT, dtype=dtype
     )(hidden)
+
+    output = layers.LayerNormalization()(output)
 
 
     return keras.Model(input_state, output)
