@@ -74,4 +74,20 @@ async def train(json_params):
 async def get_state(json_params):
     return await TRAINER_AGENT.get_state(json_params)
 
+@BROKER.task
+async def remove_record(json_params):
+    return await TRAINER_AGENT.remove_record(json_params)
+
+@BROKER.task
+async def remove_record_list(json_params):
+    return await TRAINER_AGENT.remove_record_list(json_params)
+
+@BROKER.task
+async def remove_record_no_index(json_params):
+    return await TRAINER_AGENT.remove_record_no_index(json_params)
+
+@BROKER.task
+async def remove_record_list_no_index(json_params):
+    return await TRAINER_AGENT.remove_record_list_no_index(json_params)
+
 
