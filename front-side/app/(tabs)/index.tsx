@@ -2,6 +2,7 @@ import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
+import { useMapStore } from "@/hooks/useMapStore";
 
 const initialPosition = {
   latitude: 53.893009,
@@ -11,16 +12,17 @@ const initialPosition = {
 };
 
 // A lot of test values to ensure everything works as it should
-const origin = { latitude: 37.3318456, longitude: -122.0296002 };
-const destination = { latitude: 37.771707, longitude: -122.4053769 };
+const origin = { latitude: 53.893009, longitude: 27.567444 };
+const destination = { latitude: 53.771707, longitude: 25.567444 };
 
 export default function App() {
+  const mapInitialPosition = useMapStore((state) => state.initialPosition);
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        initialRegion={initialPosition}
+        initialRegion={mapInitialPosition}
       >
         <MapViewRoute
           origin={origin}
