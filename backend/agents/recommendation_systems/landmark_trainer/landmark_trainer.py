@@ -259,6 +259,28 @@ class LandmarkTrainer:
         return row_index_list, row_uuid_list
 
 
+    def remove_record(self, row_index, row_uuid):
+        return self._sars_buffer.remove_record(row_index, row_uuid)
+
+
+    def remove_record_list(self, row_index_list, row_uuid_list):
+        result = []
+        for i in range(len(row_index_list)):
+            result.append(self._sars_buffer.remove_record(row_index_list[i], row_uuid_list[i]))
+        return result
+
+
+    def remove_record_no_index(self, row_uuid):
+        return self.remove_record_no_index(row_uuid)
+
+
+    def remove_record_list_no_index(self, row_uuid_list):
+        result = []
+        for i in range(len(row_uuid_list)):
+            result.append(self._sars_buffer.remove_record_no_index(row_uuid_list[i]))
+        return result
+
+
     @staticmethod
     def _update_target_model(target_model, original_model, tau):
         target_weights = target_model.get_weights()

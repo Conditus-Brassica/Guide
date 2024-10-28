@@ -237,6 +237,58 @@ class LandmarkTrainerAgent(PureLandmarkTrainerAgent):
         )
 
 
+    def remove_record(self, json_params):
+        """
+        Removes record from SARS buffer
+
+        :param json_params: - Dict[
+            "row_index": int,
+            "row_uuid": uuid4.hex
+        ]
+
+        :returns: {"result": bool}, True if record was successfully removed
+        """
+        return {"result": self._trainer.remove_record(json_params["row_index"], json_params["row_uuid"])}
+
+
+    def remove_record_list(self, json_params):
+        """
+            Removes records from SARS buffer
+
+            :param json_params: - Dict[
+                "row_index_list": List[int],
+                "row_uuid_list": List[uuid4.hex]
+            ]
+
+            :returns: {"result": List[bool]}, True if record was successfully removed
+        """
+        return {
+            "result": self._trainer.remove_record_list(json_params["row_index_list"], json_params["row_uuid_list"])
+        }
+
+
+    def remove_record_no_index(self, json_params):
+        """
+            Removes record from SARS buffer
+
+            :param json_params: - Dict["row_uuid": uuid4.hex]
+
+            :returns: {"result": bool}, True if record was successfully removed
+        """
+        return {"result": self._trainer.remove_record_no_index(json_params["row_uuid"])}
+
+
+    def remove_record_list_no_index(self, json_params):
+        """
+            Removes records from SARS buffer
+
+            :param json_params: - Dict["row_uuid_list": List[uuid4.hex] ]
+
+            :returns: {"result": List[bool]}, True if record was successfully removed
+        """
+        return {"result": self._trainer.remove_record_list_no_index(json_params["row_uuid_list"])}
+
+
     async def train(self, json_params):
         """
         Start training process if there is any completed record in the sars buffer
