@@ -12,11 +12,12 @@ from backend.agents.recommendation_systems.landmark_rec_agent.pure_landmark_rec_
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_tasks.crud_agent_tasks import crud_recommendations_by_coordinates_task
 from backend.broker.agents_tasks.landmark_embeddings_crud_agent_tasks import get_landmarks_embeddings_task
-from backend.broker.agents_tasks.trainer_tasks import (
-    partial_record_list, fill_up_partial_record_list,
+from backend.broker.agents_tasks.landmark_trainer_tasks import (
+    partial_record_list_with_next_state,
+    fill_up_partial_record_reward_only_list,
+    fill_up_partial_record_reward_only_replace_next_state_list,
     record_list,
-    train,
-    get_state,
+    train, get_state,
     get_actor_model, get_critic_model, get_actor_model_config, get_critic_model_config
 )
 
@@ -224,6 +225,16 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             return tf.convert_to_tensor(result)
         else:
             return result
+
+
+    @staticmethod
+    def _split_state(state: np.ndarray):
+        """
+        Split state on watch_state and visit_state.
+
+        :return: Tuple[np.ndarray, np.ndarray] - watch_state, visit_state
+        """
+        return state[:int(state.shape[0] / 2)], state[:int(state.shape[0] / 2)]
 
 
     @staticmethod
@@ -436,10 +447,43 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         return embeddings_asyncio_result.return_value
 
 
+    def _count_next_states_for_actions(self, watch_state, visit_state, actions, count_using_tensorflow=True):
+        if count_using_tensorflow:
+            watch_state_to_concat = tf.tile(
+                tf.expand_dims(watch_state, axis=0),
+                [actions.shape[0], 1]
+            )
+            next_visit_state = actions + self._visit_state_discount_factor * visit_state
+            return tf.concat((watch_state_to_concat, next_visit_state), axis=1)
+        else:
+            watch_state_to_concat = np.tile(
+                np.expand_dims(watch_state, axis=0),
+                [actions.shape[0], 1]
+            )
+            next_visit_state = actions + self._visit_state_discount_factor * visit_state
+            return np.concatenate((watch_state_to_concat, next_visit_state), axis=1)
+
+
+    @staticmethod
+    async def _partial_record_list_with_next_state_task(state, actions, next_states):
+        partial_record_list_async_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                partial_record_list_with_next_state,
+                json_params={
+                    "state": state.tolist(),
+                    "action_list": [actions[i].numpy().tolist() for i in range(actions.shape[0])],
+                    "next_state_list": [next_states[i].numpy().tolist() for i in range(next_states.shape[0])]
+                }
+            )
+        )
+
+        return (await partial_record_list_async_task).return_value
+
+
     async def _find_recommendations_by_coordinates(
-        self, state: np.ndarray, recommendations, maximum_amount_of_recommendations
+        self, watch_state: np.ndarray, visit_state: np.ndarray, recommendations, maximum_amount_of_recommendations
     ):
-        # state shape is [state_dim]
+        state = self._concat_state((watch_state, visit_state), return_tf_tensor=False)  # state shape is [state_dim]
 
         real_actions = await self._embeddings_for_landmarks(recommendations)
         real_actions = tf.convert_to_tensor(real_actions, dtype=self._tf_dtype)
@@ -447,18 +491,13 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         real_actions, recommendations = self._wolpertinger_policy(
             tf.expand_dims(
                 tf.convert_to_tensor(state, dtype=self._tf_dtype), axis=0
-            ),
+            ),  # expands state shape to [1, state_dim]
             real_actions, recommendations, maximum_amount_of_recommendations
-        )  # expands state shape to [1, state_dim]
-
-        partial_record_list_async_task = asyncio.create_task(
-            AbstractAgentsBroker.call_agent_task(
-                partial_record_list,
-                {"state": state.tolist(), "action_list": [real_actions[i].numpy().tolist() for i in range(real_actions.shape[0])]}
-            )
         )
 
-        index_list, uuid_list = (await partial_record_list_async_task).return_value
+        next_states = self._count_next_states_for_actions(watch_state, visit_state, real_actions)
+        index_list, uuid_list = await self._partial_record_list_with_next_state_task(state, real_actions, next_states)
+
         for i in range(len(index_list)):
             recommendations[i]["row_index"] = index_list[i]
             recommendations[i]["row_uuid"] = uuid_list[i]
@@ -517,13 +556,9 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         
         maximum_amount_of_recommendations = json_params.pop("maximum_amount_of_recommendations")
         json_params["limit"] = maximum_amount_of_recommendations * 4  # TODO if 400% is enough
-        
-        state = self._concat_state(
-            (
-                np.asarray(json_params.pop("watch_state"), dtype=self._np_dtype),
-                np.asarray(json_params.pop("visit_state"), dtype=self._np_dtype)
-            ), return_tf_tensor=False
-        )            
+
+        watch_state = np.asarray(json_params.pop("watch_state"), dtype=self._np_dtype)
+        visit_state = np.asarray(json_params.pop("visit_state"), dtype=self._np_dtype)
 
         kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates(json_params)
         if not kb_pre_recommendations:
@@ -538,7 +573,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             await self._init_actor_critic_models()
             
         return await self._find_recommendations_by_coordinates(
-            state, kb_pre_recommendations, maximum_amount_of_recommendations
+            watch_state, visit_state, kb_pre_recommendations, maximum_amount_of_recommendations
         )
 
 
@@ -569,32 +604,49 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             for index_in_result in range(len(result_recommendations)):
                 if self._landmarks_are_equal(primary_recommendation, result_recommendations[index_in_result]):
                     primary_recommendation["reward"] = reward
+                    primary_recommendation["change_next_state"] = False
                     result_recommendations.pop(index_in_result)
                     break
-                else:
-                    primary_recommendation["reward"] = self._min_reward  # Min reward for landmarks, removed from route by user
+            else:
+                primary_recommendation["reward"] = self._min_reward  # Min reward for landmarks, removed from route by user
+                primary_recommendation["change_next_state"] = True
         return primary_recommendations, result_recommendations
     
 
     @staticmethod
-    async def _fill_up_partial_record_list_task(row_index_list, row_uuid_list, reward_list, next_state):
-        fill_up_partial_record_list_async_task = asyncio.create_task(
+    async def _fill_up_partial_record_reward_only_list_task(row_index_list, row_uuid_list, reward_list):
+        fill_up_partial_record_reward_only_list_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                fill_up_partial_record_list,
-                {"row_index_list": row_index_list, "row_uuid_list": row_uuid_list,
-                 "reward_list": reward_list, "next_state": next_state}
+                fill_up_partial_record_reward_only_list,
+                json_params={
+                    "row_index_list": row_index_list, "row_uuid_list": row_uuid_list, "reward_list": reward_list
+                }
             )
         )
-        return (await fill_up_partial_record_list_async_task).return_value
-    
+        return (await fill_up_partial_record_reward_only_list_task).return_value
 
-    async def _get_state_task(self, row_index, row_uuid):
+
+    @staticmethod
+    async def _fill_up_partial_record_reward_only_replace_next_state_list_task(row_index_list, row_uuid_list, reward_list):
+        fill_up_partial_record_reward_only_replace_next_state_list_task = asyncio.create_task(
+            AbstractAgentsBroker.call_agent_task(
+                fill_up_partial_record_reward_only_replace_next_state_list,
+                json_params={
+                    "row_index_list": row_index_list, "row_uuid_list": row_uuid_list, "reward_list": reward_list
+                }
+            )
+        )
+        return (await fill_up_partial_record_reward_only_replace_next_state_list_task).return_value
+
+
+    @staticmethod
+    async def _get_state_task(row_index, row_uuid):
         get_state_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 get_state, {"row_index": row_index, "row_uuid": row_uuid}
             )
         )
-        return np.asarray((await get_state_async_task).return_value, dtype=self._np_dtype)
+        return (await get_state_async_task).return_value
     
 
     @staticmethod
@@ -607,43 +659,94 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         return (await record_list_async_task).return_value
 
 
-    async def _post_primary_recs_to_sars_buffer(self, primary_recommendations, next_state):
-        """
-        returns: state
-            state: numpy.ndarray | None (array, if at least one partial record was filled up, state(n) of this record)
-        """
+    async def _define_state_using_primary_uuids(
+        self, primary_recommendations, uuid_correct_list, uuid_correct_list_with_state_replace
+    ):
         state = None
-        row_index_list = [None for _ in range(len(primary_recommendations))]
-        row_uuid_list = copy(row_index_list)
-        reward_list = copy(row_index_list)
-        for i in range(len(primary_recommendations)):
-            row_index_list[i] = primary_recommendations[i]["row_index"]
-            row_uuid_list[i] = primary_recommendations[i]["row_uuid"]
-            reward_list[i] = primary_recommendations[i]["reward"]
-
-        uuid_correct_list = await self._fill_up_partial_record_list_task(
-            row_index_list, row_uuid_list, reward_list, next_state
-        )
-        logger.debug(f"_post_primary_recs_to_sars_buffer; filled_up {uuid_correct_list.count(True)}/{len(uuid_correct_list)} of primary recommendations")
         for i in range(len(uuid_correct_list)):
             if uuid_correct_list[i]:
                 state = await self._get_state_task(
                     primary_recommendations[i]["row_index"], primary_recommendations[i]["row_uuid"]
                 )
                 if state is not None:
-                    break
+                    return state
+
+        for i in range(len(uuid_correct_list_with_state_replace)):
+            if uuid_correct_list_with_state_replace[i]:
+                state = await self._get_state_task(
+                    primary_recommendations[i]["row_index"], primary_recommendations[i]["row_uuid"]
+                )
+                if state is not None:
+                    return state
+
         return state
 
 
-    async def _post_result_recs_to_sars_buffer(self, result_recommendations, state: None | List[float], next_state: List[float]):
+    @staticmethod
+    def _post_primary_recs_to_sars_buffer_debug_messages(uuid_correct_list, uuid_correct_list_with_state_replace):
+        logger.debug(
+            f"_post_primary_recs_to_sars_buffer; "
+            f"filled_up {uuid_correct_list.count(True)}/{len(uuid_correct_list)} of primary recommendations "
+            f"without replace of next_state"
+        )
+        logger.debug(
+            f"_post_primary_recs_to_sars_buffer; "
+            f"filled_up {uuid_correct_list_with_state_replace.count(True)}/{len(uuid_correct_list_with_state_replace)} "
+            f"of primary recommendations with replace of next_state"
+        )
+
+
+    async def _post_primary_recs_to_sars_buffer(self, primary_recommendations):
+        """
+        returns: state
+            state: numpy.ndarray | None (array, if at least one partial record was filled up, state(n) of this record)
+        """
+        row_index_list = []
+        row_uuid_list = []
+        reward_list = []
+
+        change_next_state_row_index_list = []
+        change_next_state_row_uuid_list = []
+        change_next_state_reward_list = []
+        for i in range(len(primary_recommendations)):
+            if primary_recommendations[i]["change_state"]:
+                change_next_state_row_index_list.append(primary_recommendations[i]["row_index"])
+                change_next_state_row_uuid_list.append(primary_recommendations[i]["row_uuid"])
+                change_next_state_reward_list.append(primary_recommendations[i]["reward"])
+            else:
+                row_index_list.append(primary_recommendations[i]["row_index"])
+                row_uuid_list.append(primary_recommendations[i]["row_uuid"])
+                reward_list.append(primary_recommendations[i]["reward"])
+
+        uuid_correct_list = await self._fill_up_partial_record_reward_only_list_task(
+            row_index_list, row_uuid_list, reward_list
+        )
+        uuid_correct_list_with_state_replace = await self._fill_up_partial_record_reward_only_replace_next_state_list_task(
+            row_index_list, row_uuid_list, reward_list
+        )
+
+        self._post_primary_recs_to_sars_buffer_debug_messages(uuid_correct_list, uuid_correct_list_with_state_replace)
+
+        return await self._define_state_using_primary_uuids(
+            primary_recommendations, uuid_correct_list, uuid_correct_list_with_state_replace
+        )
+
+
+    async def _post_result_recs_to_sars_buffer(self, result_recommendations, state: None | List[float]):
         if result_recommendations and state is not None:
             actions = await self._embeddings_for_landmarks(result_recommendations)
 
             reward = self._max_reward
 
-            sars_tuple_list = [None for _ in range(len(result_recommendations))]
-            for i in range(len(sars_tuple_list)):
-                sars_tuple_list[i] = (state, actions[i], reward, next_state)
+            watch_state, visit_state = self._split_state(np.asarray(state, dtype=self._np_dtype))
+
+            next_state_list = self._count_next_states_for_actions(
+                watch_state, visit_state, actions, count_using_tensorflow=False
+            ).tolist()
+
+            sars_tuple_list = []
+            for i in range(len(result_recommendations)):
+                sars_tuple_list.append((state, actions[i], reward, next_state_list[i]))
 
             await self._record_list_task(sars_tuple_list)
 
@@ -678,16 +781,9 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             json_params.pop("result_recommendations"),
             json_params.pop("user_reward")
         )
-
-        next_state = self._concat_state(
-            (
-                np.asarray(json_params.pop("new_watch_state"), dtype=self._np_dtype),
-                np.asarray(json_params.pop("new_visit_state"),  dtype=self._np_dtype)
-            ), return_tf_tensor=False
-        ).tolist()
         
-        state = await self._post_primary_recs_to_sars_buffer(primary_recommendations, next_state)
-        await self._post_result_recs_to_sars_buffer(result_recommendations, state, next_state)
+        state = await self._post_primary_recs_to_sars_buffer(primary_recommendations)
+        await self._post_result_recs_to_sars_buffer(result_recommendations, state)
         
         new_models_json = await self._start_training(
             len(primary_recommendations) + len(result_recommendations)
