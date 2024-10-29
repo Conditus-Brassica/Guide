@@ -48,8 +48,6 @@ async def post_result_of_recommendations(
         Method to post result of recommendations.
         :json_params["primary_recommendations"] - landmarks, given by the recommendations agent + row_index + row_uuid
         :json_params["result_recommendations"] - landmarks, that were included in the result route (index and uuid are not required)
-        :json_params["new_watch_state"] - new watch state of user
-        :json_params["new_visit_state"] - new visit state of user
         :json_params["user_reward"] - reward of the recommendations, given by the user (number from range [0, 5])
 
         ###
@@ -70,8 +68,6 @@ async def post_result_of_recommendations(
                     "longitude": float
                 ]
             ],
-            "new_watch_state": List[float],
-            "new_visit_state": List[float],
             "user_reward": float | int 
         ]
         """
