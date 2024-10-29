@@ -158,16 +158,35 @@ class LandmarkTrainerAgent(PureLandmarkTrainerAgent):
         )
 
 
-    async def fill_up_partial_with_next_state_record(self, json_params):
-        return self._trainer.fill_up_partial_with_next_state_record(
+    async def fill_up_partial_record_reward_only(self, json_params):
+        return self._trainer.fill_up_partial_record_reward_only(
             json_params["row_index"],
             json_params["row_uuid"],
             self._trainer.np_dtype(json_params["reward"])
         )
 
 
-    async def fill_up_partial_with_next_state_record_list(self, json_params):
-       return self._trainer.fill_up_partial_with_next_state_record_list(
+    async def fill_up_partial_record_reward_only_list(self, json_params):
+       return self._trainer.fill_up_partial_record_reward_only_list(
+           json_params["row_index_list"],
+           json_params["row_uuid_list"],
+           [
+               self._trainer.np_dtype(json_params["reward_list"][i])
+               for i in range(len(json_params["reward_list"]))
+           ],
+       )
+
+
+    async def fill_up_partial_record_reward_only_replace_next_state(self, json_params):
+        return self._trainer.fill_up_partial_record_reward_only_replace_next_state(
+            json_params["row_index"],
+            json_params["row_uuid"],
+            self._trainer.np_dtype(json_params["reward"])
+        )
+
+
+    async def fill_up_partial_record_reward_only_replace_next_state_list(self, json_params):
+       return self._trainer.fill_up_partial_record_reward_only_replace_next_state_list(
            json_params["row_index_list"],
            json_params["row_uuid_list"],
            [

@@ -213,11 +213,11 @@ class LandmarkTrainer:
         return index_list, uuid_list
 
 
-    def fill_up_partial_with_next_state_record(self, row_index, row_uuid, reward: np.ndarray):
-        return self._sars_buffer.fill_up_partial_with_next_state_record(row_index, row_uuid, reward)
+    def fill_up_partial_record_reward_only(self, row_index, row_uuid, reward: np.ndarray):
+        return self._sars_buffer.fill_up_partial_record_reward_only(row_index, row_uuid, reward)
 
 
-    def fill_up_partial_with_next_state_record_list(self, row_index_list, row_uuid_list, reward_list: np.ndarray):
+    def fill_up_partial_record_reward_only_list(self, row_index_list, row_uuid_list, reward_list: np.ndarray):
         if len(row_index_list) != len(row_uuid_list) or len(row_index_list) != len(reward_list):
             raise ValueError(
                 "row_index_list, row_uuid_list and reward_list must be lists of the same length"
@@ -226,7 +226,30 @@ class LandmarkTrainer:
 
         for i in range(len(row_index_list)):
             record_filled_up_list.append(
-                self._sars_buffer.fill_up_partial_with_next_state_record(
+                self._sars_buffer.fill_up_partial_record_reward_only(
+                    row_index_list[i], row_uuid_list[i], reward_list[i]
+                )
+            )
+
+        return record_filled_up_list
+
+
+    def fill_up_partial_record_reward_only_replace_next_state(self, row_index, row_uuid, reward: np.ndarray):
+        return self._sars_buffer.fill_up_partial_record_reward_only_replace_next_state(row_index, row_uuid, reward)
+
+
+    def fill_up_partial_record_reward_only_replace_next_state_list(
+        self, row_index_list, row_uuid_list, reward_list: np.ndarray
+    ):
+        if len(row_index_list) != len(row_uuid_list) or len(row_index_list) != len(reward_list):
+            raise ValueError(
+                "row_index_list, row_uuid_list and reward_list must be lists of the same length"
+            )
+        record_filled_up_list = []
+
+        for i in range(len(row_index_list)):
+            record_filled_up_list.append(
+                self._sars_buffer.fill_up_partial_record_reward_only_replace_next_state(
                     row_index_list[i], row_uuid_list[i], reward_list[i]
                 )
             )

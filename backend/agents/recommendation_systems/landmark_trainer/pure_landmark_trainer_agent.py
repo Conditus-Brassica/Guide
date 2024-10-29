@@ -132,9 +132,7 @@ class PureLandmarkTrainerAgent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def partial_record_list_with_next_state(
-            self, json_params
-    ):
+    async def partial_record_list_with_next_state(self, json_params):
         """
         Is used to write lists of state, action and next_state of sars tuple. This tuple will be saved, but won't be used in training samples
 
@@ -148,7 +146,7 @@ class PureLandmarkTrainerAgent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fill_up_partial_with_next_state_record(self, json_params):
+    async def fill_up_partial_record_reward_only(self, json_params):
         """
         Is used to write the reward of sars tuple. If the given hex of uuid was found in buffer, reward will be saved
             and the row may be used in training batch.
@@ -164,7 +162,7 @@ class PureLandmarkTrainerAgent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fill_up_partial_with_next_state_record_list(self, json_params):
+    async def fill_up_partial_record_reward_only_list(self, json_params):
         """
         Is used to write the reward of sars tuple. If the given hex of uuid was found in buffer, reward will be saved
             and the row may be used in training batch.
@@ -175,9 +173,42 @@ class PureLandmarkTrainerAgent(ABC):
             - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
         3. reward_list: List[float]
 
+        returns: List[bool] - True if hex of uuid is correct, False otherwise
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def fill_up_partial_record_reward_only_replace_next_state(self, json_params):
+        """
+        Is used to write the reward of sars tuple and replace new_state with current state, saved in state_buffer.
+            If the given hex of uuid was found in buffer, reward will be saved and the row may be used in training batch.
+
+        1. row_index: int
+            - index of the row in buffer (such index is returned as result of partial_record method)
+        2. row_uuid: uuid.hex
+            - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
+        3. reward: float
+
         returns: bool - True if hex of uuid is correct, False otherwise
         """
         raise NotImplementedError
+
+    @abstractmethod
+    async def fill_up_partial_record_reward_only_replace_next_state_list(self, json_params):
+        """
+        Is used to write the reward of sars tuple and replace new_state with current state, saved in state_buffer.
+            If the given hex of uuid was found in buffer, reward will be saved and the row may be used in training batch.
+
+        1. row_index_list: List[int]
+            - index of the row in buffer (such index is returned as result of partial_record method)
+        2. row_uuid_list: List[uuid.hex]
+            - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
+        3. reward_list: List[float]
+
+        returns: List[bool] - True if hex of uuid is correct, False otherwise
+        """
+        raise NotImplementedError
+
 
     @abstractmethod
     async def record(self, json_params):

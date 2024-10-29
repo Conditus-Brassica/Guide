@@ -51,22 +51,28 @@ async def fill_up_partial_record_list(json_params):
     return await TRAINER_AGENT.fill_up_partial_record_list(json_params)
 
 @BROKER.task
-async def partial_record_with_next_state(self, json_params):
+async def partial_record_with_next_state(json_params):
     return await TRAINER_AGENT.partial_record_with_next_state(json_params)
 
 @BROKER.task
-async def partial_record_list_with_next_state(
-        self, json_params
-):
+async def partial_record_list_with_next_state(json_params):
     return await TRAINER_AGENT.partial_record_list_with_next_state(json_params)
 
 @BROKER.task
-async def fill_up_partial_with_next_state_record(self, json_params):
-    return await TRAINER_AGENT.fill_up_partial_with_next_state_record(json_params)
+async def fill_up_partial_record_reward_only(json_params):
+    return await TRAINER_AGENT.fill_up_partial_record_reward_only(json_params)
 
 @BROKER.task
-async def fill_up_partial_with_next_state_record_list(self, json_params):
-    return await TRAINER_AGENT.fill_up_partial_with_next_state_record_list(json_params)
+async def fill_up_partial_record_reward_only_list(json_params):
+    return await TRAINER_AGENT.fill_up_partial_record_reward_only_list(json_params)
+
+@BROKER.task
+async def fill_up_partial_record_reward_only_replace_next_state(json_params):
+    return await TRAINER_AGENT.fill_up_partial_record_reward_only_replace_next_state(json_params)
+
+@BROKER.task
+async def fill_up_partial_record_reward_only_replace_next_state_list(json_params):
+    return await TRAINER_AGENT.fill_up_partial_record_reward_only_replace_next_state_list(json_params)
 
 @BROKER.task
 async def record(json_params):
