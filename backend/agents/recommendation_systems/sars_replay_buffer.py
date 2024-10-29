@@ -142,29 +142,54 @@ class SARSReplayBuffer:
             return True
         else:
             return False
-        
 
-    def fill_up_partial_record_no_index(self, row_uuid, reward: np.ndarray, next_state: np.ndarray):
+
+    def partial_record_with_next_state(self, state: np.ndarray, action: np.ndarray, next_state: np.ndarray):
         """
-        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
-            and the row may be used in training batch. Linear search is used to find out uuid.
+        Is used to write state, action and next_state fields of sars tuple. This tuple will be saved, but won't be used in training samples
 
-        1. row_uuid: uuid
-            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
-        2. reward: numpy.ndarray
+        ###
+        1. state: numpy.ndarray
+        2. action: numpy.ndarray
         3. next_state: numpy.ndarray
 
-        returns: bool - True if uuid was found out, False otherwise
+        returns: Tuple[int, uuid] - index of row in buffer and uuid of row.
         """
-        for index, uuid in enumerate(self._row_uuids):
-            if uuid == row_uuid:
-                self._reward_buffer[index] = reward
-                self._next_state_buffer[index] = next_state
+        row_uuid = uuid4().hex
+        row_index = self._define_row_index()
 
-                self._completed_rows_indexes.add(index)
+        self._state_buffer[row_index] = state
+        self._action_buffer[row_index] = action
+        self._next_state_buffer[row_index] = next_state
 
-                return True
-        return False
+        self._row_uuids[row_index] = row_uuid
+
+        self._completed_rows_indexes.discard(row_index)
+
+        return row_index, row_uuid
+
+
+    def fill_up_partial_with_next_state_record(self, row_index, row_uuid, reward: np.ndarray):
+        """
+        Is used to write the reward of sars tuple. If the given uuid was found in buffer, reward will be saved
+            and the row may be used in training batch.
+
+        1. row_index: int
+            - index of the row in buffer (such index is returned as result of partial_record method)
+        2. row_uuid: uuid
+            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
+        3. reward: numpy.ndarray
+
+        returns: bool - True if uuid is correct, False otherwise
+        """
+        if self._row_uuids[row_index] == row_uuid:
+            self._reward_buffer[row_index] = reward
+
+            self._completed_rows_indexes.add(row_index)
+
+            return True
+        else:
+            return False
         
 
     def record(self, sars_tuple: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
@@ -191,16 +216,6 @@ class SARSReplayBuffer:
             self._completed_rows_indexes.discard(row_index)  # it is not guaranteed that index is in completed rows
             self._row_uuids[row_index] = None
             self._empty_rows_indexes.add(row_index)
-            return True
-        return False
-
-
-    def remove_record_no_index(self, row_uuid):
-        for index, uuid in enumerate(self._row_uuids):
-            if uuid == row_uuid:
-                self._completed_rows_indexes.discard(index)  # it is not guaranteed that index is in completed rows
-                self._row_uuids[index] = None
-                self._empty_rows_indexes.add(index)
             return True
         return False
     
