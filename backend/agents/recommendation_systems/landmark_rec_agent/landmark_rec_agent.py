@@ -130,7 +130,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
             :returns: float
         """
-        return 10 * (used_percentage * user_reward - 5)
+        return 20 * (used_percentage * user_reward - 5)
 
 
     @property
@@ -401,7 +401,6 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         proto_action = self._actor_model(state)  # state shape is [1, state_dim]
         if self._noise_object:
             proto_action += tf.convert_to_tensor(self._noise_object())
-            proto_action = tf.clip_by_value(proto_action, clip_value_min=-1., clip_value_max=1.)
         
         proto_action = tf.squeeze(proto_action, [0])  # actor_model returns shape (1, action_dim), but shape (action_dim) is needed
 
