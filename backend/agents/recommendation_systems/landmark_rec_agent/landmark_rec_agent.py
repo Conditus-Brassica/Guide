@@ -349,13 +349,11 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         distances = LandmarkRecAgent._cosine_distance(proto_action, real_actions)
 
         # Finds k nearest actions
-        min_distance_list = [
-            None for _ in range(k if k < distances.shape[0] else distances.shape[0])
-        ]
+        min_distance_list = []
 
         for i in range(distances.shape[0]):
             if i < k:
-                min_distance_list[i] = (distances[i], i)  # pair of distance and index in the real_actions
+                min_distance_list.append((distances[i], i))  # pair of distance and index in the real_actions
             else:
                 max_from_min = max(min_distance_list, key=lambda x: x[0])  # finds maximal distance in the list of minimal distances
 
@@ -369,13 +367,11 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
     @staticmethod
     def _max_critic_values_indexes(critic_values, recommendations_amount: int):
         # Finds indexes of recommendations with the highest Critic value
-        if recommendations_amount < critic_values.shape[0]:
-            max_critic_values_list = [None for _ in range(recommendations_amount)]
-        else:
-            max_critic_values_list = [None for _ in range(critic_values.shape[0])]
+        max_critic_values_list = []
+
         for i in range(critic_values.shape[0]):
             if i < recommendations_amount:
-                max_critic_values_list[i] = (critic_values[i][0], i)  #  pair of critic value and index in the real_actions
+                max_critic_values_list.append((critic_values[i][0], i))  #  pair of critic value and index in the real_actions
             else:
                 # finds minimal critic value in the list of maximal critic values
                 min_from_max = min(max_critic_values_list, key=lambda x: x[0])
@@ -387,11 +383,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
 
     def _wolpertinger_policy(
-        self,
-        state: tf.Tensor,
-        real_actions: tf.Tensor,
-        recommendations: List[Dict],
-        recommendations_amount: int
+        self, state: tf.Tensor, real_actions: tf.Tensor, recommendations: List[Dict], recommendations_amount: int
     ):
         """
             Wolpertinger policy. Check https://arxiv.org/pdf/1512.07679 for more details.
