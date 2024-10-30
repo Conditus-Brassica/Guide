@@ -712,7 +712,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             row_index_list, row_uuid_list, reward_list
         )
         uuid_correct_list_with_state_replace = await self._fill_up_partial_record_reward_only_replace_next_state_list_task(
-            row_index_list, row_uuid_list, reward_list
+            change_next_state_row_index_list, change_next_state_row_uuid_list, change_next_state_reward_list
         )
 
         self._post_primary_recs_to_sars_buffer_debug_messages(uuid_correct_list, uuid_correct_list_with_state_replace)
