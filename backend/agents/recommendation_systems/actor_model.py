@@ -6,7 +6,7 @@ import tensorflow as tf
 
 
 HE_INIT = keras.initializers.HeNormal()
-TANH_INIT = keras.initializers.RandomUniform(minval=-0.003, maxval=0.003)
+NO_ACTIVATION_INIT = keras.initializers.RandomUniform(minval=-0.003, maxval=0.003)
 
 
 def get_actor_model(
@@ -46,7 +46,7 @@ def get_actor_model(
         hidden = init_hidden_layers(hidden_units, dtype)(hidden)  # _hidden_network = Sequential()
 
     output = layers.Dense(
-        action_size, use_bias=True, kernel_initializer=TANH_INIT, dtype=dtype
+        action_size, use_bias=True, kernel_initializer=NO_ACTIVATION_INIT, dtype=dtype
     )(hidden)
 
     output = layers.LayerNormalization()(output)
@@ -67,6 +67,7 @@ if __name__ == "__main__":
 
     with tf.GradientTape() as tape:
         action = a(state)
+        print(action)
 
         loss = tf.reduce_mean(tf.square(right - action))
 
