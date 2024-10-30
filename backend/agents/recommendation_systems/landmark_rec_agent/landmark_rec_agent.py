@@ -4,7 +4,6 @@ import tensorflow as tf
 import keras
 import numpy as np
 from typing import Dict, List, Tuple
-from copy import copy
 from jsonschema import validate, ValidationError
 from aiologger.loggers.json import JsonLogger
 import backend.agents.recommendation_systems.landmark_rec_agent.landmark_rec_json_validation as json_validation
