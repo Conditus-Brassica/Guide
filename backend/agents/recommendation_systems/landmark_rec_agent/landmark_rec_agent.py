@@ -699,7 +699,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         change_next_state_row_uuid_list = []
         change_next_state_reward_list = []
         for i in range(len(primary_recommendations)):
-            if primary_recommendations[i]["change_state"]:
+            if primary_recommendations[i]["change_next_state"]:
                 change_next_state_row_index_list.append(primary_recommendations[i]["row_index"])
                 change_next_state_row_uuid_list.append(primary_recommendations[i]["row_uuid"])
                 change_next_state_reward_list.append(primary_recommendations[i]["reward"])
