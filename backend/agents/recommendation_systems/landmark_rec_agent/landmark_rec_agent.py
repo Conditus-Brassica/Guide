@@ -485,12 +485,14 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             real_actions, recommendations, maximum_amount_of_recommendations
         )
 
-        next_states = self._count_next_states_for_actions(watch_state, visit_state, real_actions)
-        index_list, uuid_list = await self._partial_record_list_with_next_state_task(state, real_actions, next_states)
+        if not self._requires_training:
+            logger.info("RecSys agent doesn't requires training. No SARS buffer record is required.")
+            next_states = self._count_next_states_for_actions(watch_state, visit_state, real_actions)
+            index_list, uuid_list = await self._partial_record_list_with_next_state_task(state, real_actions, next_states)
 
-        for i in range(len(index_list)):
-            recommendations[i]["row_index"] = index_list[i]
-            recommendations[i]["row_uuid"] = uuid_list[i]
+            for i in range(len(index_list)):
+                recommendations[i]["row_index"] = index_list[i]
+                recommendations[i]["row_uuid"] = uuid_list[i]
  
         return recommendations
 
