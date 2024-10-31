@@ -485,7 +485,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             real_actions, recommendations, maximum_amount_of_recommendations
         )
 
-        if not self._requires_training:
+        if self._requires_training:
             logger.info("RecSys agent doesn't requires training. No SARS buffer record is required.")
             next_states = self._count_next_states_for_actions(watch_state, visit_state, real_actions)
             index_list, uuid_list = await self._partial_record_list_with_next_state_task(state, real_actions, next_states)
