@@ -10,13 +10,12 @@ import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { setStatusBarHidden } from "expo-status-bar";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-	const colorScheme = useColorScheme();
-
 	const [loaded] = useFonts({
 		SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
 	});
@@ -34,21 +33,28 @@ export default function RootLayout() {
 	}
 
 	return (
-		<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+		<ThemeProvider value={DarkTheme}>
 			<Stack>
 				<Stack.Screen
 					name="index"
 					options={{
 						headerShown: false,
+						statusBarHidden: true,
 					}}
 				/>
 				<Stack.Screen
 					name="login"
 					options={{
 						headerShown: false,
+						statusBarHidden: true,
 					}}
 				/>
-				<Stack.Screen name="home/(tabs)" options={{ headerTitle: "Home" }} />
+				<Stack.Screen
+					name="home/(tabs)"
+					options={{
+						statusBarHidden: true,
+					}}
+				/>
 				<Stack.Screen name="+not-found" />
 			</Stack>
 		</ThemeProvider>

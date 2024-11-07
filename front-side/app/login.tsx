@@ -11,12 +11,11 @@ import {
 	View,
 	StyleSheet,
 	TouchableOpacity,
+	TextInput,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
 
 // This is done step by step like in guide, so I'm not so good as you think
 const LoginScreen = () => {
-	console.log("Hi!");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -65,7 +64,7 @@ const LoginScreen = () => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={handleSignup}
-					style={(styles.button, styles.buttonOutline)}
+					style={[styles.button, styles.buttonOutline]}
 				>
 					<Text style={styles.buttonOutlineText}>Register</Text>
 				</TouchableOpacity>
@@ -100,12 +99,14 @@ const styles = StyleSheet.create({
 		width: "100%",
 		padding: 15,
 		borderRadius: 10,
+		alignItems: "center",
 	},
 	buttonOutline: {
 		backgroundColor: "white",
 		marginTop: 5,
 		borderColor: "#0782F9",
 		borderWidth: 2,
+		padding: 10,
 	},
 	buttonText: { color: "white", fontWeight: "700", fontSize: 16 },
 	buttonOutlineText: { color: "blue", fontWeight: "700", fontSize: 16 },
