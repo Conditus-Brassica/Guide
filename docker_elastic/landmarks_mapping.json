@@ -1,0 +1,42 @@
+{
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text",
+        "analyzer": "russian",
+	"fields" : {
+              "suggest" : {
+              "type" : "search_as_you_type",
+              "max_shingle_size" : 3
+              }
+            }
+      },
+      "coordinates": {
+        "properties": {
+          "latitude": {
+            "type": "float"
+          },
+          "longitude": {
+            "type": "float"
+          }
+        }
+      },
+      "located": {
+        "properties": {
+          "country": {
+            "type": "text",
+            "analyzer": "russian"
+          },
+          "state": {
+            "type": "text",
+            "analyzer": "russian"
+          },
+          "district": {
+            "type": "text",
+            "analyzer": "russian"
+          }
+        }
+      }
+    }
+  }
+}
