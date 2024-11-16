@@ -1,6 +1,6 @@
 #Author: Vodohleb04
 import asyncio
-import backend.broker.agents_tasks.recommendations_agent_tasks as recommendations_tasks
+import backend.broker.agents_tasks.landmark_rec_agent_tasks as recommendations_tasks
 from pprint import pprint
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
 from backend.broker.agents_broker import AgentsBroker

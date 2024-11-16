@@ -14,7 +14,5 @@ if CRUDAgent.crud_exists():
     print("Crud was not created")  # TODO remove
 else:
     driver = AsyncGraphDatabase.driver('bolt://localhost:7687', auth=("neo4j", "ostisGovno"))
-    reader = Reader()
-    creator = Creator()
-    CRUD_AGENT = CRUDAgent(reader, creator, driver, 'neo4j')
+    CRUD_AGENT = CRUDAgent(driver, 'neo4j')
     print("Crud was created")  # TODO remove

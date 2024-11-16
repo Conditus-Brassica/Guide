@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 
 
-class PureTrainerAgent(ABC):
+class PureNoteTrainerAgent(ABC):
     """
     Pure abstract class of Trainer agent. Provides methods for commands from the other agents.
 
@@ -13,15 +13,14 @@ class PureTrainerAgent(ABC):
     @abstractmethod
     def get_trainer_agent(cls):
         """
-        Method to take trainer agent object. Returns None in case when trainer agent is not exists.
-        :return: None | PureRecommendationsAgent
+        Method to take note_trainer agent object. Returns None in case when note_trainer agent is not exists.
         """
         raise NotImplementedError
 
     @classmethod
     @abstractmethod
     def trainer_agent_exists(cls) -> bool:
-        """Method to check if trainer agent object already exists"""
+        """Method to check if note_trainer agent object already exists"""
         raise NotImplementedError
 
 

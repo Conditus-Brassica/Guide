@@ -471,7 +471,8 @@ class PureCRUDAgent(ABC):
             Works asynchronously.
 
             :param json_params: Dict in form {"user_login": str}
-            :return: Coroutine bool True if everything is fine, False otherwise
+            :return: Coroutine
+                Dict["result": bool] - True if everything is fine, False otherwise
         """
         raise NotImplementedError
 
@@ -488,7 +489,8 @@ class PureCRUDAgent(ABC):
                 "note_title": str,
                 "note_category_names": List[str]
             }
-            :return: Coroutine bool True if everything is fine, False otherwise
+            :return: Coroutine
+                Dict["result": bool] - True if everything is fine, False otherwise
         """
         raise NotImplementedError
 
@@ -511,7 +513,8 @@ class PureCRUDAgent(ABC):
                 ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
             }
 
-            :return: Coroutine bool True if everything is fine, False otherwise
+            :return: Coroutine
+                Dict["result": bool] - True if everything is fine, False otherwise
         """
         raise NotImplementedError
 
@@ -534,7 +537,8 @@ class PureCRUDAgent(ABC):
                 ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
             }
 
-            :return: Coroutine bool True if everything is fine, False otherwise
+            :return: Coroutine
+                Dict["result": bool] - True if everything is fine, False otherwise
         """
         raise NotImplementedError
 
@@ -550,6 +554,7 @@ class PureCRUDAgent(ABC):
                 "index_id": int
             }
 
-            :return: Coroutine bool True if everything is fine, False otherwise
+            :return: Coroutine
+                Dict["result": bool] - True if everything is fine, False otherwise
         """
         raise NotImplementedError

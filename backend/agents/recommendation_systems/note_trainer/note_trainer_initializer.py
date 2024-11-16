@@ -1,16 +1,15 @@
-from recommendations_agent.actor_model import get_actor_model
-from recommendations_agent.critic_model import get_critic_model
-from recommendations_agent.trainer_agent import TrainerAgent
-from recommendations_agent.trainer import Trainer
-from recommendations_agent.sars_replay_buffer import SARSReplayBuffer
+from backend.agents.recommendation_systems.actor_model import get_actor_model
+from backend.agents.recommendation_systems.critic_model import get_critic_model
+from backend.agents.recommendation_systems.note_trainer.note_trainer import NoteTrainer
+from backend.agents.recommendation_systems.sars_replay_buffer import SARSReplayBuffer
 import numpy as np
 import tensorflow as tf
 import keras
-from backend.agents.recommendations_agent.trainer_agent import TrainerAgent
+from backend.agents.recommendation_systems.note_trainer.note_trainer_agent import NoteTrainerAgent
 
 
-if TrainerAgent.trainer_agent_exists():
-    TRAINER_AGENT = TrainerAgent.get_trainer_agent()
+if NoteTrainerAgent.trainer_agent_exists():
+    TRAINER_AGENT = NoteTrainerAgent.get_trainer_agent()
     print("Trainer agent wasn't created")  # TODO remove
 else:
     actor_model = get_actor_model(dtype=tf.float32, state_size=3, input_units=256 , action_size=1, hidden_units=[256])
@@ -26,7 +25,7 @@ else:
     )
     target_critic_model.set_weights(critic_model.get_weights())
 
-    buffer = SARSReplayBuffer(state_size=3, action_size=1, dtype=np.float32)
+    buffer = SARSReplayBuffer(state_size=3, action_size=1, dtype=np.float32, save_file="./sars_save.save")
     gamma = 0.99
     tau = 5e-3
 
@@ -36,13 +35,17 @@ else:
     critic_optimizer = keras.optimizers.Adam(critic_lr)
     actor_optimizer = keras.optimizers.Adam(actor_lr)
 
-    trainer = Trainer(
+    trainer = NoteTrainer(
         actor_model, critic_model, gamma,
         actor_optimizer, critic_optimizer,
         target_actor_model, target_critic_model, tau,
         buffer,
-        np.float32
+        np.float32,
+        "./actor.keras",
+        "./critic.keras",
+        "./target_actor.keras",
+        "target_critic.keras"
     )
 
-    TRAINER_AGENT = TrainerAgent(trainer)
+    TRAINER_AGENT = NoteTrainerAgent(trainer)
     print("Trainer agent was created")  # TODO remove

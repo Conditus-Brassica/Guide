@@ -2,13 +2,14 @@ import asyncio
 
 from backend.agents.route_builder_agent.pure_route_builder_agent import PureRouteBuilder
 from backend.broker.abstract_agents_broker import AbstractAgentsBroker
-from backend.broker.agents_tasks.recommendations_agent_tasks import \
+from backend.broker.agents_tasks.landmark_rec_agent_tasks import \
     find_recommendations_for_coordinates_and_categories_task
 from backend.broker.agents_tasks.route_generating_tasks import get_optimized_route_task, \
     get_optimized_route_main_points_task
 
 
 class RouteBuilderAgent(PureRouteBuilder):
+    _asyncio_tasks = None
     _single_route_builder = None
 
     @classmethod
@@ -27,6 +28,7 @@ class RouteBuilderAgent(PureRouteBuilder):
         Init method for RouteBuilderAgent.
         """
         if not self._single_route_builder:
+            self._asyncio_tasks = set()
             self._single_route_builder = self
         else:
             raise RuntimeError("Unexpected behaviour, this class can have only one instance")
@@ -62,6 +64,8 @@ class RouteBuilderAgent(PureRouteBuilder):
         pre_route_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(get_optimized_route_main_points_task, route_params['start_end_points'])
         )
+        self._asyncio_tasks.add(pre_route_task)
+        pre_route_task.add_done_callback(self._asyncio_tasks.discard)
 
         pre_route = await pre_route_task
         pre_route = pre_route.return_value
@@ -77,6 +81,9 @@ class RouteBuilderAgent(PureRouteBuilder):
         landmarks_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(find_recommendations_for_coordinates_and_categories_task, param_dict)
         )
+        self._asyncio_tasks.add(landmarks_task)
+        landmarks_task.add_done_callback(self._asyncio_tasks.discard)
+
         landmarks = await landmarks_task
         landmarks = landmarks.return_value
 

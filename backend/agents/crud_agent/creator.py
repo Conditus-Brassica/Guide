@@ -21,7 +21,7 @@ class Creator:
     """
 
     @staticmethod
-    async def _write_user(tx, user_login: str) -> bool:
+    async def _write_user(tx, user_login: str):
         """Transaction handler for write_user"""
         result = await tx.run(
             """
@@ -35,14 +35,14 @@ class Creator:
             raise exceptions.Neo4jError("Unexpected behaviour: No nodes were created or to much nodes were created.")
 
     @staticmethod
-    async def write_user(session: AsyncSession, user_login: str) -> bool:
+    async def write_user(session: AsyncSession, user_login: str) -> Dict[str, bool]:
         try:
             result = await session.execute_write(Creator._write_user, user_login)
             await logger.debug(f"method:\twrite_user,\nresult:\t{result}")
-            return True
+            return {"result": True}
         except Exception as e:
             await logger.error(f"Error while writing user account, args: {e.args[0]}")
-            return False
+            return {"result": False}
 
     @staticmethod
     async def _write_note(tx, guide_login: str, country_names: List[str], note_title, note_category_names):
@@ -117,20 +117,20 @@ class Creator:
             country_names: List[str],
             note_title: str,
             note_category_names: List[str]
-    ) -> bool:
+    ) -> Dict[str, bool]:
         try:
             result = await session.execute_write(
                 Creator._write_note, guide_login, country_names, note_title, note_category_names
             )
             await logger.debug(f"method:\twrite_note,\nresult:\t{result}")
-            return True
+            return {"result": True}
         except Exception as e:
             await logger.error(f"Error while writing note, args: {e.args[0]}")
-            return False
+            return {"result": False}
 
     @staticmethod
     async def _write_route_for_note(
-            tx, note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
+        tx, note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
     ):
         """Transaction handler for write_route_for_note"""
         result = await tx.run(
@@ -188,17 +188,17 @@ class Creator:
 
     @staticmethod
     async def write_route_for_note(
-            session: AsyncSession, note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
-    ) -> bool:
+        session: AsyncSession, note_title: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
+    ) -> Dict[str, bool]:
         try:
             result = await session.execute_write(
                 Creator._write_route_for_note, note_title, landmark_info_position_dicts
             )
             await logger.debug(f"method:\twrite_route_for_note,\nresult:\t{result}")
-            return True
+            return {"result": True}
         except Exception as e:
             await logger.error(f"Error while writing route for note, args: {e.args[0]}")
-            return False
+            return {"result": False}
 
     @staticmethod
     async def _write_route_saved_by_user(
@@ -258,17 +258,17 @@ class Creator:
 
     @staticmethod
     async def write_route_saved_by_user(
-            session: AsyncSession, user_login: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
-    ) -> bool:
+        session: AsyncSession, user_login: str, landmark_info_position_dicts: List[Dict[str, str | int | float]]
+    ) -> Dict[str, bool]:
         try:
             result = await session.execute_write(
                 Creator._write_route_saved_by_user, user_login, landmark_info_position_dicts
             )
             await logger.debug(f"method:\twrite_route_saved_by_user,\nresult:\t{result}")
-            return True
+            return {"result": True}
         except Exception as e:
             await logger.error(f"Error while writing route for note, args: {e.args[0]}")
-            return False
+            return {"result": False}
 
     @staticmethod
     async def _write_saved_relationship_for_existing_route(tx, user_login: str, index_id: int):
@@ -293,15 +293,15 @@ class Creator:
             raise exceptions.Neo4jError("Unexpected behaviour: No relationship was created or to much relationships were created.")
 
     @staticmethod
-    async def write_saved_relationship_for_existing_route(session: AsyncSession, user_login: str, index_id: int) -> bool:
+    async def write_saved_relationship_for_existing_route(
+        session: AsyncSession, user_login: str, index_id: int
+    ) -> Dict[str, bool]:
         try:
             result = await session.execute_write(
                 Creator._write_saved_relationship_for_existing_route, user_login, index_id
             )
             await logger.debug(f"method:\twrite_saved_relationship_for_existing_route,\nresult:\t{result}")
-            return True
+            return {"result": True}
         except Exception as e:
             await logger.error(f"Error while writing route for note, args: {e.args[0]}")
-            return False
-
-
+            return {"result": False}
