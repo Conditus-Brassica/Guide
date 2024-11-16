@@ -9,8 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { setStatusBarHidden } from "expo-status-bar";
+import { setStatusBarHidden, StatusBar } from "expo-status-bar";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,18 +21,17 @@ export default function RootLayout() {
 
 	useEffect(() => {
 		if (loaded) {
-			console.log("loaded");
 			SplashScreen.hideAsync();
 		}
 	}, [loaded]);
 
 	if (!loaded) {
-		console.log("not loaded!");
 		return null;
 	}
 
 	return (
 		<ThemeProvider value={DarkTheme}>
+			<StatusBar hidden={true} />
 			<Stack>
 				<Stack.Screen
 					name="index"

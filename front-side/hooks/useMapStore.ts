@@ -1,25 +1,24 @@
-import { Route } from "@react-navigation/native";
 import { LatLng, Region } from "react-native-maps";
 import { create } from "zustand";
-//TODO: Somehow store route.
+
 type MapStore = {
-  initialPosition: Region;
-  activeRoute: RouteType | null;
-  setInitialCoords: (coords: Region) => void;
+	initialPosition: Region;
+	activeRoute: RouteType | null;
+	setInitialCoords: (coords: Region) => void;
 };
 
 type RouteType = {
-  origin: LatLng;
-  destination: LatLng;
+	origin: LatLng;
+	destination: LatLng;
 };
 
 export const useMapStore = create<MapStore>((set) => ({
-  initialPosition: {
-    latitude: 53.893009,
-    longitude: 27.567444,
-    latitudeDelta: 0.5,
-    longitudeDelta: 0.2,
-  },
-  activeRoute: null,
-  setInitialCoords: (coords) => set(() => ({ initialPosition: coords })),
+	initialPosition: {
+		latitude: 53.893009,
+		longitude: 27.567444,
+		latitudeDelta: 0.5,
+		longitudeDelta: 0.2,
+	},
+	activeRoute: null,
+	setInitialCoords: (coords) => set(() => ({ initialPosition: coords })),
 }));

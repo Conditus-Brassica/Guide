@@ -1,5 +1,6 @@
 import { FirebaseAuth } from "@/FirebaseConfig";
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
@@ -34,7 +35,7 @@ const LoginScreen = () => {
 	useEffect(() => {
 		const unsubscribe = FirebaseAuth.onAuthStateChanged((user) => {
 			if (user) {
-				router.replace("/home/(tabs)");
+				router.replace("/home/(tabs)/home");
 			}
 
 			return unsubscribe;
@@ -43,6 +44,7 @@ const LoginScreen = () => {
 
 	return (
 		<KeyboardAvoidingView behavior="padding" style={styles.container}>
+			<StatusBar hidden={true} />
 			<View style={styles.inputContainer}>
 				<TextInput
 					placeholder="Login"
@@ -95,7 +97,7 @@ const styles = StyleSheet.create({
 		marginTop: 40,
 	},
 	button: {
-		backgroundColor: "#0782F9",
+		backgroundColor: "#44c1ff",
 		width: "100%",
 		padding: 15,
 		borderRadius: 10,
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
 	buttonOutline: {
 		backgroundColor: "white",
 		marginTop: 5,
-		borderColor: "#0782F9",
+		borderColor: "#44c1ff",
 		borderWidth: 2,
 		padding: 10,
 	},
