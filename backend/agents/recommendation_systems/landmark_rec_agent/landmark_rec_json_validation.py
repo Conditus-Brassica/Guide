@@ -80,26 +80,12 @@ post_result_of_recommendations = \
             ],
             "additionalProperties": True
         },
-        "new_watch_state": {
-                "type": "array",
-                "items": {
-                    "type": "number"
-                }
-            },
-        "new_visit_state": {
-            "type": "array",
-            "items": {
-                "type": "number"
-            }
-        },
         "user_reward": {"type": "number"}
     },
     "required": [
         "primary_recommendations",
         "result_recommendations",
-        "user_reward",
-        "new_watch_state",
-        "new_visit_state"
+        "user_reward"
     ],
     "additionalProperties": False
 }

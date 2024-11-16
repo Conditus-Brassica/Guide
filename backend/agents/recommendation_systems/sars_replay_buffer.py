@@ -10,33 +10,33 @@ class SARSReplayBuffer:
     """Buffer to save SARS records (check https://arxiv.org/pdf/1509.02971 to get more information)"""
     def _init_on_load(self, dtype, load_json_dict):
         """
-        load_json_dict is used in case of loading sars_buffer from file,
         load_json_dict: {
             "_buffer_capacity": int,
             "_batch_size": int,
-            "_current_index": int,
-            "_buffer_is_filled": bool,
+            "_next_index_to_replace": int,
             "_state_buffer": List[List[float]],
             "_action_buffer": List[List[float]],
             "_reward_buffer": List[List[float]],
             "_next_state_buffer": List[List[float]],
+            "_row_uuids": List[uuid.hex],
             "_completed_rows_indexes": List[int],
-            "_row_uuids": List[uuid.hex]
+            "_empty_rows_indexes": List[int]
         }
         """
         self._buffer_capacity = int(load_json_dict["_buffer_capacity"])
         self._batch_size = load_json_dict["_batch_size"]
         
-        self._current_index = load_json_dict["_current_index"]
-        self._buffer_is_filled = load_json_dict["_buffer_is_filled"]
+        self._next_index_to_replace = load_json_dict["_next_index_to_replace"]
 
         self._state_buffer = np.asarray(load_json_dict["_state_buffer"], dtype=dtype)
         self._action_buffer = np.asarray(load_json_dict["_action_buffer"], dtype=dtype)
         self._reward_buffer = np.asarray(load_json_dict["_reward_buffer"], dtype=dtype)
         self._next_state_buffer = np.asarray(load_json_dict["_next_state_buffer"], dtype=dtype)
 
-        self._completed_rows_indexes = load_json_dict["_completed_rows_indexes"]
         self._row_uuids: List = load_json_dict["_row_uuids"]
+
+        self._completed_rows_indexes = set(load_json_dict["_completed_rows_indexes"])
+        self._empty_rows_indexes = set(load_json_dict["_empty_rows_indexes"])
 
 
     def __init__(
@@ -48,34 +48,52 @@ class SARSReplayBuffer:
         load_json_dict: {
             "_buffer_capacity": int,
             "_batch_size": int,
-            "_current_index": int,
-            "_buffer_is_filled": bool,
+            "_next_index_to_replace": int,
             "_state_buffer": List[List[float]],
             "_action_buffer": List[List[float]],
             "_reward_buffer": List[List[float]],
             "_next_state_buffer": List[List[float]],
+            "_row_uuids": List[uuid.hex],
             "_completed_rows_indexes": List[int],
-            "_row_uuids": List[uuid.hex]
+            "_empty_rows_indexes": List[int]
         }
         """
         if load_json_dict is None:
             self._buffer_capacity = int(buffer_capacity)
             self._batch_size = batch_size
 
-            self._current_index = 0
-            self._buffer_is_filled = False
+            self._next_index_to_replace = 0
 
             self._state_buffer = np.zeros((self._buffer_capacity, state_size), dtype=dtype)
             self._action_buffer = np.zeros((self._buffer_capacity, action_size), dtype=dtype)
             self._reward_buffer = np.zeros((self._buffer_capacity, 1), dtype=dtype)
             self._next_state_buffer = np.zeros((self._buffer_capacity, state_size), dtype=dtype)
 
-            self._completed_rows_indexes = []
             self._row_uuids: List = [None for _ in range(self._buffer_capacity)]
+
+            self._completed_rows_indexes = set()
+            self._empty_rows_indexes = set()
         else:
             self._init_on_load(dtype, load_json_dict)
 
         self._save_file = save_file
+
+
+    def _define_row_index(self):
+        if self._empty_rows_indexes:
+            for empty_row_index in self._empty_rows_indexes:
+                if empty_row_index < self._next_index_to_replace:
+                    self._empty_rows_indexes.remove(empty_row_index)
+                    return empty_row_index
+
+        row_index = self._next_index_to_replace
+        self._next_index_to_replace += 1
+        if self._next_index_to_replace == self._buffer_capacity:
+            self._next_index_to_replace = 0
+
+        # if index_to_replace is in _empty_rows_indexes it should be removed from there
+        self._empty_rows_indexes.discard(row_index)
+        return row_index
 
 
     def partial_record(self, state: np.ndarray, action: np.ndarray):
@@ -89,23 +107,15 @@ class SARSReplayBuffer:
         returns: Tuple[int, uuid] - index of row in buffer and uuid of row.
         """
         row_uuid = uuid4().hex
-        row_index = self._current_index
+        row_index = self._define_row_index()
+
         self._state_buffer[row_index] = state
         self._action_buffer[row_index] = action
 
         self._row_uuids[row_index] = row_uuid
 
-        try:
-            if self._buffer_is_filled:
-                self._completed_rows_indexes.remove(row_index)
-        except ValueError:  # If row_index is not in self._completed_rows_indexes
-            pass
+        self._completed_rows_indexes.discard(row_index)
 
-        self._current_index += 1
-        if self._current_index == self._buffer_capacity:
-            self._buffer_is_filled = True
-            self._current_index = 0
-        
         return row_index, row_uuid
     
 
@@ -127,34 +137,83 @@ class SARSReplayBuffer:
             self._reward_buffer[row_index] = reward
             self._next_state_buffer[row_index] = next_state
             
-            self._completed_rows_indexes.append(row_index)
+            self._completed_rows_indexes.add(row_index)
 
             return True
         else:
             return False
-        
 
-    def fill_up_partial_record_no_index(self, row_uuid, reward: np.ndarray, next_state: np.ndarray):
+
+    def partial_record_with_next_state(self, state: np.ndarray, action: np.ndarray, next_state: np.ndarray):
         """
-        Is used to write the last part of sars tuple. If the given uuid was found in buffer, reward and next_state will be saved
-            and the row may be used in training batch. Linear search is used to find out uuid.
+        Is used to write state, action and next_state fields of sars tuple. This tuple will be saved, but won't be used in training samples
 
-        1. row_uuid: uuid
-            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
-        2. reward: numpy.ndarray
+        ###
+        1. state: numpy.ndarray
+        2. action: numpy.ndarray
         3. next_state: numpy.ndarray
 
-        returns: bool - True if uuid was found out, False otherwise
+        returns: Tuple[int, uuid] - index of row in buffer and uuid of row.
         """
-        for index, uuid in enumerate(self._row_uuids):
-            if uuid == row_uuid:
-                self._reward_buffer[index] = reward
-                self._next_state_buffer[index] = next_state
+        row_uuid = uuid4().hex
+        row_index = self._define_row_index()
 
-                self._completed_rows_indexes.append(index)
+        self._state_buffer[row_index] = state
+        self._action_buffer[row_index] = action
+        self._next_state_buffer[row_index] = next_state
 
-                return True
-        return False
+        self._row_uuids[row_index] = row_uuid
+
+        self._completed_rows_indexes.discard(row_index)
+
+        return row_index, row_uuid
+
+
+    def fill_up_partial_record_reward_only(self, row_index, row_uuid, reward: np.ndarray):
+        """
+        Is used to write the reward of sars tuple. If the given uuid was found in buffer, reward will be saved
+            and the row may be used in training batch.
+
+        1. row_index: int
+            - index of the row in buffer (such index is returned as result of partial_record method)
+        2. row_uuid: uuid
+            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
+        3. reward: numpy.ndarray
+
+        returns: bool - True if uuid is correct, False otherwise
+        """
+        if self._row_uuids[row_index] == row_uuid:
+            self._reward_buffer[row_index] = reward
+
+            self._completed_rows_indexes.add(row_index)
+
+            return True
+        else:
+            return False
+
+
+    def fill_up_partial_record_reward_only_replace_next_state(self, row_index, row_uuid, reward: np.ndarray):
+        """
+        Is used to write the reward of sars tuple and replace new_state with current state, saved in state_buffer.
+        If the given uuid was found in buffer, reward will be saved and the row may be used in training batch.
+
+        1. row_index: int
+            - index of the row in buffer (such index is returned as result of partial_record method)
+        2. row_uuid: uuid
+            - uuid of the row in buffer (such uuid is returned as result of partial_record method)
+        3. reward: numpy.ndarray
+
+        returns: bool - True if uuid is correct, False otherwise
+        """
+        if self._row_uuids[row_index] == row_uuid:
+            self._reward_buffer[row_index] = reward
+            self._next_state_buffer[row_index] = self._state_buffer[row_index]
+
+            self._completed_rows_indexes.add(row_index)
+
+            return True
+        else:
+            return False
         
 
     def record(self, sars_tuple: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
@@ -163,7 +222,7 @@ class SARSReplayBuffer:
         If the buffer is full, the oldest record will be replaced with the new one
         """
         row_uuid = uuid4().hex
-        row_index = self._current_index
+        row_index = self._define_row_index()
 
         self._state_buffer[row_index] = sars_tuple[0]
         self._action_buffer[row_index] = sars_tuple[1]
@@ -171,14 +230,18 @@ class SARSReplayBuffer:
         self._next_state_buffer[row_index] = sars_tuple[3]
 
         self._row_uuids[row_index] = row_uuid
-        self._completed_rows_indexes.append(row_index)
-
-        self._current_index += 1
-        if self._current_index == self._buffer_capacity:
-            self._buffer_is_filled = True
-            self._current_index = 0
+        self._completed_rows_indexes.add(row_index)
         
         return row_index, row_uuid
+
+
+    def remove_record(self, row_index, row_uuid):
+        if self._row_uuids[row_index] == row_uuid:
+            self._completed_rows_indexes.discard(row_index)  # it is not guaranteed that index is in completed rows
+            self._row_uuids[row_index] = None
+            self._empty_rows_indexes.add(row_index)
+            return True
+        return False
     
 
     def completed_record_exist(self) -> bool:
@@ -193,8 +256,8 @@ class SARSReplayBuffer:
         """
         if not self._completed_rows_indexes:
             return None, None, None, None
-        
-        batch_indices = np.random.choice(self._completed_rows_indexes, size=self._batch_size)
+
+        batch_indices = np.random.choice(list(self._completed_rows_indexes), size=self._batch_size)
 
         if return_tf_tensors:
             return (
@@ -225,14 +288,14 @@ class SARSReplayBuffer:
                 {
                     "_buffer_capacity": self._buffer_capacity,
                     "_batch_size": self._batch_size,
-                    "_current_index": self._current_index,
-                    "_buffer_is_filled": self._buffer_is_filled,
+                    "_next_index_to_replace": self._next_index_to_replace,
                     "_state_buffer": self._state_buffer.tolist(),
                     "_action_buffer": self._action_buffer.tolist(),
                     "_reward_buffer": self._reward_buffer.tolist(),
                     "_next_state_buffer": self._next_state_buffer.tolist(),
-                    "_completed_rows_indexes": self._completed_rows_indexes,
                     "_row_uuids": self._row_uuids,
+                    "_completed_rows_indexes": list(self._completed_rows_indexes),
+                    "_empty_rows_indexes": list(self._empty_rows_indexes)
                 },
                 fout
             )
@@ -258,7 +321,7 @@ class SARSReplayBuffer:
 
 async def main():
     #buffer = SARSReplayBuffer.load(np.float32,"./chep.save")
-    buffer = SARSReplayBuffer(np.float32, "./chep.save", 3, 2, buffer_capacity=10)
+    buffer = SARSReplayBuffer(np.float32, "./chep.save", 3, 2, buffer_capacity=5)
     #print()
     state1 = np.array([1, 1, 1], dtype=np.float32)
     action1 = np.array([1, 1], dtype=np.float32)
@@ -316,7 +379,71 @@ async def main():
 
     s5, a5, r5, ns5 = buffer.sample_sars_batch()
 
+
+    state6 = np.array([6, 6, 6], dtype=np.float32)
+    action6 = np.array([6, 6], dtype=np.float32)
+    reward6 = np.array([6], dtype=np.float32)
+    next_state6 = np.array([6, 6, 6], dtype=np.float32)
+
+    index6, uuid_6 = buffer.partial_record(state6, action6)
+    buffer.fill_up_partial_record(index6, uuid_6, reward6, next_state6)
+
+
+    state7 = np.array([7, 7, 7], dtype=np.float32)
+    action7 = np.array([7, 7], dtype=np.float32)
+    reward7 = np.array([7], dtype=np.float32)
+    next_state7 = np.array([7, 7, 7], dtype=np.float32)
+
+    index7, uuid_7 = buffer.partial_record(state7, action7)
+    buffer.fill_up_partial_record(index7, uuid_7, reward7, next_state7)
+
+
+    buffer.remove_record(index7, uuid_7)
+    buffer.remove_record(index4, uuid_4)
+
+
+    s_b, a_b, r_b, ns_b = buffer.sample_sars_batch()
+
+
+    state8 = np.array([8, 8, 8], dtype=np.float32)
+    action8 = np.array([8, 8], dtype=np.float32)
+    reward8 = np.array([8], dtype=np.float32)
+    next_state8 = np.array([8, 8, 8], dtype=np.float32)
+
+    index8, uuid_8 = buffer.partial_record(state8, action8)
+    buffer.fill_up_partial_record(index8, uuid_8, reward8, next_state8)
+
+
+    s_b, a_b, r_b, ns_b = buffer.sample_sars_batch()
+
+
+    state9 = np.array([9, 9, 9], dtype=np.float32)
+    action9 = np.array([9, 9], dtype=np.float32)
+    reward9 = np.array([9], dtype=np.float32)
+    next_state9 = np.array([9, 9, 9], dtype=np.float32)
+
+    index9, uuid_9 = buffer.partial_record(state9, action9)
+    buffer.fill_up_partial_record(index9, uuid_9, reward9, next_state9)
+
+
+    s_b, a_b, r_b, ns_b = buffer.sample_sars_batch()
+
+
+    state10 = np.array([10, 10, 10], dtype=np.float32)
+    action10 = np.array([10, 10], dtype=np.float32)
+    reward10 = np.array([10], dtype=np.float32)
+    next_state10 = np.array([10, 10, 10], dtype=np.float32)
+
+    index10, uuid_10 = buffer.partial_record(state10, action10)
+    buffer.fill_up_partial_record(index10, uuid_10, reward10, next_state10)
+
+
+    s_b, a_b, r_b, ns_b = buffer.sample_sars_batch()
+
+
     buffer.save()
+
+
 
 
 

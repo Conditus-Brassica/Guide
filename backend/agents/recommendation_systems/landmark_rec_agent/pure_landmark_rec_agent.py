@@ -2,11 +2,9 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List
 import keras
-import numpy as np
-import tensorflow as tf
 
 
-class PureRecommendationsAgent(ABC):
+class PureLandmarkRecAgent(ABC):
     """
     Pure abstract class of Recommendations agent. Provides methods for commands from the other agents.
 
@@ -136,33 +134,31 @@ class PureRecommendationsAgent(ABC):
 
 
     @abstractmethod
-    async def post_result_of_recommendations(
-            self, json_params
-    ):
+    async def post_result_of_recommendations(self, json_params):
         """
         Method to post result of recommendations.
         :json_params["primary_recommendations"] - landmarks, given by the recommendations agent + row_index + row_uuid
         :json_params["result_recommendations"] - landmarks, that were included in the result route (index and uuid are not required)
-        :json_params["new_watch_state"] - new watch state of user
-        :json_params["new_visit_state"] - new visit state of user
         :json_params["user_reward"] - reward of the recommendations, given by the user (number from range [0, 5])
 
         ###
         1. json_params: Dict[
-            "primary_recommendations": Dict [
-                "name": str,
-                "latitude": float,
-                "longitude": float,
-                "row_index": int,
-                "row_uuid": uuid.hex
+            "primary_recommendations": List[
+                Dict [
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float,
+                    "row_index": int,
+                    "row_uuid": uuid.hex
+                ]
             ],
-            "result_recommendations": Dict [
-                "name": str,
-                "latitude": float,
-                "longitude": float
+            "result_recommendations": List[
+                Dict [
+                    "name": str,
+                    "latitude": float,
+                    "longitude": float
+                ]
             ],
-            "new_watch_state": List[float],
-            "new_visit_state": List[float],
             "user_reward": float | int 
         ]
         """

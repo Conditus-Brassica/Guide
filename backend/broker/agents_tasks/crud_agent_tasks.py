@@ -464,7 +464,7 @@ async def post_user_task(json_params: Dict):
     Works asynchronously.
 
     :param json_params: Dict in form {"user_login": str}
-    :return: Coroutine bool
+    :return: Coroutine Dict["result": bool] -
     """
     return await CRUD_AGENT.put_user(json_params)
 
@@ -483,7 +483,7 @@ async def post_note_task(json_params: Dict):
         "note_title": str,
         "note_category_names": List[str]
     }
-    :return: Coroutine bool
+    :return: Coroutine Dict["result": bool] -
     """
     return await CRUD_AGENT.put_note(json_params)
 
@@ -508,7 +508,7 @@ async def post_route_for_note_task(json_params: Dict):
         ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
     }
 
-    :return: Coroutine bool
+    :return: Coroutine Dict["result": bool] -
     """
     return await CRUD_AGENT.put_route_for_note(json_params)
 
@@ -532,7 +532,7 @@ async def post_route_saved_by_user_task(json_params: Dict):
             ]
         ], where name is name of landmark and position is position in route of corresponding landmark (starts from 0)
     }
-    :return: Coroutine bool
+    :return: Coroutine Dict["result": bool] -
     """
     return await CRUD_AGENT.put_route_saved_by_user(json_params)
 
@@ -550,6 +550,6 @@ async def post_saved_relationship_for_existing_route(json_params: Dict):
         "user_login": str,
         "index_id": int
     }
-    :return: Coroutine bool
+    :return: Coroutine Dict["result": bool] -
     """
     return await CRUD_AGENT.put_saved_relationship_for_existing_route(json_params)

@@ -5,10 +5,10 @@ from typing import Tuple, List
 import keras
 import tensorflow as tf
 import numpy as np
-from backend.agents.recommendations_agent.sars_replay_buffer import SARSReplayBuffer
+from backend.agents.recommendation_systems.sars_replay_buffer import SARSReplayBuffer
 
 
-class Trainer:
+class NoteTrainer:
     
     def  __init__(
             self,
@@ -19,41 +19,42 @@ class Trainer:
             np_dtype: np.dtype,
             actor_save_file: str, critic_save_file: str,
             target_actor_save_file: str, target_critic_save_file: str,
-            save_period: int = 50
+            save_period: int = 50, noise_object=None
     ):
         """
-        ###
-        1. actor_model: keras.Model
+        :param actor_model: keras.Model
             - Actor network, counts action from the given state in terms of Markov decision process (check https://arxiv.org/pdf/1509.02971 for more details).
-        2. critic_model: keras.Model
+        :param critic_model: keras.Model
             - Critic network, counts Q-value from the given state and action (check https://arxiv.org/pdf/1509.02971 for more details).
-        3. gamma: float
+        :param gamma: float
             - discount factor of reward
-        4. actor_optimizer: keras.optimizers.Optimizer
+        :param actor_optimizer: keras.optimizers.Optimizer
             - Optimizer for actor_model
-        5. critic_optimizer: keras.optimizers.Optimizer
+        :param critic_optimizer: keras.optimizers.Optimizer
             - Optimizer for critic_model
-        6. target_actor_model: keras.Model
+        :param target_actor_model: keras.Model
             - Target actor model (check https://arxiv.org/pdf/1509.02971 for more details)
-        7. target_critic_model: keras.Model
+        :param target_critic_model: keras.Model
             - Target critic model (check https://arxiv.org/pdf/1509.02971 for more details)
-        8. tau: float
+        :param tau: float
             - Coefficient used in updating target weights  target_weight = (1 - tau) * target_weight + tau * original_model_weight
             (check https://arxiv.org/pdf/1509.02971 for more details)
-        9. sars_buffer: SARSReplayBuffer
+        :param sars_buffer: SARSReplayBuffer
             - Replay buffer to save state-action-reward-next_state tuples (check https://arxiv.org/pdf/1509.02971 for more details)
-        10. np_dtype: np.dtype
+        :param np_dtype: np.dtype
             - np.dtype used in SARSReplayBuffer and models (tensorflow.DType equivalent is used in models)
-        11. actor_save_file: str
+        :param actor_save_file: str
             - path to the file, where actor_model will be saved
-        12. critic_save_file: str
+        :param critic_save_file: str
             - path to the file, where critic_model will be saved
-        13. target_actor_save_file: str
+        :param target_actor_save_file: str
             - path to the file, where target_actor_model will be saved
-        14. target_critic_save_file: str
+        :param target_critic_save_file: str
             - path to the file, where target_critic_model will be saved
-        15. save_period: int [DEFAULT=50]
+        :param save_period: int [DEFAULT=50]
             - amount of training repeats between save of the models and SARSReplayBuffer
+        :param noise_object: __callable__ [DEFAULT=None]
+            - callable object, that generates random noise to solve exploration-exploitation problem
         """
         self._actor_model = actor_model
         self._critic_model = critic_model
@@ -66,6 +67,7 @@ class Trainer:
         self._target_actor_model = target_actor_model
         self._target_critic_model = target_critic_model 
         self.tau = tau
+        self._noise_object = noise_object
 
         self._sars_buffer = sars_buffer
 
@@ -275,7 +277,7 @@ class Trainer:
         ):
         with tf.GradientTape() as critic_tape:
             target_action_batch = self._target_actor_model(next_state_batch)
-            y = reward_batch + self._gamma * self._target_critic_model([next_state_batch, target_action_batch])  # r + g*Q'(s_n, A'(s_n))
+            y = reward_batch + self._gamma * self._target_critic_model([next_state_batch, target_action_batch])  # r + g * Q'(s_n, A'(s_n))
 
             critic_value = self._critic_model([state_batch, action_batch])
             
@@ -331,3 +333,4 @@ class Trainer:
     
     def get_state(self, row_index: int, row_uuid) -> np.ndarray | None:
         return self._sars_buffer.get_state(row_index, row_uuid)
+

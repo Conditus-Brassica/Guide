@@ -1,12 +1,12 @@
 # Author: Vodohleb04
 import numpy as np
-from backend.agents.recommendations_agent.pure_trainer_agent import PureTrainerAgent
-from backend.agents.recommendations_agent.trainer import Trainer
+from backend.agents.recommendation_systems.note_trainer.pure_note_trainer_agent import PureNoteTrainerAgent
+from backend.agents.recommendation_systems.note_trainer.note_trainer import NoteTrainer
 
 
-class TrainerAgent(PureTrainerAgent):
+class NoteTrainerAgent(PureNoteTrainerAgent):
     _single_trainer = None
-    _trainer: Trainer = None
+    _trainer: NoteTrainer = None
 
     @classmethod
     def get_trainer_agent(cls):
@@ -14,7 +14,7 @@ class TrainerAgent(PureTrainerAgent):
 
     @classmethod
     def trainer_agent_exists(cls) -> bool:
-        """Method to check if trainer object already exists"""
+        """Method to check if note trainer object already exists"""
         if cls._single_trainer:
             return True
         else:
@@ -22,11 +22,11 @@ class TrainerAgent(PureTrainerAgent):
 
     @classmethod
     def _class_init(
-            cls, trainer: Trainer
+            cls, trainer: NoteTrainer
     ):
         cls._trainer = trainer
 
-    def __init__(self, trainer: Trainer):
+    def __init__(self, trainer: NoteTrainer):
         
         if not self._single_trainer:
             self._class_init(trainer)

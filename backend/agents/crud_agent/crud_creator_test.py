@@ -14,9 +14,9 @@ if __name__ == '__main__':
     #async def test(login, password):
     async def test():
 
+        _asyncio_tasks = set()
         # Starting Broker listening (Such code will be located in main, not in agent)
         await AgentsBroker.get_broker().startup()
-
 
         # This this emulation of code from another agent
         # Async tasks that kicks broker tasks
@@ -26,6 +26,8 @@ if __name__ == '__main__':
                 {"user_login": "Test user"}
             )
         )
+        _asyncio_tasks.add(create_user_asyncio_task)
+        create_user_asyncio_task.add_done_callback(_asyncio_tasks.discard)
 
         create_note_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
@@ -38,6 +40,8 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(create_note_asyncio_task)
+        create_note_asyncio_task.add_done_callback(_asyncio_tasks.discard)
 
         res1 = await create_user_asyncio_task
         res2 = await create_note_asyncio_task
@@ -57,6 +61,8 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(create_route_for_note_asyncio_task)
+        create_route_for_note_asyncio_task.add_done_callback(_asyncio_tasks.discard)
         #
         # create_route_saved_by_user_asyncio_task = asyncio.create_task(
         #     AbstractAgentsBroker.call_agent_task(
@@ -71,6 +77,8 @@ if __name__ == '__main__':
         #         }
         #     )
         # )
+        # _asyncio_tasks.add(create_route_saved_by_user_asyncio_task)
+        # create_route_saved_by_user_asyncio_task.add_done_callback(_asyncio_tasks.discard)
 
         # create_saved_route_from_note_relationship_asyncio_task = asyncio.create_task(
         #     AbstractAgentsBroker.call_agent_task(
@@ -78,6 +86,8 @@ if __name__ == '__main__':
         #         {"user_login": "Test user", "note_title": "Test title"}
         #     )
         # )
+        # _asyncio_tasks.add(create_saved_route_from_note_relationship_asyncio_task)
+        # create_saved_route_from_note_relationship_asyncio_task.add_done_callback(_asyncio_tasks.discard)
 
 
         # res3 = await create_route_for_note_asyncio_task
@@ -100,12 +110,16 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(create_route_saved_by_user_asyncio_task)
+        create_route_saved_by_user_asyncio_task.add_done_callback(_asyncio_tasks.discard)
         create_saved_route_from_note_relationship_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.post_saved_relationship_for_existing_route,
                 {"user_login": "Test user", "index_id": 3}
             )
         )
+        _asyncio_tasks.add(create_saved_route_from_note_relationship_asyncio_task)
+        create_saved_route_from_note_relationship_asyncio_task.add_done_callback(_asyncio_tasks.discard)
 
         res4 = await create_route_saved_by_user_asyncio_task
         res5 = await create_saved_route_from_note_relationship_asyncio_task

@@ -1,0 +1,881 @@
+{"index": {"_index": "landmarks_index", "_id": 1}}
+{"name": "Государственный литературный музей Янки Купалы", "coordinates": {"latitude": 53.90611, "longitude": 27.56528}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 2}}
+{"name": "Литературный музей Петруся Бровки", "coordinates": {"latitude": 53.8993, "longitude": 27.561}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 3}}
+{"name": "Белорусский государственный музей истории Великой Отечественной войны", "coordinates": {"latitude": 53.91630556, "longitude": 27.53788889}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 4}}
+{"name": "Государственный литературно-мемориальный музей Якуба Коласа", "coordinates": {"latitude": 53.9195225, "longitude": 27.6000997}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 5}}
+{"name": "Государственный музей природы и экологии Республики Беларусь", "coordinates": {"latitude": 53.8967889, "longitude": 27.5555167}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 6}}
+{"name": "Дом Ваньковичей", "coordinates": {"latitude": 53.905075, "longitude": 27.5599806}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 7}}
+{"name": "Дом-музей I съезда РСДРП", "coordinates": {"latitude": 53.907827, "longitude": 27.571542}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 8}}
+{"name": "Зоологический музей Белорусского государственного университета", "coordinates": {"latitude": 53.83611, "longitude": 27.46889}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 9}}
+{"name": "Литературный музей Максима Богдановича", "coordinates": {"latitude": 53.908055, "longitude": 27.556087}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 10}}
+{"name": "Мемориальный музей-мастерская З. И. Азгура", "coordinates": {"latitude": 53.899292, "longitude": 27.578504}, "located": {"country": "Беларусь", "state": "", "district": "Партызанскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 11}}
+{"name": "Музей авиационной техники Центрального аэроклуба ДОСААФ имени С. Грицевца", "coordinates": {"latitude": 53.960667, "longitude": 27.651917}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Бараўлянскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 12}}
+{"name": "Музей валунов", "coordinates": {"latitude": 53.93194444, "longitude": 27.69138889}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 13}}
+{"name": "Музей землеведения БГУ", "coordinates": {"latitude": 53.89306, "longitude": 27.54833}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 14}}
+{"name": "Музей истории белорусского кино", "coordinates": {"latitude": 53.8972611, "longitude": 27.5485528}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 15}}
+{"name": "Музей истории города Минска", "coordinates": {"latitude": 53.903235, "longitude": 27.552827}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 16}}
+{"name": "Музей истории и культуры евреев Беларуси", "coordinates": {"latitude": 53.92275, "longitude": 27.56375}, "located": {"country": "Беларусь", "state": "", "district": "Савецкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 17}}
+{"name": "Музей исторического факультета БГУ", "coordinates": {"latitude": 53.89972, "longitude": 27.56667}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 18}}
+{"name": "Национальный исторический музей Республики Беларусь", "coordinates": {"latitude": 53.8967889, "longitude": 27.5555167}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 19}}
+{"name": "Национальный художественный музей Республики Беларусь", "coordinates": {"latitude": 53.89833, "longitude": 27.56056}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 20}}
+{"name": "Национальный центр современных искусств Республики Беларусь", "coordinates": {"latitude": 53.93, "longitude": 27.5965}, "located": {"country": "Беларусь", "state": "", "district": "Савецкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 21}}
+{"name": "Страна мини", "coordinates": {"latitude": 53.9034, "longitude": 27.563}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 22}}
+{"name": "Логойский историко-краеведческий музей имени Константина и Евстафия Тышкевичей", "coordinates": {"latitude": 54.20492, "longitude": 27.84037}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Лагойскі раён", "city": "Лагойск"}}
+{"index": {"_index": "landmarks_index", "_id": 23}}
+{"name": "Фольварк Ракутёвщина", "coordinates": {"latitude": 53.899316, "longitude": 27.560925}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 24}}
+{"name": "Гродненский областной театр кукол", "coordinates": {"latitude": 53.686579, "longitude": 23.83539}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 25}}
+{"name": "Мозырский драматический театр имени Ивана Мележа", "coordinates": {"latitude": 52.0453, "longitude": 29.26101}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Мазырскі раён", "city": "Мазыр"}}
+{"index": {"_index": "landmarks_index", "_id": 26}}
+{"name": "Брестский академический театр драмы", "coordinates": {"latitude": 52.09065, "longitude": 23.68606}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 27}}
+{"name": "Брестский областной театр кукол", "coordinates": {"latitude": 52.089781, "longitude": 23.687263}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 28}}
+{"name": "Александро-Невский собор (Кобрин)", "coordinates": {"latitude": 52.21428056, "longitude": 24.35850556}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Кобрынскі раён", "city": "Кобрын"}}
+{"index": {"_index": "landmarks_index", "_id": 29}}
+{"name": "Александро-Невский собор (Мстиславль)", "coordinates": {"latitude": 54.02029, "longitude": 31.72874}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Мсціслаўскі раён", "city": "Мсціслаў"}}
+{"index": {"_index": "landmarks_index", "_id": 30}}
+{"name": "Александро-Невский собор (Пружаны)", "coordinates": {"latitude": 52.5559472, "longitude": 24.45675}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Пружаны"}}
+{"index": {"_index": "landmarks_index", "_id": 31}}
+{"name": "Церковь Святого Алексея (Ивенец)", "coordinates": {"latitude": 53.89556, "longitude": 26.74306}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Валожынскі раён", "city": "Івянец"}}
+{"index": {"_index": "landmarks_index", "_id": 32}}
+{"name": "Церковь Святого Апостола Андрея (Кривичи)", "coordinates": {"latitude": 54.70722, "longitude": 27.29194}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мядзельскі раён", "city": "Крывіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 33}}
+{"name": "Церковь Святого Апостола Андрея (Нарочь)", "coordinates": {"latitude": 54.93861, "longitude": 26.68722}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мядзельскі раён", "city": "Нарацкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 34}}
+{"name": "Церковь Святого Апостола Андрея (Слоним)", "coordinates": {"latitude": 53.0975, "longitude": 25.33}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Слонімскі раён", "city": "Слонім"}}
+{"index": {"_index": "landmarks_index", "_id": 35}}
+{"name": "Антониевская церковь (Коссово)", "coordinates": {"latitude": 52.757925, "longitude": 25.15268333}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Івацэвіцкі раён", "city": "Косава"}}
+{"index": {"_index": "landmarks_index", "_id": 36}}
+{"name": "Антониевская церковь (Подгорная)", "coordinates": {"latitude": 52.98361, "longitude": 25.55472}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Падгорнаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 37}}
+{"name": "Церковь Святого Антония (Толочин)", "coordinates": {"latitude": 54.407083, "longitude": 29.70389}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Талачынскі раён", "city": "Талачын"}}
+{"index": {"_index": "landmarks_index", "_id": 38}}
+{"name": "Архиерейский дворец (Могилёв)", "coordinates": {"latitude": 53.89528, "longitude": 30.33444}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 39}}
+{"name": "Баториевка", "coordinates": {"latitude": 53.677806, "longitude": 23.830889}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 40}}
+{"name": "Белорусская государственная академия искусств", "coordinates": {"latitude": 53.9229, "longitude": 27.6011}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 41}}
+{"name": "Белорусский государственный музей истории Великой Отечественной войны", "coordinates": {"latitude": 53.91630556, "longitude": 27.53788889}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 42}}
+{"name": "Белорусский государственный университет", "coordinates": {"latitude": 53.89389, "longitude": 27.547083}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 43}}
+{"name": "Белорусский государственный цирк", "coordinates": {"latitude": 53.90417, "longitude": 27.5675}, "located": {"country": "Беларусь", "state": "", "district": "Партызанскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 44}}
+{"name": "Белорусский национальный технический университет", "coordinates": {"latitude": 53.92083, "longitude": 27.59278}, "located": {"country": "Беларусь", "state": "", "district": "Савецкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 45}}
+{"name": "Белые лавки", "coordinates": {"latitude": 52.556167, "longitude": 24.4557889}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Пружаны"}}
+{"index": {"_index": "landmarks_index", "_id": 46}}
+{"name": "Белый дворец (Брест)", "coordinates": {"latitude": 52.083233, "longitude": 23.658843}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 47}}
+{"name": "Бердыж (стоянка)", "coordinates": {"latitude": 52.833, "longitude": 30.95}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Чачэрскі раён", "city": "Ленінскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 48}}
+{"name": "Березвечский базилианский монастырь", "coordinates": {"latitude": 55.1644, "longitude": 27.6729}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Глыбоцкі раён", "city": "Глыбокае"}}
+{"index": {"_index": "landmarks_index", "_id": 49}}
+{"name": "Берёзовский монастырь картезианцев", "coordinates": {"latitude": 52.532056, "longitude": 24.9592028}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Бярозаўскі раён", "city": "Бяроза"}}
+{"index": {"_index": "landmarks_index", "_id": 50}}
+{"name": "Берестье (музей)", "coordinates": {"latitude": 52.079962, "longitude": 23.654746}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 51}}
+{"name": "Бобруйская крепость", "coordinates": {"latitude": 53.13889, "longitude": 29.24583}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Бабруйск"}}
+{"index": {"_index": "landmarks_index", "_id": 52}}
+{"name": "Церковь Богоматери Святого Розария (Раков)", "coordinates": {"latitude": 53.96556, "longitude": 27.05611}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Валожынскі раён", "city": "Ракаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 53}}
+{"name": "Богоявленский братский монастырь (Могилёв)", "coordinates": {"latitude": 53.89583, "longitude": 30.33222}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 54}}
+{"name": "Богоявленский Кутеинский монастырь", "coordinates": {"latitude": 54.49194, "longitude": 30.41333}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Аршанскі раён", "city": "Орша"}}
+{"index": {"_index": "landmarks_index", "_id": 55}}
+{"name": "Богоявленский собор (Полоцк)", "coordinates": {"latitude": 55.48389, "longitude": 28.76861}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Полацкі раён", "city": "Полацк"}}
+{"index": {"_index": "landmarks_index", "_id": 56}}
+{"name": "Церковь Божией Матери Скапулярия (Идолта)", "coordinates": {"latitude": 55.71028, "longitude": 27.57778}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Мёрскі раён", "city": "Павяцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 57}}
+{"name": "Церковь Божией Матери Скапулярия (Мядель)", "coordinates": {"latitude": 54.88222, "longitude": 26.9225}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мядзельскі раён", "city": "Мядзел"}}
+{"index": {"_index": "landmarks_index", "_id": 58}}
+{"name": "Большой театр Белоруссии", "coordinates": {"latitude": 53.91056, "longitude": 27.56139}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 59}}
+{"name": "Борисов камень в Полоцке", "coordinates": {"latitude": 55.48583, "longitude": 28.75806}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Полацкі раён", "city": "Полацк"}}
+{"index": {"_index": "landmarks_index", "_id": 60}}
+{"name": "Борисовский замок", "coordinates": {"latitude": 54.24028, "longitude": 28.50083}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Барысаўскі раён", "city": "Барысаў"}}
+{"index": {"_index": "landmarks_index", "_id": 61}}
+{"name": "Борисоглебская церковь (Гродно)", "coordinates": {"latitude": 53.67841, "longitude": 23.81861}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 62}}
+{"name": "Борисоглебская церковь (Новогрудок)", "coordinates": {"latitude": 53.6002, "longitude": 25.8241}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 63}}
+{"name": "Браславский замок", "coordinates": {"latitude": 55.64333, "longitude": 27.06139}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Браслаўскі раён", "city": "Браслаў"}}
+{"index": {"_index": "landmarks_index", "_id": 64}}
+{"name": "Братская могила (Холопеничи)", "coordinates": {"latitude": 54.529951, "longitude": 28.962553}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Крупскі раён", "city": "Халопеніцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 65}}
+{"name": "Брестская крепость", "coordinates": {"latitude": 52.08333333, "longitude": 23.65277778}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 66}}
+{"name": "Брестский замок (Белоруссия)", "coordinates": {"latitude": 52.08306, "longitude": 23.65389}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 67}}
+{"name": "Буйничское поле", "coordinates": {"latitude": 53.86167, "longitude": 30.25417}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Магілёўскі раён", "city": "Буйніцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 68}}
+{"name": "Быховская синагога", "coordinates": {"latitude": 53.519611, "longitude": 30.2552083}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Быхаўскі раён", "city": "Быхаў"}}
+{"index": {"_index": "landmarks_index", "_id": 69}}
+{"name": "Быховский замок", "coordinates": {"latitude": 53.518075, "longitude": 30.2592667}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Быхаўскі раён", "city": "Быхаў"}}
+{"index": {"_index": "landmarks_index", "_id": 70}}
+{"name": "Бюст Петра Климука", "coordinates": {"latitude": 52.08806, "longitude": 23.7025}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 71}}
+{"name": "Свято-Варваринский собор (Пинск)", "coordinates": {"latitude": 52.1184, "longitude": 26.11054}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Пінск"}}
+{"index": {"_index": "landmarks_index", "_id": 72}}
+{"name": "Церковь Святого Вацлава (Волковыск)", "coordinates": {"latitude": 53.15917, "longitude": 24.47222}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ваўкавыскі раён", "city": "Ваўкавыск"}}
+{"index": {"_index": "landmarks_index", "_id": 73}}
+{"name": "Вердомичи", "coordinates": {"latitude": 53.029, "longitude": 24.2755}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Свіслацкі раён", "city": "Вердаміцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 74}}
+{"name": "Ветковский музей старообрядчества и белорусских традиций имени Ф. Г. Шклярова", "coordinates": {"latitude": 52.55938, "longitude": 31.17058}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Веткаўскі раён", "city": "Ветка"}}
+{"index": {"_index": "landmarks_index", "_id": 75}}
+{"name": "Ветряная мельница (Мольча)", "coordinates": {"latitude": 52.62, "longitude": 29.53472}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Светлагорскі раён", "city": "Чыркавіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 76}}
+{"name": "Витебская ратуша", "coordinates": {"latitude": 55.195476, "longitude": 30.206017}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 77}}
+{"name": "Витебский железнодорожный вокзал", "coordinates": {"latitude": 53.19611, "longitude": 25.185}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Слонімскі раён", "city": "Сянькоўшчынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 78}}
+{"name": "Витебский областной краеведческий музей", "coordinates": {"latitude": 55.1956, "longitude": 30.2058}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 79}}
+{"name": "Замок Вишневецких (Тельман)", "coordinates": {"latitude": 51.8079, "longitude": 30.3034}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Брагінскі раён", "city": "Малейкаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 80}}
+{"name": "Вищинский замок", "coordinates": {"latitude": 53.148, "longitude": 30.263194}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рагачоўскі раён", "city": "Кісцянёўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 81}}
+{"name": "Водяная мельница (Поставы)", "coordinates": {"latitude": 55.1131499, "longitude": 26.8418714}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Пастаўскі раён", "city": "Паставы"}}
+{"index": {"_index": "landmarks_index", "_id": 82}}
+{"name": "Храм Воздвижения Креста Господня (Оранчицы)", "coordinates": {"latitude": 52.46028, "longitude": 24.52556}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Лінаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 83}}
+{"name": "Церковь Воздвижения Креста Господня (Зельзин)", "coordinates": {"latitude": 52.9036306, "longitude": 24.7009028}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Зеляневіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 84}}
+{"name": "Церковь Воздвижения Креста Господня (Лунинец)", "coordinates": {"latitude": 52.24472, "longitude": 26.79556}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Лунінецкі раён", "city": "Лунінец"}}
+{"index": {"_index": "landmarks_index", "_id": 85}}
+{"name": "Церковь Воздвижения Святого Креста (Барановичи)", "coordinates": {"latitude": 53.12917, "longitude": 26.00361}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 86}}
+{"name": "Церковь Воздвижения Святого Креста (Брест)", "coordinates": {"latitude": 52.09306, "longitude": 23.68611}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 87}}
+{"name": "Церковь Воздвижения Святого Креста (Лида)", "coordinates": {"latitude": 53.88917, "longitude": 25.303194}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Лідскі раён", "city": "Ліда"}}
+{"index": {"_index": "landmarks_index", "_id": 88}}
+{"name": "Костёл Вознесения Пресвятой Девы Марии (Будслав)", "coordinates": {"latitude": 54.78694, "longitude": 27.45139}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мядзельскі раён", "city": "Будслаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 89}}
+{"name": "Собор Вознесения Пресвятой Девы Марии (Пинск)", "coordinates": {"latitude": 52.11306, "longitude": 26.10833}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Пінск"}}
+{"index": {"_index": "landmarks_index", "_id": 90}}
+{"name": "Кармелитский костёл (Мстиславль)", "coordinates": {"latitude": 54.02389, "longitude": 31.72722}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Мсціслаўскі раён", "city": "Мсціслаў"}}
+{"index": {"_index": "landmarks_index", "_id": 91}}
+{"name": "Костёл Вознесения Пресвятой Девы Марии (Дятлово)", "coordinates": {"latitude": 53.46528, "longitude": 25.40472}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Дзятлаўскі раён", "city": "Дзятлава"}}
+{"index": {"_index": "landmarks_index", "_id": 92}}
+{"name": "Церковь Вознесения Девы Марии (Желудок)", "coordinates": {"latitude": 53.60222, "longitude": 24.97583}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Шчучынскі раён", "city": "Жалудок"}}
+{"index": {"_index": "landmarks_index", "_id": 93}}
+{"name": "Церковь Вознесения Девы Марии (Миоры)", "coordinates": {"latitude": 55.61444, "longitude": 27.63028}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Мёрскі раён", "city": "Мёры"}}
+{"index": {"_index": "landmarks_index", "_id": 94}}
+{"name": "Церковь Вознесения Девы Марии (Одельск)", "coordinates": {"latitude": 53.40472, "longitude": 23.76111}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Гродзенскі раён", "city": "Адэльскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 95}}
+{"name": "Церковь Вознесения Девы Марии (Прозороки)", "coordinates": {"latitude": 55.29639, "longitude": 28.21889}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Глыбоцкі раён", "city": "Празароцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 96}}
+{"name": "Церковь Вознесения Девы Марии (Пружаны)", "coordinates": {"latitude": 52.56194, "longitude": 24.45639}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Пружаны"}}
+{"index": {"_index": "landmarks_index", "_id": 97}}
+{"name": "Парк Вольно", "coordinates": {"latitude": 53.29444, "longitude": 26.23333}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Вольнаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 98}}
+{"name": "Воронечский замок", "coordinates": {"latitude": 55.32666569, "longitude": 28.63423369}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Полацкі раён", "city": "Вароніцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 99}}
+{"name": "Ворота Минска", "coordinates": {"latitude": 53.8918, "longitude": 27.5517}, "located": {"country": "Беларусь", "state": "", "district": "Кастрычніцкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 100}}
+{"name": "Воротишин крест", "coordinates": {"latitude": 54.582167, "longitude": 27.470694}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Вілейскі раён", "city": "Даўгінаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 101}}
+{"name": "Воскресенская церковь (Витебск)", "coordinates": {"latitude": 55.19472, "longitude": 30.20583}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 102}}
+{"name": "Воскресенская церковь (Межево)", "coordinates": {"latitude": 54.62699444, "longitude": 30.31492778}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Аршанскі раён", "city": "Межаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 103}}
+{"name": "Воскресенский собор (Борисов)", "coordinates": {"latitude": 54.245, "longitude": 28.50389}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Барысаўскі раён", "city": "Барысаў"}}
+{"index": {"_index": "landmarks_index", "_id": 104}}
+{"name": "Восточное кладбище (Минск)", "coordinates": {"latitude": 53.93889, "longitude": 27.66111}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 105}}
+{"name": "Высоковский замок", "coordinates": {"latitude": 52.366833, "longitude": 23.3678222}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Камянецкі раён", "city": "Высокае"}}
+{"index": {"_index": "landmarks_index", "_id": 106}}
+{"name": "Гайтюнишский дом-замок", "coordinates": {"latitude": 54.2510333, "longitude": 25.4332417}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Воранаўскі раён", "city": "Канвелішскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 107}}
+{"name": "Гарнизонное кладбище Бреста", "coordinates": {"latitude": 52.09145, "longitude": 23.64922}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 108}}
+{"name": "Георгиевская церковь (Давид-Городок)", "coordinates": {"latitude": 52.055986, "longitude": 27.228928}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Столінскі раён", "city": "Давыд-Гарадок"}}
+{"index": {"_index": "landmarks_index", "_id": 109}}
+{"name": "Геранёнский замок", "coordinates": {"latitude": 54.11333, "longitude": 25.57917}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Іўеўскі раён", "city": "Геранёнскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 110}}
+{"name": "Главная синагога (Столин)", "coordinates": {"latitude": 51.8865028, "longitude": 26.8429417}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Столінскі раён", "city": "Столін"}}
+{"index": {"_index": "landmarks_index", "_id": 111}}
+{"name": "Глубокский историко-этнографический музей", "coordinates": {"latitude": 55.1424, "longitude": 27.68454}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Глыбоцкі раён", "city": "Глыбокае"}}
+{"index": {"_index": "landmarks_index", "_id": 112}}
+{"name": "Глусский замок", "coordinates": {"latitude": 52.89111, "longitude": 28.68861}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Глускі раён", "city": "Глуск"}}
+{"index": {"_index": "landmarks_index", "_id": 113}}
+{"name": "Гольшанский замок", "coordinates": {"latitude": 54.25111, "longitude": 26.02028}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ашмянскі раён", "city": "Гальшанскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 114}}
+{"name": "Гомельская областная универсальная библиотека имени В. И. Ленина", "coordinates": {"latitude": 52.43141, "longitude": 31.00002}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 115}}
+{"name": "Гомельский государственный медицинский университет", "coordinates": {"latitude": 52.428167, "longitude": 31.015861}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 116}}
+{"name": "Гомельский государственный цирк", "coordinates": {"latitude": 52.4341284, "longitude": 31.0095603}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 117}}
+{"name": "Гомельский дворцово-парковый ансамбль", "coordinates": {"latitude": 52.42361, "longitude": 31.01667}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 118}}
+{"name": "Гомельский замок", "coordinates": {"latitude": 52.422425, "longitude": 31.016875}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 119}}
+{"name": "Гора Миндовга", "coordinates": {"latitude": 53.60023056, "longitude": 25.83538056}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 120}}
+{"name": "Государственный литературно-мемориальный музей Якуба Коласа", "coordinates": {"latitude": 53.9195225, "longitude": 27.6000997}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 121}}
+{"name": "Гремяча (усадьба)", "coordinates": {"latitude": 52.28428333, "longitude": 23.34548333}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Камянецкі раён", "city": "Воўчынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 122}}
+{"name": "Давид-Городокский замок", "coordinates": {"latitude": 52.0575, "longitude": 27.21056}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Столінскі раён", "city": "Давыд-Гарадок"}}
+{"index": {"_index": "landmarks_index", "_id": 123}}
+{"name": "Дальва", "coordinates": {"latitude": 54.53685, "longitude": 27.950367}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Лагойскі раён", "city": "Акалоўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 124}}
+{"name": "Дворец Валицкого (Гродно)", "coordinates": {"latitude": 53.685, "longitude": 23.831}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 125}}
+{"name": "Дворец Друцких-Любецких (Щучин)", "coordinates": {"latitude": 53.6106, "longitude": 24.7408}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Шчучынскі раён", "city": "Шчучын"}}
+{"index": {"_index": "landmarks_index", "_id": 126}}
+{"name": "Дворец культуры железнодорожников (Гомель)", "coordinates": {"latitude": 52.4308806, "longitude": 30.9940889}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 127}}
+{"name": "Дворец Потёмкина в Кричеве", "coordinates": {"latitude": 53.68806, "longitude": 31.712528}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Крычаўскі раён", "city": "Крычаў"}}
+{"index": {"_index": "landmarks_index", "_id": 128}}
+{"name": "Дворец Радзивиллов (Полонечка)", "coordinates": {"latitude": 53.344192, "longitude": 26.258283}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Вольнаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 129}}
+{"name": "Дворец Румянцевых — Паскевичей", "coordinates": {"latitude": 52.42222222, "longitude": 31.01638889}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 130}}
+{"name": "Дворец Хрептовичей (Гродно)", "coordinates": {"latitude": 53.678, "longitude": 23.826}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 131}}
+{"name": "Дворец Чапских (Прилуки)", "coordinates": {"latitude": 53.79056, "longitude": 27.45056}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Сеніцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 132}}
+{"name": "Дворцово-парковый ансамбль Бохвицев (Павлиново)", "coordinates": {"latitude": 53.02778, "longitude": 25.81806}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Ляснянскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 133}}
+{"name": "Дворцово-парковый комплекс Ельских (Дудичи)", "coordinates": {"latitude": 53.58, "longitude": 27.66}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Пухавіцкі раён", "city": "Навапольскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 134}}
+{"name": "Дворцово-парковый комплекс Трембицких", "coordinates": {"latitude": 52.49361, "longitude": 24.48028}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Лінаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 135}}
+{"name": "Собор Пресвятого Имени Пресвятой Девы Марии (Минск)", "coordinates": {"latitude": 53.9031472, "longitude": 27.5544028}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 136}}
+{"name": "Дзержиново", "coordinates": {"latitude": 53.83611, "longitude": 26.54167}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Стаўбцоўскі раён", "city": "Літвенскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 137}}
+{"name": "Улица Димитрова (Витебск)", "coordinates": {"latitude": 55.1906, "longitude": 30.19111}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 138}}
+{"name": "Добрушская бумажная фабрика", "coordinates": {"latitude": 52.408, "longitude": 31.318}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Добрушскі раён", "city": "Добруш"}}
+{"index": {"_index": "landmarks_index", "_id": 139}}
+{"name": "Добрушский районный краеведческий музей", "coordinates": {"latitude": 52.419272, "longitude": 31.315339}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Добрушскі раён", "city": "Добруш"}}
+{"index": {"_index": "landmarks_index", "_id": 140}}
+{"name": "Довбучская мечеть", "coordinates": {"latitude": 54.3485, "longitude": 26.439}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Смаргонскі раён", "city": "Сінькоўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 141}}
+{"name": "Дом Абрампольского", "coordinates": {"latitude": 53.89650556, "longitude": 27.54858889}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 142}}
+{"name": "Дом Багратиона", "coordinates": {"latitude": 53.1614556, "longitude": 24.4735306}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ваўкавыскі раён", "city": "Ваўкавыск"}}
+{"index": {"_index": "landmarks_index", "_id": 143}}
+{"name": "Дом Волина", "coordinates": {"latitude": 53.897413, "longitude": 27.551167}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 144}}
+{"name": "Дом врача (Гомель)", "coordinates": {"latitude": 52.4292417, "longitude": 31.0062139}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 145}}
+{"name": "Дом врача Тальгейма", "coordinates": {"latitude": 53.68076, "longitude": 23.840486}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 146}}
+{"name": "Дом губернатора (Минск)", "coordinates": {"latitude": 53.90298056, "longitude": 27.55500833}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 147}}
+{"name": "Дом Козиной", "coordinates": {"latitude": 53.8937, "longitude": 27.5518}, "located": {"country": "Беларусь", "state": "", "district": "Кастрычніцкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 148}}
+{"name": "Дом Костровицкой", "coordinates": {"latitude": 53.8949, "longitude": 27.5542}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 149}}
+{"name": "Дом Малина", "coordinates": {"latitude": 53.8976139, "longitude": 27.5515806}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 150}}
+{"name": "Дом Минского товарищества взаимного сельскохозяйственного страхования", "coordinates": {"latitude": 53.8983, "longitude": 27.5536}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 151}}
+{"name": "Дом под шпилем (Минск)", "coordinates": {"latitude": 53.91056, "longitude": 27.56833}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 152}}
+{"name": "Дом правительства Республики Беларусь", "coordinates": {"latitude": 53.8961167, "longitude": 27.544778}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 153}}
+{"name": "Дом ремесленника (Несвиж)", "coordinates": {"latitude": 53.2189667, "longitude": 26.6799444}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Нясвіж"}}
+{"index": {"_index": "landmarks_index", "_id": 154}}
+{"name": "Дом с мезузой (Минск)", "coordinates": {"latitude": 53.905035, "longitude": 27.547855}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 155}}
+{"name": "Дом Свенцицкого", "coordinates": {"latitude": 53.89931667, "longitude": 27.560925}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 156}}
+{"name": "Дом специалистов (Витебск)", "coordinates": {"latitude": 55.19778, "longitude": 30.21528}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 157}}
+{"name": "Дом Униховского", "coordinates": {"latitude": 53.89668056, "longitude": 27.54908611}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 158}}
+{"name": "Дом № 5 по улице Пирогова (Барановичи)", "coordinates": {"latitude": 53.12972, "longitude": 26.02056}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 159}}
+{"name": "Дом-коммуна (Гомель)", "coordinates": {"latitude": 52.429998, "longitude": 30.996629}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 160}}
+{"name": "Дом-музей Максима Богдановича (Гродно)", "coordinates": {"latitude": 53.6872769, "longitude": 23.8377839}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 161}}
+{"name": "Дом, где жил Змитрок Бядуля", "coordinates": {"latitude": 53.88815, "longitude": 27.54136111}, "located": {"country": "Беларусь", "state": "", "district": "Кастрычніцкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 162}}
+{"name": "Дрисвятский замок", "coordinates": {"latitude": 55.594975, "longitude": 26.6474917}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Браслаўскі раён", "city": "Відзаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 163}}
+{"name": "Дудичи (Пуховичский район)", "coordinates": {"latitude": 53.58527778, "longitude": 27.66277778}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Пухавіцкі раён", "city": "Навапольскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 164}}
+{"name": "Жаберский замок", "coordinates": {"latitude": 52.3592, "longitude": 25.1761}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Драгічынскі раён", "city": "Хомскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 165}}
+{"name": "Жемыславль (усадьба)", "coordinates": {"latitude": 54.13222, "longitude": 25.76528}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Іўеўскі раён", "city": "Суботніцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 166}}
+{"name": "Жиличи (усадьба)", "coordinates": {"latitude": 53.155778, "longitude": 29.68917}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Кіраўскі раён", "city": "Добасненскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 167}}
+{"name": "Жировичский монастырь", "coordinates": {"latitude": 53.0143583, "longitude": 25.3444361}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Слонімскі раён", "city": "Жыровіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 168}}
+{"name": "За нашу Советскую Родину (мемориальный комплекс)", "coordinates": {"latitude": 54.505556, "longitude": 30.430278}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Аршанскі раён", "city": "Орша"}}
+{"index": {"_index": "landmarks_index", "_id": 169}}
+{"name": "Залесье (усадьба)", "coordinates": {"latitude": 54.41917, "longitude": 26.52222}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Смаргонскі раён", "city": "Залескі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 170}}
+{"name": "Замковая башня (Несвиж)", "coordinates": {"latitude": 53.220975, "longitude": 26.6835611}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Нясвіж"}}
+{"index": {"_index": "landmarks_index", "_id": 171}}
+{"name": "Замок Кмиты", "coordinates": {"latitude": 53.523065, "longitude": 26.157326}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Карэліцкі раён", "city": "Турэцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 172}}
+{"name": "Заполотье", "coordinates": {"latitude": 55.48667, "longitude": 28.75194}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Полацкі раён", "city": "Полацк"}}
+{"index": {"_index": "landmarks_index", "_id": 173}}
+{"name": "Запрудский замок", "coordinates": {"latitude": 52.330652, "longitude": 24.56901}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Кобрынскі раён", "city": "Астроміцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 174}}
+{"name": "Заславский замок", "coordinates": {"latitude": 54.00722, "longitude": 27.29194}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Заслаўе"}}
+{"index": {"_index": "landmarks_index", "_id": 175}}
+{"name": "Звонница (Шерешёво)", "coordinates": {"latitude": 52.5546, "longitude": 24.2142}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Шарашэўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 176}}
+{"name": "Здание банка (Брест)", "coordinates": {"latitude": 52.09444, "longitude": 23.68333}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 177}}
+{"name": "Здание библиотеки Белорусской государственной сельскохозяйственной академии", "coordinates": {"latitude": 54.28989, "longitude": 30.98944}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Горацкі раён", "city": "Горкі"}}
+{"index": {"_index": "landmarks_index", "_id": 178}}
+{"name": "Здание бывшего духовного училища (Гомель)", "coordinates": {"latitude": 52.4278083, "longitude": 31.0191722}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 179}}
+{"name": "Здание бывшей Александровской гимназии (Гомель)", "coordinates": {"latitude": 52.43219543, "longitude": 31.00378275}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 180}}
+{"name": "Здание бывшей городской думы (Гомель)", "coordinates": {"latitude": 52.42569, "longitude": 31.01514}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 181}}
+{"name": "Здание Виленского коммерческого банка (Гомель)", "coordinates": {"latitude": 52.4269056, "longitude": 31.0137444}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 182}}
+{"name": "Здание городского театра (Могилёв)", "coordinates": {"latitude": 53.89722222, "longitude": 30.33305556}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 183}}
+{"name": "Здание дворянского собрания (Слуцк)", "coordinates": {"latitude": 53.0242389, "longitude": 27.5463639}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Слуцкі раён", "city": "Слуцк"}}
+{"index": {"_index": "landmarks_index", "_id": 184}}
+{"name": "Здание Комитета государственной безопасности Республики Беларусь", "coordinates": {"latitude": 53.8989652, "longitude": 27.554698}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 185}}
+{"name": "Здание ланкастерской школы (Гомель)", "coordinates": {"latitude": 52.43610046, "longitude": 31.00832105}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 186}}
+{"name": "Здание обувной фабрики Цитвера", "coordinates": {"latitude": 53.908614, "longitude": 27.557023}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 187}}
+{"name": "Здание радиостанции (Барановичи)", "coordinates": {"latitude": 53.12583, "longitude": 25.99611}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 188}}
+{"name": "Здание Русско-Азиатского банка (Гомель)", "coordinates": {"latitude": 52.42694, "longitude": 31.01417}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 189}}
+{"name": "Здание средней школы №4", "coordinates": {"latitude": 53.9002, "longitude": 27.5674}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 190}}
+{"name": "Здание факультета географии и геоинформатики БГУ", "coordinates": {"latitude": 53.89306, "longitude": 27.54806}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 191}}
+{"name": "Здравнёво (музей-усадьба)", "coordinates": {"latitude": 55.32, "longitude": 30.33722}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Віцебскі раён", "city": "Мазалаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 192}}
+{"name": "Зимний сад (Гомель)", "coordinates": {"latitude": 52.41878, "longitude": 31.01386}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 193}}
+{"name": "Ивьевская мечеть", "coordinates": {"latitude": 53.92224167, "longitude": 25.77298333}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Іўеўскі раён", "city": "Іўе"}}
+{"index": {"_index": "landmarks_index", "_id": 194}}
+{"name": "Иезуитский коллегиум (Орша)", "coordinates": {"latitude": 54.50722, "longitude": 30.4225}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Аршанскі раён", "city": "Орша"}}
+{"index": {"_index": "landmarks_index", "_id": 195}}
+{"name": "Иезуитский коллегиум (Пинск)", "coordinates": {"latitude": 52.11111, "longitude": 26.10417}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Пінск"}}
+{"index": {"_index": "landmarks_index", "_id": 196}}
+{"name": "Иказненский замок", "coordinates": {"latitude": 55.62333, "longitude": 27.26694}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Браслаўскі раён", "city": "Цяцеркаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 197}}
+{"name": "Церковь Святого Иоанна Крестителя (Бенякони)", "coordinates": {"latitude": 54.25333, "longitude": 25.35972}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Воранаўскі раён", "city": "Беняконскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 198}}
+{"name": "Церковь Святого Иоанна Крестителя (Гольшаны)", "coordinates": {"latitude": 54.25667, "longitude": 26.01}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ашмянскі раён", "city": "Гальшанскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 199}}
+{"name": "Церковь Святого Иоанна Крестителя (Василишки)", "coordinates": {"latitude": 53.77667, "longitude": 24.84833}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Шчучынскі раён", "city": "Васілішкаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 200}}
+{"name": "Церковь Святого Иоанна Крестителя (Волпа)", "coordinates": {"latitude": 53.37028, "longitude": 24.35694}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ваўкавыскі раён", "city": "Воўпаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 201}}
+{"name": "Церковь Святого Иоанна Крестителя (Мстибово)", "coordinates": {"latitude": 53.11333, "longitude": 24.25889}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ваўкавыскі раён", "city": "Гнезнаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 202}}
+{"name": "Иоанно-Богословская церковь (Домашаны)", "coordinates": {"latitude": 54.01917, "longitude": 27.94611}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Смалявіцкі раён", "city": "Азярыцка-Слабадскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 203}}
+{"name": "Иоанно-Кормянский монастырь", "coordinates": {"latitude": 52.34389, "longitude": 31.51278}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Добрушскі раён", "city": "Кармянскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 204}}
+{"name": "Церковь Святого Иосифа Обручника (Орша)", "coordinates": {"latitude": 54.50528, "longitude": 30.41611}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Аршанскі раён", "city": "Орша"}}
+{"index": {"_index": "landmarks_index", "_id": 205}}
+{"name": "Церковь Святого Казимира (Лепель)", "coordinates": {"latitude": 54.88944, "longitude": 28.69306}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Лепельскі раён", "city": "Лепель"}}
+{"index": {"_index": "landmarks_index", "_id": 206}}
+{"name": "Часовня святого Казимира (Ружаны)", "coordinates": {"latitude": 52.8697361, "longitude": 24.896806}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Ружанскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 207}}
+{"name": "Улица Калинина (Витебск)", "coordinates": {"latitude": 55.18891, "longitude": 30.20076}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 208}}
+{"name": "Кальварийская брама", "coordinates": {"latitude": 53.90870278, "longitude": 27.50653611}, "located": {"country": "Беларусь", "state": "", "district": "Фрунзенскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 209}}
+{"name": "Каменецкая башня", "coordinates": {"latitude": 52.4047639, "longitude": 23.8195222}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Камянецкі раён", "city": "Камянец"}}
+{"index": {"_index": "landmarks_index", "_id": 210}}
+{"name": "Улица Кирова (Витебск)", "coordinates": {"latitude": 55.19392, "longitude": 30.193039}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 211}}
+{"name": "Улица Кирова (Гродно)", "coordinates": {"latitude": 53.67865, "longitude": 23.83591}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 212}}
+{"name": "Китаевская синагога", "coordinates": {"latitude": 53.90806, "longitude": 27.55611}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 213}}
+{"name": "Кладбище на улице Загородной (Барановичи)", "coordinates": {"latitude": 53.11583, "longitude": 26.01111}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 214}}
+{"name": "Клецкая иешива", "coordinates": {"latitude": 53.066083, "longitude": 26.62722}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Клецкі раён", "city": "Клецк"}}
+{"index": {"_index": "landmarks_index", "_id": 215}}
+{"name": "Княжеский терем (Гродно)", "coordinates": {"latitude": 53.677111, "longitude": 23.822472}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 216}}
+{"name": "Кобринский усадебный дом", "coordinates": {"latitude": 52.2097, "longitude": 24.3553}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Кобрынскі раён", "city": "Кобрын"}}
+{"index": {"_index": "landmarks_index", "_id": 217}}
+{"name": "Козьян (крепость)", "coordinates": {"latitude": 55.54222, "longitude": 29.505417}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Шумілінскі раён", "city": "Мішневіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 218}}
+{"name": "Колодезный шатёр", "coordinates": {"latitude": 55.638735, "longitude": 27.030939}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Браслаўскі раён", "city": "Браслаў"}}
+{"index": {"_index": "landmarks_index", "_id": 219}}
+{"name": "Колония Варбурга", "coordinates": {"latitude": 52.10294, "longitude": 23.70319}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 220}}
+{"name": "Комплекс зданий Белорусского государственного университета", "coordinates": {"latitude": 53.89306, "longitude": 27.54806}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 221}}
+{"name": "Костёл Благовещения Пресвятой Девы Марии и монастырь бригиток", "coordinates": {"latitude": 53.67713333, "longitude": 23.83606667}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 222}}
+{"name": "Костёл Божьего Тела (Богушевичи)", "coordinates": {"latitude": 53.71472, "longitude": 28.81972}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Бярэзінскі раён", "city": "Багушэвіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 223}}
+{"name": "Костёл Вознесения Девы Марии (Скидель)", "coordinates": {"latitude": 53.59637222, "longitude": 24.26375278}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Гродзенскі раён", "city": "Скідзель"}}
+{"index": {"_index": "landmarks_index", "_id": 224}}
+{"name": "Костёл Девы Марии Розарии и монастырь доминиканцев (Гродно)", "coordinates": {"latitude": 53.68, "longitude": 23.8298}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 225}}
+{"name": "Костёл и монастырь Святого Духа (Гродно)", "coordinates": {"latitude": 53.681361, "longitude": 23.83106}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 226}}
+{"name": "Костёл Иоанна Крестителя (Камаи)", "coordinates": {"latitude": 55.06028, "longitude": 26.60528}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Пастаўскі раён", "city": "Камайскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 227}}
+{"name": "Костёл Опеки Матери Божьей (Королищевичи)", "coordinates": {"latitude": 53.80149758, "longitude": 27.69521717}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Навадворскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 228}}
+{"name": "Костёл Пресвятой Троицы (Беница)", "coordinates": {"latitude": 54.346667, "longitude": 26.556621}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Маладзечанскі раён", "city": "Лебедзеўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 229}}
+{"name": "Костёл Пресвятой Троицы (Войстом)", "coordinates": {"latitude": 54.57371667, "longitude": 26.61798889}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Смаргонскі раён", "city": "Вішнеўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 230}}
+{"name": "Костёл Пресвятой Троицы (Индура)", "coordinates": {"latitude": 53.458641, "longitude": 23.887585}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Гродзенскі раён", "city": "Індурскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 231}}
+{"name": "Костёл Пресвятой Троицы (Плюсы)", "coordinates": {"latitude": 55.81327778, "longitude": 27.04733333}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Браслаўскі раён", "city": "Плюскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 232}}
+{"name": "Костёл Рождества Пресвятой Девы Марии (Борисов)", "coordinates": {"latitude": 54.24167, "longitude": 28.50556}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Барысаўскі раён", "city": "Барысаў"}}
+{"index": {"_index": "landmarks_index", "_id": 233}}
+{"name": "Костёл Рождества Пресвятой Девы Марии (Заславль)", "coordinates": {"latitude": 54.00306, "longitude": 27.29167}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Заслаўе"}}
+{"index": {"_index": "landmarks_index", "_id": 234}}
+{"name": "Костёл Святого Иоанна Крестителя (Снов)", "coordinates": {"latitude": 53.21972222, "longitude": 26.40825}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Сноўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 235}}
+{"name": "Костёл Святого Иуды Фаддея (Привалки)", "coordinates": {"latitude": 53.945998, "longitude": 23.922583}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Гродзенскі раён", "city": "Гожскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 236}}
+{"name": "Костёл Святого Казимира (Рясно)", "coordinates": {"latitude": 54.01167, "longitude": 31.19472}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Дрыбінскі раён", "city": "Расненскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 237}}
+{"name": "Костёл Святого Матвея Апостола (Раубичи)", "coordinates": {"latitude": 54.05996667, "longitude": 27.73957778}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Астрашыцкагарадоцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 238}}
+{"name": "Костёл Святого Михаила Архангела (Сморгонь)", "coordinates": {"latitude": 54.480778, "longitude": 26.4036806}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Смаргонскі раён", "city": "Смаргонь"}}
+{"index": {"_index": "landmarks_index", "_id": 239}}
+{"name": "Костёл Святого Михаила Архангела и монастырь иезуитов (Мстиславль)", "coordinates": {"latitude": 54.02193, "longitude": 31.73083}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Мсціслаўскі раён", "city": "Мсціслаў"}}
+{"index": {"_index": "landmarks_index", "_id": 240}}
+{"name": "Костёл Святого Николая (Княжицы)", "coordinates": {"latitude": 53.97472222, "longitude": 30.15222222}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Магілёўскі раён", "city": "Княжыцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 241}}
+{"name": "Костёл Святой Анны (Мосар)", "coordinates": {"latitude": 55.22611, "longitude": 27.46694}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Глыбоцкі раён", "city": "Удзелаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 242}}
+{"name": "Костёл Святой Евфимии и монастырь бенедиктинок (Несвиж)", "coordinates": {"latitude": 53.21578, "longitude": 26.681549}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Нясвіж"}}
+{"index": {"_index": "landmarks_index", "_id": 243}}
+{"name": "Костёл Святой Екатерины и монастырь бернардинцев (Несвиж)", "coordinates": {"latitude": 53.222137, "longitude": 26.679889}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Нясвіж"}}
+{"index": {"_index": "landmarks_index", "_id": 244}}
+{"name": "Костёл Святой Троицы (Гервяты)", "coordinates": {"latitude": 54.68694, "longitude": 26.14389}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Астравецкі раён", "city": "Гервяцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 245}}
+{"name": "Костёл Святой Троицы (Росица)", "coordinates": {"latitude": 55.92, "longitude": 27.75917}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Верхнядзвінскі раён", "city": "Сарʼянскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 246}}
+{"name": "Костёл Святых Апостолов Петра и Павла и монастырь василиан (Боруны)", "coordinates": {"latitude": 54.3167, "longitude": 26.1394}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ашмянскі раён", "city": "Барунскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 247}}
+{"name": "Костёл Святых Петра и Павла (Старые Василишки)", "coordinates": {"latitude": 53.7621, "longitude": 24.8267}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Шчучынскі раён", "city": "Васілішкаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 248}}
+{"name": "Костёл Успения Пресвятой Девы Марии (Налибоки)", "coordinates": {"latitude": 53.75817, "longitude": 26.47065}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Стаўбцоўскі раён", "city": "Налібацкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 249}}
+{"name": "Красная звезда (кинотеатр, Могилёв)", "coordinates": {"latitude": 53.9002, "longitude": 30.3337}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 250}}
+{"name": "Кревский замок", "coordinates": {"latitude": 54.31, "longitude": 26.284}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Смаргонскі раён", "city": "Крэўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 251}}
+{"name": "Крестовоздвиженская церковь (Городище)", "coordinates": {"latitude": 53.32444, "longitude": 26.00194}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Гарадзішчанскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 252}}
+{"name": "Крестовоздвиженская церковь (Могилёв)", "coordinates": {"latitude": 53.89631, "longitude": 30.3249}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 253}}
+{"name": "Крестовоздвиженский собор (Могилёв)", "coordinates": {"latitude": 53.89617, "longitude": 30.32525}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 254}}
+{"name": "Крестовоздвиженский собор (Полоцк)", "coordinates": {"latitude": 55.5040944, "longitude": 28.7807806}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Полацкі раён", "city": "Полацк"}}
+{"index": {"_index": "landmarks_index", "_id": 255}}
+{"name": "Кривлянский замок", "coordinates": {"latitude": 52.294016, "longitude": 24.038108}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Жабінкаўскі раён", "city": "Крыўлянскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 256}}
+{"name": "Курган Адама Мицкевича", "coordinates": {"latitude": 53.6022, "longitude": 25.8264}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 257}}
+{"name": "Курган Славы (Минск)", "coordinates": {"latitude": 54.01861, "longitude": 27.89833}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Смалявіцкі раён", "city": "Азярыцка-Слабадскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 258}}
+{"name": "Куропаты", "coordinates": {"latitude": 53.9655, "longitude": 27.61133333}, "located": {"country": "Беларусь", "state": "", "district": "Савецкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 259}}
+{"name": "Лидский замок", "coordinates": {"latitude": 53.8871972, "longitude": 25.3027833}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Лідскі раён", "city": "Ліда"}}
+{"index": {"_index": "landmarks_index", "_id": 260}}
+{"name": "Литературный музей Максима Богдановича", "coordinates": {"latitude": 53.908055, "longitude": 27.556087}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 261}}
+{"name": "Логойская ткацкая фабрика", "coordinates": {"latitude": 54.2010162, "longitude": 27.8502321}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Лагойскі раён", "city": "Лагойск"}}
+{"index": {"_index": "landmarks_index", "_id": 262}}
+{"name": "Лосский замок", "coordinates": {"latitude": 54.26211289, "longitude": 26.43477919}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Валожынскі раён", "city": "Гародзькаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 263}}
+{"name": "Лысковский замок", "coordinates": {"latitude": 52.8587639, "longitude": 24.6389889}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Зеляневіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 264}}
+{"name": "Любчанский замок", "coordinates": {"latitude": 53.7520306, "longitude": 26.0688167}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Любча"}}
+{"index": {"_index": "landmarks_index", "_id": 265}}
+{"name": "Лютеранская церковь (Гродно)", "coordinates": {"latitude": 53.6872, "longitude": 23.8406}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 266}}
+{"name": "Ляденский монастырь", "coordinates": {"latitude": 53.79149167, "longitude": 28.08789167}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Смалявіцкі раён", "city": "Драчкаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 267}}
+{"name": "Малый Тростенец", "coordinates": {"latitude": 53.85111111, "longitude": 27.70472222}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Навадворскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 268}}
+{"name": "Церковь Пресвятой Девы Марии (Мурованая Ошмянка)", "coordinates": {"latitude": 54.45667, "longitude": 25.785}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ашмянскі раён", "city": "Мураванаашмянкоўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 269}}
+{"name": "Мемориальная часовня (Миловиды)", "coordinates": {"latitude": 52.88222, "longitude": 25.77806}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Мілавідскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 270}}
+{"name": "Мемориальный комплекс «Прорыв»", "coordinates": {"latitude": 55.20444, "longitude": 28.4925}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Ушацкі раён", "city": "Ушацкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 271}}
+{"name": "Мемориальный комплекс на могиле узников Барановичского гетто", "coordinates": {"latitude": 53.12194, "longitude": 26.00861}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 272}}
+{"name": "Мемориальный музей-мастерская З. И. Азгура", "coordinates": {"latitude": 53.899292, "longitude": 27.578504}, "located": {"country": "Беларусь", "state": "", "district": "Партызанскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 273}}
+{"name": "Меречёвщина", "coordinates": {"latitude": 52.7675, "longitude": 25.125}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Івацэвіцкі раён", "city": "Косава"}}
+{"index": {"_index": "landmarks_index", "_id": 274}}
+{"name": "Минковичи (Браславский район)", "coordinates": {"latitude": 55.61639, "longitude": 26.70833}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Браслаўскі раён", "city": "Опсаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 275}}
+{"name": "Минск — город-герой", "coordinates": {"latitude": 53.9159, "longitude": 27.5381}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 276}}
+{"name": "Минск (гостиница, Минск)", "coordinates": {"latitude": 53.89665, "longitude": 27.55032}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 277}}
+{"name": "Минская ратуша", "coordinates": {"latitude": 53.90333, "longitude": 27.55611}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 278}}
+{"name": "Минское суворовское военное училище", "coordinates": {"latitude": 53.91139, "longitude": 27.55889}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 279}}
+{"name": "Мирский замок", "coordinates": {"latitude": 53.4512667, "longitude": 26.4728944}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Карэліцкі раён", "city": "Мірскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 280}}
+{"name": "Церковь Михаила Архангела (Порозово)", "coordinates": {"latitude": 52.93694, "longitude": 24.36778}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Свіслацкі раён", "city": "Поразава"}}
+{"index": {"_index": "landmarks_index", "_id": 281}}
+{"name": "Церковь Святого Михаила Архангела (Ивенец)", "coordinates": {"latitude": 53.89111, "longitude": 26.73722}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Валожынскі раён", "city": "Івянец"}}
+{"index": {"_index": "landmarks_index", "_id": 282}}
+{"name": "Церковь Михаила Архангела (Новогрудок)", "coordinates": {"latitude": 53.59722, "longitude": 25.82472}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 283}}
+{"name": "Михайловская церковь (Слуцк)", "coordinates": {"latitude": 53.03075, "longitude": 27.57847222}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Слуцкі раён", "city": "Слуцк"}}
+{"index": {"_index": "landmarks_index", "_id": 284}}
+{"name": "Церковь Святого Михаила (Сынковичи)", "coordinates": {"latitude": 53.123111, "longitude": 25.156972}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Зэльвенскі раён", "city": "Сынкавіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 285}}
+{"name": "Могила Кирилла Прокофьевича Орловского", "coordinates": {"latitude": 53.23325, "longitude": 29.49672222}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Кіраўскі раён", "city": "Мышкавіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 286}}
+{"name": "Могилёвский областной художественный музей имени П. В. Масленикова", "coordinates": {"latitude": 53.908096, "longitude": 30.33838}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 287}}
+{"name": "Можейково (усадьба)", "coordinates": {"latitude": 53.72194, "longitude": 24.98583}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Лідскі раён", "city": "Мажэйкаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 288}}
+{"name": "Мозырский замок", "coordinates": {"latitude": 52.047789, "longitude": 29.269187}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Мазырскі раён", "city": "Мазыр"}}
+{"index": {"_index": "landmarks_index", "_id": 289}}
+{"name": "Молодечненский замок", "coordinates": {"latitude": 54.33472222, "longitude": 26.87277778}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Маладзечанскі раён", "city": "Мясоцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 290}}
+{"name": "Монастырь бернардинцев (Гродно)", "coordinates": {"latitude": 53.675, "longitude": 23.8303}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 291}}
+{"name": "Монастырь бернардинцев (Дубровно)", "coordinates": {"latitude": 54.57162222, "longitude": 30.67941111}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Дубровенскі раён", "city": "Дуброўна"}}
+{"index": {"_index": "landmarks_index", "_id": 292}}
+{"name": "Монастырь бернардинцев (Минск)", "coordinates": {"latitude": 53.9048, "longitude": 27.556833}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 293}}
+{"name": "Монастырь кармелитов (Глубокое)", "coordinates": {"latitude": 55.1388978, "longitude": 27.6971394}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Глыбоцкі раён", "city": "Глыбокае"}}
+{"index": {"_index": "landmarks_index", "_id": 294}}
+{"name": "Монастырь миссионеров (Лысково)", "coordinates": {"latitude": 52.856278, "longitude": 24.61389}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пружанскі раён", "city": "Зеляневіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 295}}
+{"name": "Монумент в честь советской матери-патриотки (Жодино)", "coordinates": {"latitude": 54.100487, "longitude": 28.30808}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "", "city": "Жодзіна"}}
+{"index": {"_index": "landmarks_index", "_id": 296}}
+{"name": "Монумент Победы (Минск)", "coordinates": {"latitude": 53.908665, "longitude": 27.57506306}, "located": {"country": "Беларусь", "state": "", "district": "Партызанскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 297}}
+{"name": "Музей Бялыницкого-Бирули", "coordinates": {"latitude": 53.8995, "longitude": 30.3388}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 298}}
+{"name": "Музей Владимира Короткевича", "coordinates": {"latitude": 54.51139, "longitude": 30.42889}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Аршанскі раён", "city": "Орша"}}
+{"index": {"_index": "landmarks_index", "_id": 299}}
+{"name": "Музей истории Витебского народного художественного училища", "coordinates": {"latitude": 55.1885, "longitude": 30.2028}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 300}}
+{"name": "Музей Обольского комсомольского подполья", "coordinates": {"latitude": 55.35793, "longitude": 29.28327}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Шумілінскі раён", "city": "Обальскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 301}}
+{"name": "Музей советско-польского боевого содружества", "coordinates": {"latitude": 54.410333, "longitude": 31.111972}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Горацкі раён", "city": "Ленінскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 302}}
+{"name": "Музей-усадьба Василя Быкова", "coordinates": {"latitude": 55.165054, "longitude": 28.385989}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Ушацкі раён", "city": "Кубліцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 303}}
+{"name": "Музей-усадьба Тадеуша Костюшко", "coordinates": {"latitude": 52.7675, "longitude": 25.125}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Івацэвіцкі раён", "city": "Косава"}}
+{"index": {"_index": "landmarks_index", "_id": 304}}
+{"name": "Мышский замок", "coordinates": {"latitude": 53.18194, "longitude": 25.89278}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Навамышскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 305}}
+{"name": "Мядельский замок", "coordinates": {"latitude": 54.8712361, "longitude": 26.9151833}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мядзельскі раён", "city": "Мядзельскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 306}}
+{"name": "Надгробный памятник Якубу Коласу", "coordinates": {"latitude": 53.90933, "longitude": 27.585836}, "located": {"country": "Беларусь", "state": "", "district": "Савецкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 307}}
+{"name": "Надгробный памятник Янке Купале", "coordinates": {"latitude": 53.909368, "longitude": 27.58605}, "located": {"country": "Беларусь", "state": "", "district": "Савецкі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 308}}
+{"name": "Национальная академия наук Беларуси", "coordinates": {"latitude": 53.9205, "longitude": 27.5986}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 309}}
+{"name": "Национальный Олимпийский стадион Динамо (Минск)", "coordinates": {"latitude": 53.895, "longitude": 27.56}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 310}}
+{"name": "Национальный художественный музей Республики Беларусь", "coordinates": {"latitude": 53.89833, "longitude": 27.56056}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 311}}
+{"name": "Храм Непорочного Зачатия Пресвятой Девы Марии (Удело)", "coordinates": {"latitude": 55.21028, "longitude": 27.55917}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Глыбоцкі раён", "city": "Удзелаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 312}}
+{"name": "Несвижская ратуша", "coordinates": {"latitude": 53.21889, "longitude": 26.68111}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Нясвіж"}}
+{"index": {"_index": "landmarks_index", "_id": 313}}
+{"name": "Несвижский замок", "coordinates": {"latitude": 53.2228778, "longitude": 26.6917361}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Нясвіж"}}
+{"index": {"_index": "landmarks_index", "_id": 314}}
+{"name": "Нижняя церковь (Гродно)", "coordinates": {"latitude": 53.677431, "longitude": 23.822608}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 315}}
+{"name": "Свято-Никитская церковь (Здитово)", "coordinates": {"latitude": 52.196556, "longitude": 24.059278}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Жабінкаўскі раён", "city": "Жабінка"}}
+{"index": {"_index": "landmarks_index", "_id": 316}}
+{"name": "Свято-Николаевская церковь (Кричев)", "coordinates": {"latitude": 53.692861, "longitude": 31.71972}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Крычаўскі раён", "city": "Крычаў"}}
+{"index": {"_index": "landmarks_index", "_id": 317}}
+{"name": "Николаевская церковь (Волковыск)", "coordinates": {"latitude": 53.1612, "longitude": 24.4571}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Ваўкавыскі раён", "city": "Ваўкавыск"}}
+{"index": {"_index": "landmarks_index", "_id": 318}}
+{"name": "Николаевский костёл (Мир)", "coordinates": {"latitude": 53.4526826, "longitude": 26.4651777}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Карэліцкі раён", "city": "Мірскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 319}}
+{"name": "Николаевский костёл (Свирь)", "coordinates": {"latitude": 54.85306, "longitude": 26.39611}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мядзельскі раён", "city": "Свірскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 320}}
+{"name": "Церковь Святого Николая (Геранёны)", "coordinates": {"latitude": 54.11389, "longitude": 25.58083}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Іўеўскі раён", "city": "Геранёнскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 321}}
+{"name": "Свято-Никольский собор (Новогрудок)", "coordinates": {"latitude": 53.5833, "longitude": 25.8167}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 322}}
+{"name": "Никольский монастырь (Могилёв)", "coordinates": {"latitude": 53.8936, "longitude": 30.3456}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 323}}
+{"name": "Новогрудская мечеть", "coordinates": {"latitude": 53.593825, "longitude": 25.826278}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 324}}
+{"name": "Новогрудский замок", "coordinates": {"latitude": 53.6014583, "longitude": 25.8277139}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 325}}
+{"name": "Новопечерский Дятловичский Преображенский мужской монастырь", "coordinates": {"latitude": 52.3406, "longitude": 26.8397}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Лунінецкі раён", "city": "Дзятлавіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 326}}
+{"name": "Новый замок (Гродно)", "coordinates": {"latitude": 53.676306, "longitude": 23.825125}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 327}}
+{"name": "Обольская усадьба", "coordinates": {"latitude": 55.35776389, "longitude": 29.28228333}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Шумілінскі раён", "city": "Обальскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 328}}
+{"name": "Оршанский замок", "coordinates": {"latitude": 54.5057611, "longitude": 30.420944}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Аршанскі раён", "city": "Орша"}}
+{"index": {"_index": "landmarks_index", "_id": 329}}
+{"name": "Особняк купчихи Кацнельсон", "coordinates": {"latitude": 53.13917, "longitude": 29.22167}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Бабруйск"}}
+{"index": {"_index": "landmarks_index", "_id": 330}}
+{"name": "Особняк Мещерских (Климовичи)", "coordinates": {"latitude": 53.6114361, "longitude": 31.9625417}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Клімавіцкі раён", "city": "Лабжанскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 331}}
+{"name": "Остров Мужества и Скорби", "coordinates": {"latitude": 53.9098833, "longitude": 27.5545889}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 332}}
+{"name": "Охотничий домик (Гомель)", "coordinates": {"latitude": 52.42839167, "longitude": 31.01852778}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 333}}
+{"name": "Памятник Адаму Мицкевичу (Новогрудок)", "coordinates": {"latitude": 53.600959, "longitude": 25.825923}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Навагрудак"}}
+{"index": {"_index": "landmarks_index", "_id": 334}}
+{"name": "Памятник Ленину (Барановичи)", "coordinates": {"latitude": 53.1325, "longitude": 26.0175}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 335}}
+{"name": "Памятник Ленину (Минск)", "coordinates": {"latitude": 53.8956, "longitude": 27.5454}, "located": {"country": "Беларусь", "state": "", "district": "Маскоўскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 336}}
+{"name": "Памятник М. И. Калинину (Минск)", "coordinates": {"latitude": 53.92336, "longitude": 27.6081}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 337}}
+{"name": "Памятник Освобождения (Барановичи)", "coordinates": {"latitude": 53.13222, "longitude": 26.02194}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 338}}
+{"name": "Памятник Петру Куприянову (Жодино, проспект Ленина)", "coordinates": {"latitude": 54.099, "longitude": 28.30791667}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "", "city": "Жодзіна"}}
+{"index": {"_index": "landmarks_index", "_id": 339}}
+{"name": "Памятник Симону Будному (Несвиж)", "coordinates": {"latitude": 53.220165, "longitude": 26.683189}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Нясвіжскі раён", "city": "Нясвіж"}}
+{"index": {"_index": "landmarks_index", "_id": 340}}
+{"name": "Памятник узникам шталага № 324", "coordinates": {"latitude": 53.653354, "longitude": 23.777179}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 341}}
+{"name": "Памятник Франциску Скорине (Полоцк)", "coordinates": {"latitude": 55.48417, "longitude": 28.77806}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Полацкі раён", "city": "Полацк"}}
+{"index": {"_index": "landmarks_index", "_id": 342}}
+{"name": "Улица Янки Купалы (Витебск)", "coordinates": {"latitude": 55.19711, "longitude": 30.2043}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 343}}
+{"name": "Большие Новосёлки", "coordinates": {"latitude": 53.74306, "longitude": 27.11722}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Дзяржынскі раён", "city": "Дзяржынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 344}}
+{"name": "Лошица (усадьба)", "coordinates": {"latitude": 53.850956, "longitude": 27.57872}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 345}}
+{"name": "Парк Жилибера (Гродно)", "coordinates": {"latitude": 53.68602, "longitude": 23.83733}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 346}}
+{"name": "Центральный ботанический сад Национальной академии наук Беларуси", "coordinates": {"latitude": 53.91611, "longitude": 27.6125}, "located": {"country": "Беларусь", "state": "", "district": "Першамайскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 347}}
+{"name": "Большие Новосёлки", "coordinates": {"latitude": 53.74306, "longitude": 27.11722}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Дзяржынскі раён", "city": "Дзяржынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 348}}
+{"name": "Лошица (усадьба)", "coordinates": {"latitude": 53.850956, "longitude": 27.57872}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 349}}
+{"name": "Комсомольский сквер (Могилёв)", "coordinates": {"latitude": 53.903, "longitude": 30.3395}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 350}}
+{"name": "Пушкинский сквер (Брест)", "coordinates": {"latitude": 52.098563, "longitude": 23.689355}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 351}}
+{"name": "Сквер 40-летия Победы (Могилёв)", "coordinates": {"latitude": 53.90601, "longitude": 30.343782}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 352}}
+{"name": "Атлант (стадион, Новополоцк)", "coordinates": {"latitude": 55.537479, "longitude": 28.648374}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Наваполацк"}}
+{"index": {"_index": "landmarks_index", "_id": 353}}
+{"name": "Борисов-Арена", "coordinates": {"latitude": 54.19306, "longitude": 28.47528}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Барысаўскі раён", "city": "Барысаў"}}
+{"index": {"_index": "landmarks_index", "_id": 354}}
+{"name": "Брестский (спортивный комплекс)", "coordinates": {"latitude": 52.08972, "longitude": 23.68389}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Брэст"}}
+{"index": {"_index": "landmarks_index", "_id": 355}}
+{"name": "Волна (стадион, Пинск)", "coordinates": {"latitude": 52.12402, "longitude": 26.128392}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Пінск"}}
+{"index": {"_index": "landmarks_index", "_id": 356}}
+{"name": "Гомельский ГСДЮШОР 8", "coordinates": {"latitude": 52.43389, "longitude": 31.01833}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 357}}
+{"name": "Городской (стадион, Барановичи)", "coordinates": {"latitude": 53.1308, "longitude": 26.0314}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 358}}
+{"name": "Городской стадион (Борисов)", "coordinates": {"latitude": 54.22222, "longitude": 28.49028}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Барысаўскі раён", "city": "Барысаў"}}
+{"index": {"_index": "landmarks_index", "_id": 359}}
+{"name": "Городской стадион (Молодечно)", "coordinates": {"latitude": 54.29972, "longitude": 26.83056}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Маладзечанскі раён", "city": "Маладзечна"}}
+{"index": {"_index": "landmarks_index", "_id": 360}}
+{"name": "Городской стадион (Слуцк)", "coordinates": {"latitude": 53.02139, "longitude": 27.54611}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Слуцкі раён", "city": "Слуцк"}}
+{"index": {"_index": "landmarks_index", "_id": 361}}
+{"name": "Динамо-Юни (стадион)", "coordinates": {"latitude": 53.90417, "longitude": 27.41639}, "located": {"country": "Беларусь", "state": "", "district": "Фрунзенскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 362}}
+{"name": "Национальный Олимпийский стадион Динамо (Минск)", "coordinates": {"latitude": 53.895, "longitude": 27.56}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 363}}
+{"name": "Национальный футбольный стадион (Минск)", "coordinates": {"latitude": 53.87944444, "longitude": 27.61333333}, "located": {"country": "Беларусь", "state": "", "district": "Заводскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 364}}
+{"name": "Полесье (стадион, Лунинец)", "coordinates": {"latitude": 52.24722, "longitude": 26.80472}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Лунінецкі раён", "city": "Лунінец"}}
+{"index": {"_index": "landmarks_index", "_id": 365}}
+{"name": "Спартак (стадион, Бобруйск)", "coordinates": {"latitude": 53.14028, "longitude": 29.21722}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Бабруйск"}}
+{"index": {"_index": "landmarks_index", "_id": 366}}
+{"name": "Спартак (стадион, Могилёв)", "coordinates": {"latitude": 53.90528, "longitude": 30.34083}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 367}}
+{"name": "Спартак (стадион, Шклов)", "coordinates": {"latitude": 54.21583, "longitude": 30.28833}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Шклоўскі раён", "city": "Шклоў"}}
+{"index": {"_index": "landmarks_index", "_id": 368}}
+{"name": "Стадион ФК «Минск»", "coordinates": {"latitude": 53.86167, "longitude": 27.57861}, "located": {"country": "Беларусь", "state": "", "district": "Ленінскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 369}}
+{"name": "Строитель (стадион, Солигорск)", "coordinates": {"latitude": 52.79833, "longitude": 27.53833}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Салігорскі раён", "city": "Салігорск"}}
+{"index": {"_index": "landmarks_index", "_id": 370}}
+{"name": "Торпедо (стадион, Жодино)", "coordinates": {"latitude": 54.09222, "longitude": 28.32}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "", "city": "Жодзіна"}}
+{"index": {"_index": "landmarks_index", "_id": 371}}
+{"name": "Торпедо (стадион, Минск)", "coordinates": {"latitude": 53.86944, "longitude": 27.65833}, "located": {"country": "Беларусь", "state": "", "district": "Заводскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 372}}
+{"name": "Торпедо (стадион, Могилёв)", "coordinates": {"latitude": 53.88306, "longitude": 30.41444}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "", "city": "Магілёў"}}
+{"index": {"_index": "landmarks_index", "_id": 373}}
+{"name": "Трактор (стадион, Минск)", "coordinates": {"latitude": 53.88167, "longitude": 27.61722}, "located": {"country": "Беларусь", "state": "", "district": "Заводскі раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 374}}
+{"name": "Футбольный манеж (Минск)", "coordinates": {"latitude": 53.93389, "longitude": 27.50889}, "located": {"country": "Беларусь", "state": "", "district": "Цэнтральны раён", "city": "Мінск"}}
+{"index": {"_index": "landmarks_index", "_id": 375}}
+{"name": "Центральный (стадион, Гомель)", "coordinates": {"latitude": 52.4366611, "longitude": 31.0125778}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "", "city": "Гомель"}}
+{"index": {"_index": "landmarks_index", "_id": 376}}
+{"name": "ЦСК «Витебский»", "coordinates": {"latitude": 55.19833, "longitude": 30.22917}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "", "city": "Віцебск"}}
+{"index": {"_index": "landmarks_index", "_id": 377}}
+{"name": "ЦСК «Неман»", "coordinates": {"latitude": 53.68861, "longitude": 23.82167}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "", "city": "Гродна"}}
+{"index": {"_index": "landmarks_index", "_id": 378}}
+{"name": "ЦСК Лида", "coordinates": {"latitude": 53.89306, "longitude": 25.29028}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Лідскі раён", "city": "Ліда"}}
+{"index": {"_index": "landmarks_index", "_id": 379}}
+{"name": "Юность (стадион, Мозырь)", "coordinates": {"latitude": 52.038728, "longitude": 29.277091}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Мазырскі раён", "city": "Мазыр"}}
+{"index": {"_index": "landmarks_index", "_id": 380}}
+{"name": "Юность (стадион, Слоним)", "coordinates": {"latitude": 53.097493, "longitude": 25.306907}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Слонімскі раён", "city": "Слонім"}}
+{"index": {"_index": "landmarks_index", "_id": 381}}
+{"name": "Юность (стадион, Сморгонь)", "coordinates": {"latitude": 54.47896, "longitude": 26.404827}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Смаргонскі раён", "city": "Смаргонь"}}
+{"index": {"_index": "landmarks_index", "_id": 382}}
+{"name": "Логойск (горнолыжный центр)", "coordinates": {"latitude": 54.1850611, "longitude": 27.8077917}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Лагойскі раён", "city": "Лагойскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 383}}
+{"name": "Мозырь (горнолыжный комплекс)", "coordinates": {"latitude": 52.028667, "longitude": 29.256861}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Мазырскі раён", "city": "Мазыр"}}
+{"index": {"_index": "landmarks_index", "_id": 384}}
+{"name": "Раубичи", "coordinates": {"latitude": 54.061, "longitude": 27.736778}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мінскі раён", "city": "Астрашыцкагарадоцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 385}}
+{"name": "Силичи (горнолыжный центр)", "coordinates": {"latitude": 54.15667, "longitude": 27.83778}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Лагойскі раён", "city": "Лагойскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 386}}
+{"name": "Нарочанский национальный парк", "coordinates": {"latitude": 54.85, "longitude": 26.733}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Мядзельскі раён", "city": "Нарацкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 387}}
+{"name": "Припятский национальный парк", "coordinates": {"latitude": 52.0161, "longitude": 28.0124}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Жыткавіцкі раён", "city": "Азяранскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 388}}
+{"name": "Березинский биосферный заповедник", "coordinates": {"latitude": 54.77, "longitude": 28.32}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Лепельскі раён", "city": "Домжарыцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 389}}
+{"name": "Западное Полесье (биосферный заповедник)", "coordinates": {"latitude": 51.73333, "longitude": 23.65}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Брэсцкі раён", "city": "Дамачаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 390}}
+{"name": "Налибокская пуща", "coordinates": {"latitude": 53.8845, "longitude": 26.4425}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Валожынскі раён", "city": "Івянецкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 391}}
+{"name": "Полесский государственный радиационно-экологический заповедник", "coordinates": {"latitude": 51.65, "longitude": 29.98333333}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Хойніцкі раён", "city": "Стралічаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 392}}
+{"name": "Белое (озеро, Берёзовский район)", "coordinates": {"latitude": 52.4336, "longitude": 25.1518}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Бярозаўскі раён", "city": "Пескаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 393}}
+{"name": "Бобровичское (озеро)", "coordinates": {"latitude": 52.6303, "longitude": 25.7819}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Івацэвіцкі раён", "city": "Целяханскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 394}}
+{"name": "Вульковское озеро", "coordinates": {"latitude": 52.5386, "longitude": 25.8675}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Івацэвіцкі раён", "city": "Целяханскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 395}}
+{"name": "Выгонощанское (озеро)", "coordinates": {"latitude": 52.6842, "longitude": 25.9472}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Івацэвіцкі раён", "city": "Целяханскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 396}}
+{"name": "Жлобинское", "coordinates": {"latitude": 53.1429, "longitude": 26.0618}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "", "city": "Баранавічы"}}
+{"index": {"_index": "landmarks_index", "_id": 397}}
+{"name": "Качайское", "coordinates": {"latitude": 52.7111, "longitude": 26.4043}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Ганцавіцкі раён", "city": "Любашаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 398}}
+{"name": "Колдычевское", "coordinates": {"latitude": 53.2679, "longitude": 26.0697}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Баранавіцкі раён", "city": "Сталовіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 399}}
+{"name": "Луково (озеро, Брестская область)", "coordinates": {"latitude": 51.8917, "longitude": 24.2667}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Маларыцкі раён", "city": "Лукаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 400}}
+{"name": "Любань (озеро)", "coordinates": {"latitude": 51.986, "longitude": 24.6131}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Кобрынскі раён", "city": "Дзівінскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 401}}
+{"name": "Мотольское (озеро)", "coordinates": {"latitude": 52.32, "longitude": 25.596}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Іванаўскі раён", "city": "Мотальскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 402}}
+{"name": "Мульное", "coordinates": {"latitude": 52.3667, "longitude": 25.6264}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Іванаўскі раён", "city": "Мотальскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 403}}
+{"name": "Олтушское", "coordinates": {"latitude": 51.69167, "longitude": 23.95694}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Маларыцкі раён", "city": "Олтушскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 404}}
+{"name": "Ореховское (озеро, Брестская область)", "coordinates": {"latitude": 51.65083, "longitude": 23.93528}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Маларыцкі раён", "city": "Арэхаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 405}}
+{"name": "Песчаное (озеро, Брестская область)", "coordinates": {"latitude": 51.9745167, "longitude": 25.4769361}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Іванаўскі раён", "city": "Адрыжынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 406}}
+{"name": "Погостское (озеро, Белоруссия)", "coordinates": {"latitude": 52.318, "longitude": 26.3406}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Пінскі раён", "city": "Загародскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 407}}
+{"name": "Соминское", "coordinates": {"latitude": 52.5357, "longitude": 25.9311}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Івацэвіцкі раён", "city": "Целяханскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 408}}
+{"name": "Споровское", "coordinates": {"latitude": 52.4086, "longitude": 25.3406}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Бярозаўскі раён", "city": "Спораўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 409}}
+{"name": "Чёрное озеро (Берёзовский район)", "coordinates": {"latitude": 52.4786, "longitude": 25.2386}, "located": {"country": "Беларусь", "state": "Брэсцкая вобласць", "district": "Бярозаўскі раён", "city": "Пескаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 410}}
+{"name": "Обстерновская группа озёр", "coordinates": {"latitude": 55.59, "longitude": 27.37}, "located": {"country": "Беларусь", "state": "Віцебская вобласць", "district": "Мёрскі раён", "city": "Перабродскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 411}}
+{"name": "Буснежье", "coordinates": {"latitude": 52.347, "longitude": 30.496}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рэчыцкі раён", "city": "Баршчоўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 412}}
+{"name": "Гадынь", "coordinates": {"latitude": 52.3731, "longitude": 30.4956}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рэчыцкі раён", "city": "Баршчоўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 413}}
+{"name": "Дегтярёво (озеро)", "coordinates": {"latitude": 52.39306, "longitude": 30.45472}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рэчыцкі раён", "city": "Белабалоцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 414}}
+{"name": "Доброе (озеро, Гомельская область)", "coordinates": {"latitude": 53.0194, "longitude": 30.0603}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рагачоўскі раён", "city": "Збароўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 415}}
+{"name": "Заколодницкое", "coordinates": {"latitude": 51.6543, "longitude": 30.5201}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Брагінскі раён", "city": "Малажынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 416}}
+{"name": "Колпино (озеро, Гомельская область)", "coordinates": {"latitude": 52.8863, "longitude": 30.9203}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Чачэрскі раён", "city": "Ленінскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 417}}
+{"name": "Кольница (озеро)", "coordinates": {"latitude": 51.6769, "longitude": 30.5426}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Брагінскі раён", "city": "Малажынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 418}}
+{"name": "Кривой Гиров", "coordinates": {"latitude": 52.3770556, "longitude": 30.4560556}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рэчыцкі раён", "city": "Баршчоўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 419}}
+{"name": "Крушиновское", "coordinates": {"latitude": 53.2655, "longitude": 29.8499}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рагачоўскі раён", "city": "Азяранскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 420}}
+{"name": "Ломыш", "coordinates": {"latitude": 51.8176, "longitude": 29.5779}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Хойніцкі раён", "city": "Судкоўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 421}}
+{"name": "Ореховое (озеро, Кормянский район)", "coordinates": {"latitude": 53.2135, "longitude": 30.9135}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Кармянскі раён", "city": "Кароцькаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 422}}
+{"name": "Плесо (озеро)", "coordinates": {"latitude": 52.05389, "longitude": 28.12972}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Жыткавіцкі раён", "city": "Азяранскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 423}}
+{"name": "Ревучее (озеро)", "coordinates": {"latitude": 52.5666, "longitude": 31.4833}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Добрушскі раён", "city": "Рассветаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 424}}
+{"name": "Святое (озеро, Рогачёвский район)", "coordinates": {"latitude": 53.0863056, "longitude": 29.9530278}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Рагачоўскі раён", "city": "Запольскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 425}}
+{"name": "Старик (озеро, Петриковский район)", "coordinates": {"latitude": 52.16, "longitude": 28.6875}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Петрыкаўскі раён", "city": "Конкавіцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 426}}
+{"name": "Старое (озеро, Гомельская область)", "coordinates": {"latitude": 52.8483, "longitude": 30.8925}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Чачэрскі раён", "city": "Ленінскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 427}}
+{"name": "Стоячее (озеро, Чечерский район)", "coordinates": {"latitude": 52.8609, "longitude": 30.911}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Чачэрскі раён", "city": "Ленінскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 428}}
+{"name": "Тербохинь", "coordinates": {"latitude": 53.2084, "longitude": 30.9232}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Кармянскі раён", "city": "Кароцькаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 429}}
+{"name": "Червоное (озеро)", "coordinates": {"latitude": 52.4046, "longitude": 27.9735}, "located": {"country": "Беларусь", "state": "Гомельская вобласць", "district": "Жыткавіцкі раён", "city": "Чырвоненскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 430}}
+{"name": "Долгое (озеро, Гродненская область)", "coordinates": {"latitude": 53.815472, "longitude": 24.3488639}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Шчучынскі раён", "city": "Астрынскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 431}}
+{"name": "Локно (озеро, Белоруссия)", "coordinates": {"latitude": 53.7164, "longitude": 24.2556}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Гродзенскі раён", "city": "Азёрскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 432}}
+{"name": "Рыбница (озеро)", "coordinates": {"latitude": 53.7061583, "longitude": 24.1568667}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Гродзенскі раён", "city": "Азёрскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 433}}
+{"name": "Свитязь (озеро, Белоруссия)", "coordinates": {"latitude": 53.4333, "longitude": 25.9167}, "located": {"country": "Беларусь", "state": "Гродзенская вобласць", "district": "Навагрудскі раён", "city": "Валеўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 434}}
+{"name": "Судобле", "coordinates": {"latitude": 54.0619, "longitude": 28.4066}, "located": {"country": "Беларусь", "state": "Мінская вобласць", "district": "Смалявіцкі раён", "city": "Курганскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 435}}
+{"name": "Вейня", "coordinates": {"latitude": 54.0539, "longitude": 29.7091}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Бялыніцкі раён", "city": "Ланькаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 436}}
+{"name": "Заозерское (озеро, Могилёвская область)", "coordinates": {"latitude": 54.0631, "longitude": 29.4806}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Бялыніцкі раён", "city": "Машчаніцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 437}}
+{"name": "Кармановское", "coordinates": {"latitude": 54.0709, "longitude": 29.499}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Бялыніцкі раён", "city": "Машчаніцкі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 438}}
+{"name": "Красное (озеро, Могилёвская область)", "coordinates": {"latitude": 53.9554, "longitude": 29.8244}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Бялыніцкі раён", "city": "Лебядзянкаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 439}}
+{"name": "Ореховое (озеро, Могилёвская область)", "coordinates": {"latitude": 53.262034, "longitude": 30.372534}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Быхаўскі раён", "city": "Навабыхаўскі сельскі Савет"}}
+{"index": {"_index": "landmarks_index", "_id": 440}}
+{"name": "Хотомля (озеро)", "coordinates": {"latitude": 54.1042, "longitude": 29.5169}, "located": {"country": "Беларусь", "state": "Магілёўская вобласць", "district": "Круглянскі раён", "city": "Цяцерынскі сельскі Савет"}}
+

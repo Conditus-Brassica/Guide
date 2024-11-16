@@ -18,6 +18,7 @@ if __name__ == '__main__':
     #async def test(login, password):
     async def test():
 
+        _asyncio_tasks = set()
         # Starting Broker listening (Such code will be located in main, not in agent)
         await AgentsBroker.get_broker().startup()
 
@@ -30,12 +31,18 @@ if __name__ == '__main__':
                 {"region_name": "Мядзельскі раён"}
             )
         )
+        _asyncio_tasks.add(categories_of_region_asyncio_task)
+        categories_of_region_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_in_map_sectors_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_in_map_sectors_task,
                 {"map_sectors_names": ["a1", "a2", "g2"], "optional_limit": 3}
             )
         )
+        _asyncio_tasks.add(landmarks_in_map_sectors_asyncio_task)
+        landmarks_in_map_sectors_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_refers_to_categories_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_refers_to_categories_task,
@@ -45,6 +52,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(landmarks_refers_to_categories_asyncio_task)
+        landmarks_refers_to_categories_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_by_coordinates_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_by_coordinates_task,
@@ -57,6 +67,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(landmarks_by_coordinates_asyncio_task)
+        landmarks_by_coordinates_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_by_names_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_by_name_list_task,
@@ -67,24 +80,36 @@ if __name__ == '__main__':
                 ]}
             )
         )
+        _asyncio_tasks.add(landmarks_by_names_asyncio_task)
+        landmarks_by_names_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_by_name_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_by_name_task,
                 {"landmark_name": "Мин", "limit": 3}
             )
         )
+        _asyncio_tasks.add(landmarks_by_name_asyncio_task)
+        landmarks_by_name_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_of_categories_in_region_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_of_categories_in_region_task,
                 {"region_name": "Мядзельскі раён", "categories_names": ["Национальные парки Белоруссии"]}
             )
         )
+        _asyncio_tasks.add(landmarks_of_categories_in_region_asyncio_task)
+        landmarks_of_categories_in_region_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_by_region_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_by_region_task,
                 {"region_name": "Мядзельскі", "optional_limit": 3}
             )
         )
+        _asyncio_tasks.add(landmarks_by_region_asyncio_task)
+        landmarks_by_region_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         map_sectors_of_points_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.map_sectors_of_points_task,
@@ -98,6 +123,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(map_sectors_of_points_asyncio_task)
+        map_sectors_of_points_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         map_sectors_structure_of_region_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.map_sectors_structure_of_region_task,
@@ -106,6 +134,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(map_sectors_structure_of_region_task)
+        map_sectors_structure_of_region_task.add_done_callback(_asyncio_tasks.discard)
+
         landmarks_of_categories_in_map_sectors_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.landmarks_of_categories_in_map_sectors_task,
@@ -120,6 +151,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(landmarks_of_categories_in_map_sectors_asyncio_task)
+        landmarks_of_categories_in_map_sectors_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         recommendations_by_coordinates_asyncio_task_1 = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.crud_recommendations_by_coordinates_task,
@@ -132,6 +166,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(recommendations_by_coordinates_asyncio_task_1)
+        recommendations_by_coordinates_asyncio_task_1.add_done_callback(_asyncio_tasks.discard)
+
         recommendations_by_coordinates_asyncio_task_2 = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.crud_recommendations_by_coordinates_task,
@@ -144,6 +181,8 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(recommendations_by_coordinates_asyncio_task_2)
+        recommendations_by_coordinates_asyncio_task_2.add_done_callback(_asyncio_tasks.discard)
 
         recommendations_by_coordinates_asyncio_task_3 = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
@@ -156,6 +195,8 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(recommendations_by_coordinates_asyncio_task_3)
+        recommendations_by_coordinates_asyncio_task_3.add_done_callback(_asyncio_tasks.discard)
 
         route_landmarks_by_index_id_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
@@ -163,6 +204,8 @@ if __name__ == '__main__':
                 {'index_id':2}
             )
         )
+        _asyncio_tasks.add(route_landmarks_by_index_id_asyncio_task)
+        route_landmarks_by_index_id_asyncio_task.add_done_callback(_asyncio_tasks.discard)
 
         routes_saved_by_user_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
@@ -170,6 +213,9 @@ if __name__ == '__main__':
                 {"user_login": 'Test'}
             )
         )
+        _asyncio_tasks.add(routes_saved_by_user_asyncio_task)
+        routes_saved_by_user_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         range_of_routes_saved_by_user_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.range_of_routes_saved_by_user_task,
@@ -180,6 +226,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(range_of_routes_saved_by_user_asyncio_task)
+        range_of_routes_saved_by_user_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         note_by_title_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.note_by_title_task,
@@ -188,6 +237,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(note_by_title_asyncio_task)
+        note_by_title_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         notes_in_range_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.notes_in_range_task,
@@ -197,6 +249,9 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(notes_in_range_asyncio_task)
+        notes_in_range_asyncio_task.add_done_callback(_asyncio_tasks.discard)
+
         notes_of_categories_in_range_asyncio_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 crud_tasks.notes_of_categories_in_range,
@@ -207,6 +262,8 @@ if __name__ == '__main__':
                 }
             )
         )
+        _asyncio_tasks.add(notes_of_categories_in_range_asyncio_task)
+        notes_of_categories_in_range_asyncio_task.add_done_callback(_asyncio_tasks.discard)
 
 
         # Async tasks running

@@ -1,8 +1,9 @@
 # Author: Vodohleb04
 from abc import ABC, abstractmethod
+from typing import Dict
 
 
-class PureEmbeddingsCRUDAgent(ABC):
+class PureLandmarkEmbeddingsCRUDAgent(ABC):
     """
     Base class for CRUD agent, that provided to manage embeddings database.
 
@@ -22,23 +23,6 @@ class PureEmbeddingsCRUDAgent(ABC):
     @classmethod
     @abstractmethod
     def embeddings_crud_exists(cls) -> bool:
-        """
-        Read query to get embeddings of the given landmarks.
-        Works asynchronously.
-
-        ###
-        1. json_params: Dict[
-            "landmarks": List[
-                Dict[
-                    "name": str,
-                    "latitude": float,
-                    "longitude": float
-                ]
-            ]
-        ]
-            - landmarks, for wich the embedding is returned
-        returns: Coroutine List[[List[float]] - List of embeddings of the given landmarks
-        """
         raise NotImplementedError
     
 
