@@ -6166,6 +6166,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-local-authentication@npm:~15.0.1":
+  version: 15.0.1
+  resolution: "expo-local-authentication@npm:15.0.1"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/0327ffc42fc2f4d17b65b9a5d78045f549426a329ab0c812e01da985551c2899c2183a475f58e7047130d402570b48151aeb858a2d36164e26bfb067072ac2c0
+  languageName: node
+  linkType: hard
+
 "expo-manifests@npm:~0.15.0":
   version: 0.15.3
   resolution: "expo-manifests@npm:0.15.3"
@@ -6727,6 +6738,7 @@ __metadata:
     expo-font: "npm:~13.0.1"
     expo-image: "npm:^2.0.0"
     expo-linking: "npm:~7.0.2"
+    expo-local-authentication: "npm:~15.0.1"
     expo-router: "npm:~4.0.6"
     expo-splash-screen: "npm:~0.29.11"
     expo-status-bar: "npm:~2.0.0"

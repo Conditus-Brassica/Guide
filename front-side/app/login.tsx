@@ -15,7 +15,6 @@ import {
 	TextInput,
 } from "react-native";
 
-// This is done step by step like in guide, so I'm not so good as you think
 const LoginScreen = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
