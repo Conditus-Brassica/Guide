@@ -107,8 +107,8 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             self._watch_state_discount_factor = watch_state_discount_factor
             self._visit_state_discount_factor = visit_state_discount_factor
 
-            self._min_reward = self.reward_function(0, 0)
-            self._max_reward = self.reward_function(5, 1)
+            self._min_reward = self.reward_function(0)
+            self._max_reward = self.reward_function(5)
 
             self._tf_dtype = tf_dtype
             self._np_dtype = np_dtype
@@ -119,18 +119,16 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
 
     @staticmethod
-    def reward_function(user_reward, used_percentage):
+    def reward_function(user_reward):
         """
             Counts immediate reward in Markov decision process. Takes user reward and percentage of recommended landmarks
             that were included in the final route.
 
-            :param user_reward: float in range[0, 5] - reward, leaved bu user.
-            :param used_percentage: float in range [0, 1] - percentage of recommended landmarks, that were included in
-            the final route
+            :param user_reward: float in range[0, 5] - reward, leaved by user.
 
             :returns: float
         """
-        return 20 * (used_percentage * user_reward - 5)
+        return 20 * (user_reward - 5)
 
 
     @property
@@ -569,28 +567,15 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         )
 
 
-    @staticmethod
-    def _count_reward(primary_recommendations, result_recommendations, user_reward):
-        used_percentage = len(primary_recommendations)
-        for primary_recommendation in primary_recommendations:
-            for result_index in range(len(result_recommendations)):
-                if LandmarkRecAgent._landmarks_are_equal(primary_recommendation, result_recommendations[result_index]):
-                    break
-            else:
-                used_percentage -= 1
-        used_percentage = used_percentage / len(primary_recommendations)
-        return LandmarkRecAgent.reward_function(user_reward, used_percentage)
-
-
     def _give_reward_to_recommendations(
         self, primary_recommendations, result_recommendations, user_reward
     ):
         """
-        Remove from result_recommendations landmarks that included in primary_recommendations 
+        Remove from result_recommendations landmarks that included in primary_recommendations
         (primary_recommendations and result_recommendations will be modified). Reward for result_recommendations,
         that were included by user wil be given in _post_result_recs_to_sars_buffer method.
         """
-        reward = self._count_reward(primary_recommendations, result_recommendations, user_reward)
+        reward = self.reward_function(user_reward)
 
         for primary_recommendation in primary_recommendations:
             for index_in_result in range(len(result_recommendations)):
