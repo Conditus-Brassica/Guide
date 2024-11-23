@@ -4,6 +4,8 @@ import { signOut } from "firebase/auth";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 const Profile = () => {
+	const user = FirebaseAuth.currentUser;
+
 	const HandleSignOut = () => {
 		signOut(FirebaseAuth)
 			.then(() => router.replace("/login"))
@@ -11,18 +13,23 @@ const Profile = () => {
 	};
 
 	return (
-		<View style={styles.container}>
-			<Text style={{ color: "white" }}>Your own profile!</Text>
-			<TouchableOpacity style={styles.button} onPress={HandleSignOut}>
-				<Text style={styles.buttonText}>Sign out</Text>
-			</TouchableOpacity>
+		<View>
+			<View style={styles.emailContainer}>
+				<Text style={{ color: "white", fontSize: 24 }} children={user?.email} />
+			</View>
+			<View style={styles.container}>
+				<TouchableOpacity style={styles.button} onPress={HandleSignOut}>
+					<Text style={styles.buttonText}>Sign out</Text>
+				</TouchableOpacity>
+			</View>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
+	emailContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
 	container: {
-		flex: 1,
+		flex: 0.3,
 		justifyContent: "flex-end",
 		alignItems: "center",
 	},
