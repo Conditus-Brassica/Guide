@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -15,7 +16,9 @@ const Index = () => {
 	return (
 		<View style={styles.beginContainer}>
 			<View style={styles.logoContainer}>
-				{!imageLoaded && <ActivityIndicator size="large" color="#11a6c6" />}
+				{!imageLoaded && (
+					<ActivityIndicator size="large" color={Colors.standartAppColor} />
+				)}
 
 				<Image
 					style={styles.logo}
@@ -55,7 +58,7 @@ const styles = StyleSheet.create({
 		height: "100%",
 	},
 	button: {
-		backgroundColor: "#11a6c6",
+		backgroundColor: Colors.standartAppColor,
 		paddingVertical: 15,
 		paddingHorizontal: 30,
 		borderRadius: 10,

@@ -13,14 +13,13 @@ import {
 
 const URL_STRING = "";
 
-type ArticleInfo = {
+type ArticlesInfo = {
 	id: string;
 	title: string;
-	content: string;
 };
 
 type ArticleResponce = {
-	articles: ArticleInfo[];
+	articles: ArticlesInfo[];
 };
 
 const articlesTest = [
@@ -43,7 +42,7 @@ const articlesTest = [
 
 const Articles = () => {
 	const [loaded, setLoaded] = useState(false);
-	const [articles, setArticles] = useState<ArticleInfo[]>(articlesTest);
+	const [articles, setArticles] = useState<ArticlesInfo[]>(articlesTest);
 
 	const getArticles = async () => {
 		try {
@@ -57,14 +56,15 @@ const Articles = () => {
 		}
 	};
 
+	//TODO: Remove commenting when API will be ready
 	// useEffect(() => {
 	// 	getArticles();
 	// }, []);
 
-	const Item = ({ article }: { article: ArticleInfo }) => (
+	const Item = ({ article }: { article: ArticlesInfo }) => (
 		<TouchableOpacity
 			onPress={() => {
-				router.navigate(`/articles/${article.id}`);
+				router.navigate(`/home/articles/${article.id}`);
 			}}
 			style={[styles.item, { backgroundColor: "white" }]}
 		>
@@ -73,7 +73,14 @@ const Articles = () => {
 	);
 
 	return (
-		<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+		<View
+			style={{
+				flex: 1,
+				top: 20,
+				alignItems: "center",
+				justifyContent: "center",
+			}}
+		>
 			<Text style={{ color: "white" }}>Articles!</Text>
 			{loaded ? (
 				<ActivityIndicator size="large" color={Colors.standartAppColor} />
