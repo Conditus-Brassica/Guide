@@ -5,14 +5,13 @@ SELECT, INSERT, UPDATE and DELETE queries to embeddings database
 
 https://www.youtube.com/watch?v=kDnJf-bFTaY&t=1311s
 """
-import asyncio
 from typing import Dict
 from aiologger.loggers.json import JsonLogger
 from jsonschema import validate, ValidationError
 from chromadb.api.models.AsyncCollection import AsyncCollection
 from backend.agents.note_embeddings_crud.pure_note_embeddings_crud_agent import PureNoteEmbeddingsCRUDAgent
 from backend.agents.note_embeddings_crud.note_embeddings_crud_validation import (
-    get_nearest_notes, add_note_embedding, update_note_embedding, delete_notes
+    get_nearest_notes, add_note_embedding, update_note_embedding, delete_notes, get_notes_by_titles
 )
 
 
@@ -31,7 +30,7 @@ class NoteEmbeddingsCRUD(PureNoteEmbeddingsCRUDAgent):
     """
     
     _single_embeddings_crud = None
-    _embeddings_include = ["embeddings"]
+    _embeddings_include = ["embeddings", ]
     _without_embeddings_include = []
 
     @classmethod
@@ -88,6 +87,22 @@ class NoteEmbeddingsCRUD(PureNoteEmbeddingsCRUDAgent):
             }
         else:
             return {"note_titles": result["ids"][0]}
+
+
+    async def get_notes_by_titles(self, json_params: Dict):
+        try:
+            validate(json_params, get_notes_by_titles)
+        except ValidationError as ex:
+            return {"notes": {}}  # raise ValidationError
+
+        result = await self._embedding_collection.get(
+            ids=json_params["note_titles"], include=self._embeddings_include
+        )
+        notes = {}
+        for i, note_title in enumerate(result["ids"]):
+            notes[note_title] = result["embeddings"][i]
+
+        return {"notes": notes}  # Dict for pair note_title-note_embedding
 
 
     # Write queries
@@ -162,6 +177,9 @@ if __name__ == "__main__":
         await note_emb_ag.add_note_embedding({"note_title": "1", "note_embedding": emb1})
         await note_emb_ag.add_note_embedding({"note_title": "2", "note_embedding": emb2})
         await note_emb_ag.add_note_embedding({"note_title": "3", "note_embedding": emb3})
+
+
+        print(await note_emb_ag.get_notes_by_titles({"note_titles": ["2", "3", "1"]}))
 
         res = await note_emb_ag.get_nearest_notes({"note_embedding": [1., 1., 1.], "return_embeddings": True, "limit": 3})
         print(res)
