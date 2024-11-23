@@ -121,8 +121,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
     @staticmethod
     def reward_function(user_reward):
         """
-            Counts immediate reward in Markov decision process. Takes user reward and percentage of recommended landmarks
-            that were included in the final route.
+            Counts immediate reward in Markov decision process. Takes user reward of the route.
 
             :param user_reward: float in range[0, 5] - reward, leaved by user.
 
