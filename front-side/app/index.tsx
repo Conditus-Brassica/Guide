@@ -1,20 +1,31 @@
-import { useAssets } from "expo-asset";
+import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+	StyleSheet,
+	View,
+	Text,
+	TouchableOpacity,
+	ActivityIndicator,
+} from "react-native";
 
 const Index = () => {
-	const assets = useAssets([require("./../assets/images/app-icon.png")]);
+	const [imageLoaded, setImageLoaded] = useState(false);
 
 	return (
 		<View style={styles.beginContainer}>
 			<View style={styles.logoContainer}>
+				{!imageLoaded && (
+					<ActivityIndicator size="large" color={Colors.standartAppColor} />
+				)}
+
 				<Image
 					style={styles.logo}
 					contentFit="contain"
-					source={assets[0]}
+					source={require("./../assets/images/app-icon.png")}
 					transition={10}
+					onLoad={() => setImageLoaded(true)}
 				/>
 			</View>
 
@@ -47,7 +58,7 @@ const styles = StyleSheet.create({
 		height: "100%",
 	},
 	button: {
-		backgroundColor: "#11a6c6",
+		backgroundColor: Colors.standartAppColor,
 		paddingVertical: 15,
 		paddingHorizontal: 30,
 		borderRadius: 10,

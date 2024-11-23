@@ -5,6 +5,7 @@ type MapStore = {
 	initialPosition: Region;
 	activeRoute: RouteType | null;
 	setInitialCoords: (coords: Region) => void;
+	setActiveRoute: (coords: RouteType) => void;
 };
 
 type RouteType = {
@@ -21,4 +22,5 @@ export const useMapStore = create<MapStore>((set) => ({
 	},
 	activeRoute: null,
 	setInitialCoords: (coords) => set(() => ({ initialPosition: coords })),
+	setActiveRoute: (coords) => set(() => ({ activeRoute: coords })),
 }));
