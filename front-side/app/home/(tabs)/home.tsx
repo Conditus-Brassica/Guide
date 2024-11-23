@@ -26,30 +26,8 @@ import {
 
 const renderResultItem = ({ item }) => (
 	<View style={styles.itemStyle}>
-		<Image
-			style={styles.image}
-			source={{
-				uri: item.image,
-			}}
-			resizeMode="contain"
-		/>
 		<View style={{ flex: 1 }}>
-			<Text style={styles.textStyle}>{item.original_title}</Text>
-			<Text style={styles.textStyle}>by {item.authors}</Text>
-			<View style={styles.star}>
-				{Array(item.average_rating_rounded)
-					.fill("x")
-					.map((i, index) => (
-						<AntDesign
-							key={item._id + `_${index}`}
-							name="star"
-							size={24}
-							color="gold"
-						/>
-					))}
-				<Text style={styles.rating}>({item.average_rating} avg)</Text>
-			</View>
-			<Text>Pub {item.original_publication_year}</Text>
+			<Text style={styles.textStyle}>{item.name}</Text>
 		</View>
 	</View>
 );
@@ -63,18 +41,15 @@ export default function App() {
 
 	return (
 		<View style={styles.container}>
-			<SafeAreaView style={styles.searchContainer}>
+			<View style={styles.searchContainer}>
 				<SearchBase
 					index="landmarks_index"
-					url="http://localhost:9200"
+					credentials="elastic:mypassword"
+					url="http://192.168.1.123:9200"
 					appbaseConfig={{
 						recordAnalytics: true,
 						enableQueryRules: true,
 						userId: user?.email,
-						customEvents: {
-							platform: "ios",
-							device: "iphoneX",
-						},
 					}}
 				>
 					<SearchBox
@@ -89,9 +64,10 @@ export default function App() {
 								weight: 3,
 							},
 						]}
-						renderNoSuggestion={() => <Text>No suggestions found</Text>}
+						renderNoSuggestion={() => (
+							<Text>Нет подходящих достопримечательностей</Text>
+						)}
 						enableRecentSearches
-						goBackIcon={(props) => <Ionicons {...props} />}
 						autoFillIcon={(props) => (
 							<Feather name="arrow-up-left" {...props} />
 						)}
@@ -113,6 +89,7 @@ export default function App() {
 						preserveResults
 					>
 						{({ results, loading, size, from, setValue, setFrom }) => {
+							console.log(results);
 							return (
 								<View>
 									{loading && !results.data.length ? (
@@ -159,7 +136,7 @@ export default function App() {
 						}}
 					</SearchComponent>
 				</SearchBase>
-			</SafeAreaView>
+			</View>
 			<View style={styles.mapContainer}>
 				<MapGuide />
 			</View>
@@ -180,7 +157,8 @@ const styles = StyleSheet.create({
 		backgroundColor: "#C8C8C8",
 	},
 	searchContainer: {
-		flex: 0.1,
+		flex: 0.13,
+		top: 25,
 	},
 	mapContainer: { flex: 0.9 },
 	image: {

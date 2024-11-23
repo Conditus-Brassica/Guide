@@ -1,4 +1,3 @@
-import { useAssets } from "expo-asset";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -12,21 +11,19 @@ import {
 
 const Index = () => {
 	const [imageLoaded, setImageLoaded] = useState(false);
-	const assets = useAssets([require("./../assets/images/app-icon.png")]);
 
 	return (
 		<View style={styles.beginContainer}>
 			<View style={styles.logoContainer}>
 				{!imageLoaded && <ActivityIndicator size="large" color="#11a6c6" />}
-				{assets[0] && (
-					<Image
-						style={styles.logo}
-						contentFit="contain"
-						source={assets[0]}
-						transition={10}
-						onLoad={() => setImageLoaded(true)}
-					/>
-				)}
+
+				<Image
+					style={styles.logo}
+					contentFit="contain"
+					source={require("./../assets/images/app-icon.png")}
+					transition={10}
+					onLoad={() => setImageLoaded(true)}
+				/>
 			</View>
 
 			<TouchableOpacity

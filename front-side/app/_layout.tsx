@@ -6,12 +6,12 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "react-native-reanimated";
 
-import { setStatusBarHidden, StatusBar } from "expo-status-bar";
+import { StatusBar } from "expo-status-bar";
+import { useAssets } from "expo-asset";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -19,8 +19,12 @@ export default function RootLayout() {
 		SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
 	});
 
+	const [loadedAssets] = useAssets([
+		require("./../assets/images/app-icon.png"),
+	]);
+
 	useEffect(() => {
-		if (loaded) {
+		if (loaded && loadedAssets) {
 			SplashScreen.hideAsync();
 		}
 	}, [loaded]);
@@ -37,20 +41,18 @@ export default function RootLayout() {
 					name="index"
 					options={{
 						headerShown: false,
-						statusBarHidden: true,
 					}}
 				/>
 				<Stack.Screen
 					name="login"
 					options={{
 						headerShown: false,
-						statusBarHidden: true,
 					}}
 				/>
 				<Stack.Screen
 					name="home/(tabs)"
 					options={{
-						statusBarHidden: true,
+						headerShown: false,
 					}}
 				/>
 				<Stack.Screen name="+not-found" />
