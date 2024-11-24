@@ -15,7 +15,7 @@ from backend.broker.agents_tasks.note_embeddings_crud_agent_tasks import get_not
 
 # TODO change with my trainer
 from backend.broker.agents_tasks.landmark_trainer_tasks import (
-    partial_record_list_with_next_state,
+    partial_record_with_next_state,
     fill_up_partial_record_reward_only_list,
     fill_up_partial_record_reward_only_replace_next_state_list,
     record_list,
@@ -247,7 +247,7 @@ class NoteRecAgent(PureNoteRecAgent):
 
         embeddings_asyncio_result = await embeddings_async_task
         logger.debug(
-            f"Recommendations agent, _embeddings_for_notes, "
+            f"Recommendations agent, _get_nearest_notes, "
             f"embeddings_for_landmarks: {embeddings_asyncio_result}"
         )
 
@@ -291,14 +291,14 @@ class NoteRecAgent(PureNoteRecAgent):
 
     # TODO change with note trainer
     @staticmethod
-    async def _partial_record_list_with_next_state_task(state, actions, next_states):
+    async def _partial_record_with_next_state_task(state, action, next_state):
         partial_record_list_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
-                partial_record_list_with_next_state,
+                partial_record_with_next_state,
                 json_params={
                     "state": state.tolist(),
-                    "action_list": [actions[i].numpy().tolist() for i in range(actions.shape[0])],
-                    "next_state_list": [next_states[i].numpy().tolist() for i in range(next_states.shape[0])]
+                    "action": action.numpy().tolist(),
+                    "next_state": next_state.numpy().tolist()
                 }
             )
         )
@@ -306,29 +306,13 @@ class NoteRecAgent(PureNoteRecAgent):
         return (await partial_record_list_async_task).return_value
 
 
-    async def _find_recommendations_by_coordinates(
-        self, watch_state: np.ndarray, visit_state: np.ndarray, recommendations, maximum_amount_of_recommendations
-    ):
-        state = self._concat_state((watch_state, visit_state), return_tf_tensor=False)  # state shape is [state_dim]
-
-        real_actions = await self._embeddings_for_notes(recommendations)
-        real_actions = tf.convert_to_tensor(real_actions, dtype=self._tf_dtype)
-
+    async def _make_recommendations(self, state: np.ndarray, maximum_amount_of_recommendations):
         real_actions, recommendations = self._wolpertinger_policy(
             tf.expand_dims(
                 tf.convert_to_tensor(state, dtype=self._tf_dtype), axis=0
             ),  # expands state shape to [1, state_dim]
-            real_actions, recommendations, maximum_amount_of_recommendations
+            maximum_amount_of_recommendations
         )
-
-        if self._requires_training:
-            logger.info("RecSys agent doesn't requires training. No SARS buffer record is required.")
-            next_states = self._count_next_states_for_actions(watch_state, visit_state, real_actions)
-            index_list, uuid_list = await self._partial_record_list_with_next_state_task(state, real_actions, next_states)
-
-            for i in range(len(index_list)):
-                recommendations[i]["row_index"] = index_list[i]
-                recommendations[i]["row_uuid"] = uuid_list[i]
  
         return recommendations
 
@@ -386,23 +370,36 @@ class NoteRecAgent(PureNoteRecAgent):
 
         state = np.asarray(json_params["state"], dtype=self._np_dtype)
 
-        kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates(json_params)
-        if not kb_pre_recommendations:
-            return kb_pre_recommendations
-        
-        kb_pre_recommendations = self._remove_duplicates_from_kb_result(kb_pre_recommendations)
-        logger.debug(
-            f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
-        )
-
         if not self._actor_critic_are_inited:
             await self._init_actor_critic_models()
             
-        return await self._find_recommendations_by_coordinates(
-            watch_state, visit_state, kb_pre_recommendations, maximum_amount_of_recommendations
-        )
+        return await self._make_recommendations(state, maximum_amount_of_recommendations)
 
 
+    async def interaction_with_note_started(self, json_params: Dict):
+        try:
+            validate(json_params, json_validation.interaction_with_note_started)
+        except ValidationError as ex:
+            await logger.error(f"interaction_with_note_started, ValidationError({ex.args[0]})")
+            return {}  # raise ValidationError
+
+        if not self._requires_training:
+            logger.info("RecSys agent doesn't require training. No sars records will be completed")
+            return {}
+
+        state = np.asarray(json_params["state"], dtype=self._np_dtype)
+
+        note_embedding = await self._embeddings_for_notes([json_params["note_title"]])
+        note_embedding = np.asarray(note_embedding[json_params["note_title"]], dtype=self._np_dtype)
+
+        next_state = self._new_state_formula(state, note_embedding)
+        index, uuid = await self._partial_record_with_next_state_task(state, note_embedding, next_state)
+
+        return {"row_uuid": uuid, "row_index": index}
+
+
+
+    # TODO
     def _give_reward_to_recommendations(
         self, primary_recommendations, result_recommendations, user_reward
     ):
