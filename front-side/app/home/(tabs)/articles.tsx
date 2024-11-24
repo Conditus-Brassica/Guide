@@ -1,10 +1,12 @@
 import { Colors } from "@/constants/Colors";
+import { ArticleScore } from "@/constants/enums";
 import axios from "axios";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	FlatList,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
@@ -13,9 +15,11 @@ import {
 
 const URL_STRING = "";
 
-type ArticlesInfo = {
+export type ArticlesInfo = {
 	id: string;
 	title: string;
+	author: string;
+	score: ArticleScore;
 };
 
 type ArticleResponce = {
@@ -27,16 +31,22 @@ const articlesTest = [
 		id: "test1",
 		content: "haha hahahahahh",
 		title: "Ostis gavno",
+		author: "Stas",
+		score: ArticleScore.POHUY,
 	},
 	{
 		id: "test2",
 		content: "haha hahahahahh",
 		title: "Ostis dermo",
+		author: "Stas",
+		score: ArticleScore.POHUY,
 	},
 	{
 		id: "test3",
 		content: "haha hahahahahh",
 		title: "Ostis kal",
+		author: "Stas",
+		score: ArticleScore.POHUY,
 	},
 ];
 
@@ -66,14 +76,15 @@ const Articles = () => {
 			onPress={() => {
 				router.navigate(`/home/articles/${article.id}`);
 			}}
-			style={[styles.item, { backgroundColor: "white" }]}
+			style={styles.item}
 		>
 			<Text style={[styles.title, { color: "black" }]}>{article.title}</Text>
 		</TouchableOpacity>
 	);
 
 	return (
-		<View
+		<ScrollView
+			contentInsetAdjustmentBehavior="automatic"
 			style={{
 				flex: 1,
 				top: 20,
@@ -81,23 +92,28 @@ const Articles = () => {
 				justifyContent: "center",
 			}}
 		>
-			<Text style={{ color: "white" }}>Articles!</Text>
 			{loaded ? (
 				<ActivityIndicator size="large" color={Colors.standartAppColor} />
 			) : (
 				<FlatList
+					style={styles.flatList}
 					data={articles}
 					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => <Item article={item} />}
 				/>
 			)}
-		</View>
+		</ScrollView>
 	);
 };
 
 const styles = StyleSheet.create({
-	item: { padding: 20, marginVertical: 8 },
-	title: { fontSize: 16 },
+	item: {
+		padding: 20,
+		marginVertical: 8,
+		borderColor: Colors.standartAppColor,
+	},
+	title: { fontSize: 16, color: "white" },
+	flatList: {},
 });
 
 export default Articles;
