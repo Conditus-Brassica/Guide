@@ -1,34 +1,69 @@
+import { BASE_URL } from "@/constants/request-api-constants";
 import { FirebaseAuth } from "@/FirebaseConfig";
+import axios from "axios";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	KeyboardAvoidingView,
 	Text,
 	View,
 	StyleSheet,
 	TouchableOpacity,
-	TextInput,
 } from "react-native";
+import { HelperText, TextInput } from "react-native-paper";
+
+export type UserInfo = {
+	email: string;
+};
+
+type ErrorType = {
+	[key: string]: string;
+};
 
 const LoginScreen = () => {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const [form, setForm] = useState({ email: "", password: "" });
+	const [errors, setErrors] = useState<ErrorType>({});
 
-	const handleSignup = () => {
-		createUserWithEmailAndPassword(FirebaseAuth, email, password)
-			.then()
-			.catch((error) => alert(error.message));
+	const postUserInfo = () => {
+		try {
+			axios.post<UserInfo>(BASE_URL, { email: form.email });
+		} catch (error) {
+			console.error(`HTTP request error: ${error}`);
+		}
 	};
 
-	const handleLogin = () => {
-		signInWithEmailAndPassword(FirebaseAuth, email, password)
-			.then()
-			.catch((error) => alert(error.message));
+	const handleSignup = async () => {
+		try {
+			await createUserWithEmailAndPassword(
+				FirebaseAuth,
+				form.email,
+				form.password
+			);
+			postUserInfo();
+			setErrors({});
+		} catch (error: any) {
+			const parsedErrors = parseFirebaseError(error);
+			setErrors(parsedErrors);
+		}
+	};
+
+	const handleLogin = async () => {
+		try {
+			await signInWithEmailAndPassword(FirebaseAuth, form.email, form.password);
+			setErrors({});
+		} catch (error: any) {
+			const parsedErrors = parseFirebaseError(error);
+			setErrors(parsedErrors);
+		}
+	};
+
+	const handleFormChange = (key: string, value: string) => {
+		setForm((prev) => ({ ...prev, [key]: value }));
 	};
 
 	useEffect(() => {
@@ -36,28 +71,46 @@ const LoginScreen = () => {
 			if (user) {
 				router.replace("/home/(tabs)/home");
 			}
-
-			return unsubscribe;
+			return () => unsubscribe();
 		});
 	});
 
 	return (
 		<KeyboardAvoidingView behavior="padding" style={styles.container}>
-			<StatusBar hidden={true} />
 			<View style={styles.inputContainer}>
 				<TextInput
-					placeholder="Login"
-					value={email}
-					onChangeText={(text) => setEmail(text)}
+					placeholder="Email"
+					value={form.email}
 					style={styles.input}
+					onChangeText={(text) => {
+						handleFormChange("email", text);
+						setErrors({});
+					}}
 				/>
+				<HelperText
+					style={{ color: "red" }}
+					type="error"
+					visible={!!errors.email}
+				>
+					{errors.email}
+				</HelperText>
 				<TextInput
 					placeholder="Password"
-					value={password}
-					onChangeText={(text) => setPassword(text)}
+					value={form.password}
+					onChangeText={(text) => {
+						handleFormChange("password", text);
+						setErrors({});
+					}}
 					style={styles.input}
 					secureTextEntry
 				/>
+				<HelperText
+					style={{ color: "red" }}
+					type="error"
+					visible={!!errors.password}
+				>
+					{errors.password}
+				</HelperText>
 			</View>
 			<View style={styles.buttonContainter}>
 				<TouchableOpacity onPress={handleLogin} style={styles.button}>
@@ -85,7 +138,10 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		paddingHorizontal: 15,
 		paddingVertical: 10,
-		borderRadius: 10,
+		borderTopLeftRadius: 15,
+		borderTopRightRadius: 15,
+		borderBottomLeftRadius: 15,
+		borderBottomRightRadius: 15,
 		marginTop: 5,
 	},
 	labels: { fontWeight: "bold" },
@@ -112,5 +168,32 @@ const styles = StyleSheet.create({
 	buttonText: { color: "white", fontWeight: "700", fontSize: 16 },
 	buttonOutlineText: { color: "blue", fontWeight: "700", fontSize: 16 },
 });
+
+const parseFirebaseError = (error: any): ErrorType => {
+	const errorType: ErrorType = {};
+
+	// Handle specific Firebase Auth error codes
+	switch (error.code) {
+		case "auth/email-already-in-use":
+			errorType.email = "Email is already in use.";
+			break;
+		case "auth/invalid-email":
+			errorType.email = "Invalid email address.";
+			break;
+		case "auth/user-not-found":
+			errorType.email = "No user found with this email.";
+			break;
+		case "auth/wrong-password":
+			errorType.password = "Incorrect password.";
+			break;
+		case "auth/weak-password":
+			errorType.password = "Password is too weak.";
+			break;
+		default:
+			errorType.general = "An unknown error occurred. Please try again.";
+	}
+
+	return errorType;
+};
 
 export default LoginScreen;

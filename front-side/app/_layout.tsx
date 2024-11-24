@@ -38,7 +38,7 @@ export default function RootLayout() {
 			<StatusBar hidden={true} />
 			<Stack>
 				<Stack.Screen
-					name="home/articles/[id]"
+					name="home/articles/[articleId]"
 					options={{
 						headerTitle: "Article",
 					}}
