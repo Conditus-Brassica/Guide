@@ -112,14 +112,14 @@ class PureNoteRecAgent(ABC):
 
 
     @abstractmethod
-    async def interaction_with_note_finished(self, json_params):
+    async def interactions_with_notes_finished(self, json_params):
         """
-        Method to end user interaction with note. This method is used to end interaction. Takes uuid and index of
+        Method to end user interactions with notes. This method is used to end interactions. Takes uuid and index of
         partial record for user interaction with note.
         :json_params["interactions"] - list of user interactions with notes
 
         ###
-        1. json_params: Dict[
+        :param json_params: Dict[
             "interactions": List[
                 Dict [
                     "row_uuid": uuid4.hex,
