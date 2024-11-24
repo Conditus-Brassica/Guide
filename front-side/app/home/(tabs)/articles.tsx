@@ -12,6 +12,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const URL_STRING = "";
 
@@ -48,10 +49,24 @@ const articlesTest = [
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
+	{
+		id: "test4",
+		content: "haha hahahahahh",
+		title: "Ostis kal",
+		author: "Stas",
+		score: ArticleScore.POHUY,
+	},
+	{
+		id: "test5",
+		content: "haha hahahahahh",
+		title: "Ostis kal",
+		author: "Stas",
+		score: ArticleScore.POHUY,
+	},
 ];
 
 const Articles = () => {
-	const [loaded, setLoaded] = useState(false);
+	const [loaded, setLoaded] = useState(true);
 	const [articles, setArticles] = useState<ArticlesInfo[]>(articlesTest);
 
 	const getArticles = async () => {
@@ -78,31 +93,23 @@ const Articles = () => {
 			}}
 			style={styles.item}
 		>
-			<Text style={[styles.title, { color: "black" }]}>{article.title}</Text>
+			<Text style={styles.title}>{article.title}</Text>
 		</TouchableOpacity>
 	);
 
 	return (
-		<ScrollView
-			contentInsetAdjustmentBehavior="automatic"
-			style={{
-				flex: 1,
-				top: 20,
-				alignItems: "center",
-				justifyContent: "center",
-			}}
-		>
+		<View style={styles.scrollView}>
 			{loaded ? (
-				<ActivityIndicator size="large" color={Colors.standartAppColor} />
-			) : (
 				<FlatList
 					style={styles.flatList}
 					data={articles}
 					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => <Item article={item} />}
 				/>
+			) : (
+				<ActivityIndicator size="large" color={Colors.standartAppColor} />
 			)}
-		</ScrollView>
+		</View>
 	);
 };
 
@@ -110,9 +117,14 @@ const styles = StyleSheet.create({
 	item: {
 		padding: 20,
 		marginVertical: 8,
+		backgroundColor: "white",
 		borderColor: Colors.standartAppColor,
+		borderWidth: 2,
 	},
-	title: { fontSize: 16, color: "white" },
+	title: { fontSize: 24, color: "black", fontWeight: "600" },
+	scrollView: {
+		top: 20,
+	},
 	flatList: {},
 });
 

@@ -77,7 +77,6 @@ const LoginScreen = () => {
 
 	return (
 		<KeyboardAvoidingView behavior="padding" style={styles.container}>
-			<StatusBar hidden={true} />
 			<View style={styles.inputContainer}>
 				<TextInput
 					placeholder="Email"
@@ -139,7 +138,10 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		paddingHorizontal: 15,
 		paddingVertical: 10,
-		borderRadius: 20,
+		borderTopLeftRadius: 15,
+		borderTopRightRadius: 15,
+		borderBottomLeftRadius: 15,
+		borderBottomRightRadius: 15,
 		marginTop: 5,
 	},
 	labels: { fontWeight: "bold" },

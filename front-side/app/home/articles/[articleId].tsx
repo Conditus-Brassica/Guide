@@ -71,14 +71,14 @@ const Article: FC = () => {
 			<Markdown>{atricleDetails?.content}</Markdown>
 			<View style={styles.userScore}>
 				{atricleDetails?.score === ArticleScore.LIKE ? (
-					<Icon name="heart" />
+					<Icon name="heart" color="red" />
 				) : (
-					<Icon name="heart-outline" />
+					<Icon name="heart-outline" color="white" />
 				)}
 				{atricleDetails?.score === ArticleScore.HUYNA_EBANAYA ? (
-					<Icon name="heart-dislike" />
+					<Icon name="heart-dislike" color="red" />
 				) : (
-					<Icon name="heart-dislike-outline" />
+					<Icon name="heart-dislike-outline" color="white" />
 				)}
 			</View>
 		</ScrollView>
@@ -88,7 +88,7 @@ const Article: FC = () => {
 const styles = StyleSheet.create({
 	userScore: {
 		flexDirection: "row",
-		columnGap: 10,
+		marginHorizontal: 10,
 		alignItems: "center",
 		justifyContent: "center",
 	},
