@@ -543,11 +543,11 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             await logger.error(f"find_recommendations_by_coordinates, ValidationError({ex.args[0]})")
             return []  # raise ValidationError
         
-        maximum_amount_of_recommendations = json_params.pop("maximum_amount_of_recommendations")
+        maximum_amount_of_recommendations = json_params["maximum_amount_of_recommendations"]
         json_params["limit"] = maximum_amount_of_recommendations * 4  # TODO if 400% is enough
 
-        watch_state = np.asarray(json_params.pop("watch_state"), dtype=self._np_dtype)
-        visit_state = np.asarray(json_params.pop("visit_state"), dtype=self._np_dtype)
+        watch_state = np.asarray(json_params["watch_state"], dtype=self._np_dtype)
+        visit_state = np.asarray(json_params["visit_state"], dtype=self._np_dtype)
 
         kb_pre_recommendations = await self._kb_pre_recommendation_by_coordinates(json_params)
         if not kb_pre_recommendations:
@@ -753,9 +753,9 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             return  # raise ValidationError
 
         primary_recommendations, result_recommendations = self._give_reward_to_recommendations(
-            json_params.pop("primary_recommendations"),
-            json_params.pop("result_recommendations"),
-            json_params.pop("user_reward")
+            json_params["primary_recommendations"],
+            json_params["result_recommendations"],
+            json_params["user_reward"]
         )
         
         state = await self._post_primary_recs_to_sars_buffer(primary_recommendations)
