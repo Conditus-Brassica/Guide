@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FirebaseAuth } from "@/FirebaseConfig";
 import {
 	FlatList,
@@ -14,6 +14,7 @@ import { ELASTIC_URL } from "@/constants/request-api-constants";
 import { Colors } from "@/constants/Colors";
 import { LatLng } from "react-native-maps";
 import { setStatusBarHidden } from "expo-status-bar";
+import * as Location from "expo-location";
 
 type landmarkInfo = {
 	_id: string;
@@ -37,6 +38,33 @@ export default function App() {
 
 	const [results, setResults] = useState<landmarkInfo[]>([]);
 	const [query, setQuery] = useState("");
+
+	const [location, setLocation] = useState<Location.LocationObject | null>(
+		null
+	);
+	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+	useEffect(() => {
+		async function getCurrentLocation() {
+			let { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== "granted") {
+				setErrorMsg("Permission to access location was denied");
+				return;
+			}
+
+			let location = await Location.getCurrentPositionAsync({});
+			setLocation(location);
+		}
+
+		getCurrentLocation();
+	}, []);
+
+	let text = "Waiting...";
+	if (errorMsg) {
+		text = errorMsg;
+	} else if (location) {
+		text = JSON.stringify(location);
+	}
 
 	const performSearch = async (searchQuery: string) => {
 		try {

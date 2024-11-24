@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	StyleSheet,
 	View,
