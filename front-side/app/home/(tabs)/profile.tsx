@@ -27,7 +27,7 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
-	emailContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+	emailContainer: { flex: 1 },
 	container: {
 		flex: 0.3,
 		justifyContent: "flex-end",

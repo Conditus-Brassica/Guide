@@ -39,39 +39,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@appbaseio/analytics@npm:^2.1.0-beta":
-  version: 2.1.0-beta
-  resolution: "@appbaseio/analytics@npm:2.1.0-beta"
-  dependencies:
-    cross-fetch: "npm:^3.0.4"
-  checksum: 10c0/b65cb89f78178dd9d197ec26b3851c107ddf1150a0db338626f93130c201d1d74c276fdf19a4e1efaa72a5612464a6f66ee34f135ff247128611819870e0a65c
-  languageName: node
-  linkType: hard
-
-"@appbaseio/react-native-searchbox@npm:1.7.0-preview.5":
-  version: 1.7.0-preview.5
-  resolution: "@appbaseio/react-native-searchbox@npm:1.7.0-preview.5"
-  dependencies:
-    "@appbaseio/searchbase": "npm:1.7.0-preview.1"
-    color: "npm:^3.1.3"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-vector-icons: ">6.6.0"
-  checksum: 10c0/6a2e6f05b5e76f62d4a1aef358df8c381a53b144f2fab93305ec85031cc946393dc7617ebec9e74d4da2056398ffee53c78b39aebc88b89c0621349056b8c07b
-  languageName: node
-  linkType: hard
-
-"@appbaseio/searchbase@npm:1.7.0-preview.1":
-  version: 1.7.0-preview.1
-  resolution: "@appbaseio/searchbase@npm:1.7.0-preview.1"
-  dependencies:
-    "@appbaseio/analytics": "npm:^2.1.0-beta"
-    cross-fetch: "npm:^3.0.4"
-  checksum: 10c0/883ad4c19a502696bc77fdfb16a355c99decb81c3769a11f27ab3572035b9edc44cd1722f1e421f326af327a82eb7b1d3f7e89a96b510ceaa52e347044941ed4
-  languageName: node
-  linkType: hard
-
 "@babel/code-frame@npm:7.10.4, @babel/code-frame@npm:~7.10.4":
   version: 7.10.4
   resolution: "@babel/code-frame@npm:7.10.4"
@@ -5084,7 +5051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color@npm:^3.1.2, color@npm:^3.1.3":
+"color@npm:^3.1.2":
   version: 3.2.1
   resolution: "color@npm:3.2.1"
   dependencies:
@@ -5271,7 +5238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:^3.0.4, cross-fetch@npm:^3.1.5":
+"cross-fetch@npm:^3.1.5":
   version: 3.1.8
   resolution: "cross-fetch@npm:3.1.8"
   dependencies:
@@ -6770,7 +6737,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "front-side@workspace:."
   dependencies:
-    "@appbaseio/react-native-searchbox": "npm:1.7.0-preview.5"
     "@babel/core": "npm:^7.20.0"
     "@expo/vector-icons": "npm:^14.0.2"
     "@react-navigation/native": "npm:7.0.0"

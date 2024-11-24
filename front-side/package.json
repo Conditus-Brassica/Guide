@@ -15,7 +15,6 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@appbaseio/react-native-searchbox": "1.7.0-preview.5",
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/native": "7.0.0",
     "axios": "^1.7.7",
