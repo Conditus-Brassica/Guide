@@ -26,6 +26,24 @@ get_nearest_notes = \
 }
 
 
+get_notes_by_titles = \
+{
+    "type": "object",
+    "properties": {
+        "note_titles": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "additionalProperties": False
+        }
+    },
+    "required": ["note_titles"],
+    "additionalProperties": False,
+    "max_properties": 1
+}
+
+
 # Write queries
 """
 add_note_embedding

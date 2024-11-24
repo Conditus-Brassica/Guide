@@ -52,6 +52,26 @@ class PureNoteEmbeddingsCRUDAgent(ABC):
         raise NotImplementedError
 
 
+    @abstractmethod
+    async def get_notes_by_titles(self, json_params: Dict):
+        """
+        WARNING! Result dict order doesn't correspond to the note_title argument order
+        Returns embeddings of the notes with the given titles.
+        Works asynchronously.
+
+        :param json_params: Dict [
+            note_titles: List[str]
+        ]
+
+        returns: Coroutine
+            Dict[
+                notes: Dict[
+                    str: List[List[float]]
+                ]
+            ], where str is document id which is string. List[List[float]] - embedding of the note
+        """
+        raise NotImplementedError
+
     # Write queries
     async def add_note_embedding(self, json_params: Dict):
         """
