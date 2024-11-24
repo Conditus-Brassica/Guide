@@ -89,7 +89,6 @@ export default function App() {
 						preserveResults
 					>
 						{({ results, loading, size, from, setValue, setFrom }) => {
-							console.log(results);
 							return (
 								<View>
 									{loading && !results.data.length ? (
