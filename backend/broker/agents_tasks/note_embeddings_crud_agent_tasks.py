@@ -51,6 +51,25 @@ async def get_nearest_notes(json_params: Dict):
 
 
 @BROKER.task
+async def get_nearest_one_for_notes_batch(json_params: Dict):
+    """
+    Read query to get the nearest embedding for every element of the given batch.
+    Works asynchronously.
+
+    :param json_params: Dict[
+        "notes_embeddings": List[List[float]] - batch of embeddings
+    ]
+
+    :returns: Coroutine
+        Dict[
+            "note_titles": List[str],
+            "embeddings": List[List[float]]
+        ]
+    """
+    return await NOTE_EMBEDDINGS_CRUD_AGENT.get_nearest_one_for_notes_batch(json_params)
+
+
+@BROKER.task
 async def get_notes_by_titles(json_params: Dict):
     """
         WARNING! Result dict order doesn't correspond to the note_title argument order
