@@ -1,6 +1,5 @@
 # Author: Vodohleb04
 import threading
-from copy import copy
 from typing import Tuple, List
 import keras
 import tensorflow as tf
