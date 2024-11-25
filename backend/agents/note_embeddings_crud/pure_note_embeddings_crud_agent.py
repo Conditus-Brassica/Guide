@@ -51,6 +51,24 @@ class PureNoteEmbeddingsCRUDAgent(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    async def get_nearest_one_for_notes_batch(self, json_params: Dict):
+        """
+        Read query to get the nearest embedding for every element of the given batch.
+        Works asynchronously.
+
+        :param json_params: Dict[
+            "notes_embeddings": List[List[float]] - batch of embeddings
+        ]
+
+        :returns: Coroutine
+            Dict[
+                "note_titles": List[str],
+                "embeddings": List[List[float]]
+            ]
+        """
+        raise NotImplementedError
+
 
     @abstractmethod
     async def get_notes_by_titles(self, json_params: Dict):

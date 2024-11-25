@@ -11,7 +11,7 @@ from jsonschema import validate, ValidationError
 from chromadb.api.models.AsyncCollection import AsyncCollection
 from backend.agents.note_embeddings_crud.pure_note_embeddings_crud_agent import PureNoteEmbeddingsCRUDAgent
 from backend.agents.note_embeddings_crud.note_embeddings_crud_validation import (
-    get_nearest_notes, add_note_embedding, update_note_embedding, delete_notes, get_notes_by_titles
+    get_nearest_notes, add_note_embedding, update_note_embedding, delete_notes, get_notes_by_titles, get_nearest_one_for_notes_batch
 )
 
 
@@ -87,6 +87,24 @@ class NoteEmbeddingsCRUD(PureNoteEmbeddingsCRUDAgent):
             }
         else:
             return {"note_titles": result["ids"][0]}
+
+
+    async def get_nearest_one_for_notes_batch(self, json_params: Dict):
+        try:
+            validate(json_params, get_nearest_one_for_notes_batch)
+        except ValidationError as ex:
+            return {"note_titles": [], "embeddings": []}  # raise ValidationError
+
+        result = await self._embedding_collection.query(
+            query_embeddings=json_params["notes_embeddings"],
+            n_results=1,
+            include=self._embeddings_include
+        )
+        note_titles = [note_ids[0] for note_ids in result["ids"]]  # convert List[List[str]] to List[str]
+        return {
+            "note_titles": note_titles,  # List of ids
+            "embeddings": result["embeddings"]  # List of the nearest embedding for every given embedding
+        }
 
 
     async def get_notes_by_titles(self, json_params: Dict):
@@ -174,10 +192,16 @@ if __name__ == "__main__":
         emb1 = [1., 1., 1.]
         emb2 = [3., 3.9, 3.1]
         emb3 = [0, -1, 0.5]
+
         await note_emb_ag.add_note_embedding({"note_title": "1", "note_embedding": emb1})
         await note_emb_ag.add_note_embedding({"note_title": "2", "note_embedding": emb2})
         await note_emb_ag.add_note_embedding({"note_title": "3", "note_embedding": emb3})
 
+        print(
+            await note_emb_ag.get_nearest_one_for_notes_batch(
+                {"notes_embeddings": [[0, -0.9, 0.4], [0.1, -0.9, 0.4], [1.1, 1.1, 1.1], [3., 3.9, 3.1]]}
+            )
+        )
 
         print(await note_emb_ag.get_notes_by_titles({"note_titles": ["2", "3", "1"]}))
 
@@ -197,5 +221,6 @@ if __name__ == "__main__":
         await note_emb_ag.delete_notes_embeddings({"note_title_list": ["3", "2"]})
         print(await embedding_collection.get(include=["embeddings"]))
         await embedding_collection.delete((await embedding_collection.get())["ids"])
+
 
     asyncio.run(main())
