@@ -294,14 +294,14 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         recommendations_async_task.add_done_callback(self._asyncio_tasks.discard)
 
         kb_pre_recommendation_asyncio_result = await recommendations_async_task
-        logger.debug(
+        await logger.debug(
             f"Recommendations agent, find_recommendations_for_coordinates, "
             f"kb_pre_recommendation_asyncio_result: {kb_pre_recommendation_asyncio_result}"
         )
         kb_pre_recommendations = kb_pre_recommendation_asyncio_result.return_value
 
         kb_pre_recommendations = self._remove_nones_from_kb_result(kb_pre_recommendations)
-        logger.debug(
+        await logger.debug(
             f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after None removed: {kb_pre_recommendations}"  
         )
         return kb_pre_recommendations
@@ -426,7 +426,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
         embeddings_async_task.add_done_callback(self._asyncio_tasks.discard)
 
         embeddings_asyncio_result = await embeddings_async_task
-        logger.debug(
+        await logger.debug(
             f"Recommendations agent, _embeddings_for_landmarks, "
             f"embeddings_for_landmarks: {embeddings_asyncio_result}"
         )
@@ -490,7 +490,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
                 recommendations[i]["row_index"] = index_list[i]
                 recommendations[i]["row_uuid"] = uuid_list[i]
         else:
-            logger.info("RecSys agent doesn't requires training. No SARS buffer record is required.")
+            await logger.info("RecSys agent doesn't requires training. No SARS buffer record is required.")
  
         return recommendations
 
@@ -555,7 +555,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             return kb_pre_recommendations
         
         kb_pre_recommendations = self._remove_duplicates_from_kb_result(kb_pre_recommendations)
-        logger.debug(
+        await logger.debug(
             f"Recommendations agent, find_recommendations_by_coordinates, kb_pre_recommendations after duplicates removed: {kb_pre_recommendations}"
         )
 
@@ -660,13 +660,13 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
 
     @staticmethod
-    def _post_primary_recs_to_sars_buffer_debug_messages(uuid_correct_list, uuid_correct_list_with_state_replace):
-        logger.debug(
+    async def _post_primary_recs_to_sars_buffer_debug_messages(uuid_correct_list, uuid_correct_list_with_state_replace):
+        await logger.debug(
             f"_post_primary_recs_to_sars_buffer; "
             f"filled_up {uuid_correct_list.count(True)}/{len(uuid_correct_list)} of primary recommendations "
             f"without replace of next_state"
         )
-        logger.debug(
+        await logger.debug(
             f"_post_primary_recs_to_sars_buffer; "
             f"filled_up {uuid_correct_list_with_state_replace.count(True)}/{len(uuid_correct_list_with_state_replace)} "
             f"of primary recommendations with replace of next_state"
@@ -702,7 +702,7 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
             change_next_state_row_index_list, change_next_state_row_uuid_list, change_next_state_reward_list
         )
 
-        self._post_primary_recs_to_sars_buffer_debug_messages(uuid_correct_list, uuid_correct_list_with_state_replace)
+        await self._post_primary_recs_to_sars_buffer_debug_messages(uuid_correct_list, uuid_correct_list_with_state_replace)
 
         return await self._define_state_using_primary_uuids(
             primary_recommendations, uuid_correct_list, uuid_correct_list_with_state_replace
@@ -727,12 +727,12 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
             await self._record_list_task(sars_tuple_list)
 
-            logger.debug(f"_post_result_recs_to_sars_buffer; {len(result_recommendations)} records added from landmarks, given by user")
+            await logger.debug(f"_post_result_recs_to_sars_buffer; {len(result_recommendations)} records added from landmarks, given by user")
     
 
     @staticmethod
     async def _start_training(repeat_amount):
-        logger.debug(f"{repeat_amount} training cycles")
+        await logger.debug(f"{repeat_amount} training cycles")
         train_async_task = asyncio.create_task(
             AbstractAgentsBroker.call_agent_task(
                 train, {"repeat_amount": repeat_amount}
@@ -742,9 +742,9 @@ class LandmarkRecAgent(PureLandmarkRecAgent):
 
 
     async def post_result_of_recommendations(self, json_params):
-        logger.debug(f"post_result_of_recommendations")
+        await logger.debug(f"post_result_of_recommendations")
         if not self._requires_training:
-            logger.info("RecSys agent doesn't requires training.")
+            await logger.info("RecSys agent doesn't requires training.")
             return
 
         try:
