@@ -284,9 +284,8 @@ class NoteRecAgent(PureNoteRecAgent):
 
         max_critic_value_index_list = self._max_critic_values_indexes(critic_values, recommendations_amount)
         recommendations = [recommendations[index] for index in max_critic_value_index_list]
-        real_actions = tf.gather(real_actions, max_critic_value_index_list)
                 
-        return real_actions, recommendations
+        return recommendations
 
 
     # TODO change with note trainer
@@ -307,7 +306,7 @@ class NoteRecAgent(PureNoteRecAgent):
 
 
     async def _make_recommendations(self, state: np.ndarray, maximum_amount_of_recommendations):
-        real_actions, recommendations = self._wolpertinger_policy(
+        recommendations = self._wolpertinger_policy(
             tf.expand_dims(
                 tf.convert_to_tensor(state, dtype=self._tf_dtype), axis=0
             ),  # expands state shape to [1, state_dim]
