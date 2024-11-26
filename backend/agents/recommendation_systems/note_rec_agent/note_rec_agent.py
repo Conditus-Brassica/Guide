@@ -374,7 +374,8 @@ class NoteRecAgent(PureNoteRecAgent):
         state = np.asarray(json_params["state"], dtype=self._np_dtype)
 
         note_embedding = await self._embeddings_for_notes([json_params["note_title"]])
-        note_embedding = np.asarray(note_embedding[json_params["note_title"]], dtype=self._np_dtype)
+        note_embedding = note_embedding["notes"][json_params["note_title"]]
+        note_embedding = np.asarray(note_embedding, dtype=self._np_dtype)
 
         next_state = self._new_state_formula(state, note_embedding)
         index, uuid = await self._partial_record_with_next_state_task(
