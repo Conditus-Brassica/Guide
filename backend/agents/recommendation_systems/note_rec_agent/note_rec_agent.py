@@ -291,7 +291,7 @@ class NoteRecAgent(PureNoteRecAgent):
 
 
     async def _make_recommendations(self, state: np.ndarray, maximum_amount_of_recommendations):
-        recommendations = self._wolpertinger_policy(
+        recommendations = await self._wolpertinger_policy(
             tf.expand_dims(
                 tf.convert_to_tensor(state, dtype=self._tf_dtype), axis=0
             ),  # expands state shape to [1, state_dim]
