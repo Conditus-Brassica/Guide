@@ -450,4 +450,4 @@ class NoteRecAgent(PureNoteRecAgent):
             await logger.error(f"interactions_with_notes_finished, ValidationError({ex.args[0]})")
             return  # raise ValidationError
 
-        self._interactions_with_notes_finished(json_params)
+        await self._interactions_with_notes_finished(json_params)
