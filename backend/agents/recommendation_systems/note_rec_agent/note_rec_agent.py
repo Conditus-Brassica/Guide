@@ -206,14 +206,6 @@ class NoteRecAgent(PureNoteRecAgent):
 
 
     @staticmethod
-    def _interactions_with_note_finished(json_params):
-        """This method checks values only of special params. Other values will be checked in target agent."""
-        validate(json_params, json_validation.interaction_with_note_finished)
-        if json_params["relative_interaction_time"] < 0 or json_params["relative_interaction_time"] > 1:
-            raise ValidationError("relative_interaction_time must be value in range [0, 1]")
-
-
-    @staticmethod
     def _max_critic_values_indexes(critic_values, recommendations_amount: int):
         # Finds indexes of recommendations with the highest Critic value
         max_critic_values_list = []
@@ -458,4 +450,4 @@ class NoteRecAgent(PureNoteRecAgent):
             await logger.error(f"interactions_with_notes_finished, ValidationError({ex.args[0]})")
             return  # raise ValidationError
 
-        self._interactions_with_note_finished(json_params)
+        self._interactions_with_notes_finished(json_params)
