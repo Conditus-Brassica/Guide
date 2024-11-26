@@ -260,7 +260,7 @@ class NoteRecAgent(PureNoteRecAgent):
 
         embeddings_note_titles = await self._get_nearest_notes(proto_action, recommendations_amount * 4)  # TODO Check if 400% is good
 
-        real_actions = tf.convert_to_tensor(embeddings_note_titles["embeddings"])
+        real_actions = tf.convert_to_tensor(embeddings_note_titles["embeddings"], dtype=self._tf_dtype)
         recommendations = embeddings_note_titles["note_titles"]
 
         # state_for_actions shape is [n, state_dim]. The same state is copied for multiple actions
