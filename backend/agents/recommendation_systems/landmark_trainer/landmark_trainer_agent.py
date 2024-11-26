@@ -21,9 +21,7 @@ class LandmarkTrainerAgent(PureLandmarkTrainerAgent):
             return False
 
     @classmethod
-    def _class_init(
-            cls, trainer: LandmarkTrainer
-    ):
+    def _class_init(cls, trainer: LandmarkTrainer):
         cls._trainer = trainer
 
     def __init__(self, trainer: LandmarkTrainer):

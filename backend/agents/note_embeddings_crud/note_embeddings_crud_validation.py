@@ -26,6 +26,30 @@ get_nearest_notes = \
 }
 
 
+get_nearest_one_for_notes_batch = \
+{
+    "type": "object",
+    "properties": {
+        "notes_embeddings": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "number"
+                },
+                "additionalProperties": False
+            },
+            "additionalProperties": False
+        }
+    },
+    "required": [
+        "notes_embeddings"
+    ],
+    "additionalProperties": False,
+    "max_properties": 1
+}
+
+
 get_notes_by_titles = \
 {
     "type": "object",

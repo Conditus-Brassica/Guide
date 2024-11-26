@@ -26,7 +26,7 @@ else:
     target_critic_model.set_weights(critic_model.get_weights())
 
     buffer = SARSReplayBuffer(state_size=3, action_size=1, dtype=np.float32, save_file="./sars_save.save")
-    gamma = 0.99
+    gamma = 0.95
     tau = 5e-3
 
     critic_lr = 0.002
@@ -40,7 +40,7 @@ else:
         actor_optimizer, critic_optimizer,
         target_actor_model, target_critic_model, tau,
         buffer,
-        np.float32,
+        np.float32, tf.float32,
         "./actor.keras",
         "./critic.keras",
         "./target_actor.keras",

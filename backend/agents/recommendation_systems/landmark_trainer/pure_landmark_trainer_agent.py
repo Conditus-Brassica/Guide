@@ -14,7 +14,7 @@ class PureLandmarkTrainerAgent(ABC):
     def get_trainer_agent(cls):
         """
         Method to take landmark_trainer agent object. Returns None in case when landmark_trainer agent is not exists.
-        :return: None | PureRecommendationsAgent
+        :return: None | PureLandmarkTrainerAgent
         """
         raise NotImplementedError
 
