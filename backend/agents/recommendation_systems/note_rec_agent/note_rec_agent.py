@@ -280,9 +280,9 @@ class NoteRecAgent(PureNoteRecAgent):
             AbstractAgentsBroker.call_agent_task(
                 partial_record_with_next_state,
                 json_params={
-                    "state": state.tolist(),
-                    "action": action.numpy().tolist(),
-                    "next_state": next_state.numpy().tolist()
+                    "state": state,
+                    "action": action,
+                    "next_state": next_state
                 }
             )
         )
