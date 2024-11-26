@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "front-side",
+    "name": "Route Guide",
     "slug": "front-side",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/app-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -35,6 +35,12 @@
         "expo-local-authentication",
         {
           "faceIDPermission": "Allow $(PRODUCT_NAME) to use Biometrics."
+        }
+      ],
+      [
+      "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
     ],

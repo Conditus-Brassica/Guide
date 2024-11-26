@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { BASE_URL } from "@/constants/request-api-constants";
 import { FirebaseAuth } from "@/FirebaseConfig";
 import axios from "axios";
@@ -18,7 +19,7 @@ import {
 import { HelperText, TextInput } from "react-native-paper";
 
 export type UserInfo = {
-	email: string;
+	userId: string;
 };
 
 type ErrorType = {
@@ -31,7 +32,8 @@ const LoginScreen = () => {
 
 	const postUserInfo = () => {
 		try {
-			axios.post<UserInfo>(BASE_URL, { email: form.email });
+			const user = FirebaseAuth.currentUser;
+			axios.post<UserInfo>(BASE_URL, { email: user?.uid });
 		} catch (error) {
 			console.error(`HTTP request error: ${error}`);
 		}
@@ -143,6 +145,8 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 15,
 		borderBottomRightRadius: 15,
 		marginTop: 5,
+		borderWidth: 1,
+		borderColor: Colors.standartAppColor,
 	},
 	labels: { fontWeight: "bold" },
 	buttonContainter: {
