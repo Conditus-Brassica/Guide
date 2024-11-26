@@ -116,12 +116,11 @@ const Articles = () => {
 const styles = StyleSheet.create({
 	item: {
 		padding: 20,
-		marginVertical: 8,
-		backgroundColor: "white",
+		backgroundColor: "black",
 		borderColor: Colors.standartAppColor,
 		borderWidth: 2,
 	},
-	title: { fontSize: 24, color: "black", fontWeight: "600" },
+	title: { fontSize: 24, color: "white", fontWeight: "600" },
 	scrollView: {
 		top: 20,
 	},

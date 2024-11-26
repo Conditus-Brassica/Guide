@@ -2,7 +2,7 @@ import { FirebaseAuth } from "@/FirebaseConfig";
 import { router } from "expo-router";
 import { signOut } from "firebase/auth";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-
+//Rewrute this element completely
 const Profile = () => {
 	const user = FirebaseAuth.currentUser;
 
@@ -11,9 +11,9 @@ const Profile = () => {
 			.then(() => router.replace("/login"))
 			.catch((error: Error): void => alert(error.message));
 	};
-
+	console.log(user);
 	return (
-		<View>
+		<View style={{ flex: 1 }}>
 			<View style={styles.emailContainer}>
 				<Text style={{ color: "white", fontSize: 24 }} children={user?.email} />
 			</View>
@@ -27,14 +27,14 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
-	emailContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+	emailContainer: { flex: 1 },
 	container: {
 		flex: 0.3,
 		justifyContent: "flex-end",
 		alignItems: "center",
 	},
 	button: {
-		backgroundColor: "black",
+		backgroundColor: "grey",
 		marginTop: 5,
 		padding: 15,
 		borderColor: "#769dac",

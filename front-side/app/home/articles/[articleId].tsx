@@ -5,7 +5,7 @@ import { FirebaseAuth } from "@/FirebaseConfig";
 import axios from "axios";
 import { useLocalSearchParams } from "expo-router";
 import React, { FC, useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { ArticlesInfo } from "../(tabs)/articles";
 import Icon from "react-native-ionicons";
@@ -27,7 +27,7 @@ const Article: FC = () => {
 	const [entryTime, setEntryTime] = useState<number | null>(null); //TODO: Check if i need this
 	const [score, setScore] = useState<ArticleScore>(ArticleScore.POHUY); //TODO: Possibly this state is also not needed
 	const { id } = useLocalSearchParams();
-	const user = String(FirebaseAuth.currentUser?.email);
+	const user = String(FirebaseAuth.currentUser?.uid);
 
 	const getArticle = async () => {
 		try {
@@ -59,7 +59,7 @@ const Article: FC = () => {
 		return () => {
 			const exit = Date.now();
 			const duration = exit - entryTime;
-			postArticleReward({ timeOnPage: duration, score: score, email: user });
+			postArticleReward({ timeOnPage: duration, score: score, userId: user });
 		};
 	}, []);
 
