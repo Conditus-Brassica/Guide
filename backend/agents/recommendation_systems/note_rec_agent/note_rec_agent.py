@@ -258,14 +258,14 @@ class NoteRecAgent(PureNoteRecAgent):
         
         proto_action = tf.squeeze(proto_action, [0])  # actor_model returns shape (1, action_dim), but shape (action_dim) is needed
 
-        embeddings_note_titles = await self._get_nearest_notes(proto_action, recommendations_amount * 4)  # TODO Check if 400% is good
-
+        embeddings_note_titles = await self._get_nearest_notes(
+            proto_action.numpy().tolist(), recommendations_amount * 4
+        )  # TODO Check if 400% is good
         real_actions = tf.convert_to_tensor(embeddings_note_titles["embeddings"], dtype=self._tf_dtype)
         recommendations = embeddings_note_titles["note_titles"]
 
         # state_for_actions shape is [n, state_dim]. The same state is copied for multiple actions
         state_for_actions = tf.tile(state, [real_actions.shape[0], 1])
-
         critic_values = self._critic_model([state_for_actions, real_actions])  # critic_values shape is [n, 1]
 
         max_critic_value_index_list = self._max_critic_values_indexes(critic_values, recommendations_amount)
