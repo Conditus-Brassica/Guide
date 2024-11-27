@@ -27,7 +27,7 @@ def get_critic_model(
         hidden_layers = []
         for i in range(len(hidden_units)):
             hidden_layers.append(
-                layers.Dense(hidden_units[i], use_bias=False, kernel_initializer=HE_INIT, dtype=dtype)
+                layers.Dense(hidden_units[i], use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)
             )
             hidden_layers.append(layers.LeakyReLU(negative_slope=0.3))
         
@@ -35,14 +35,14 @@ def get_critic_model(
 
 
     state_input = layers.Input((state_size,), dtype=dtype)
-    state = layers.Dense(state_input_units, use_bias=False, kernel_initializer=HE_INIT, dtype=dtype)(state_input)
+    state = layers.Dense(state_input_units, use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)(state_input)
     state = layers.LeakyReLU(negative_slope=0.3)(state)
 
     if state_hidden_units:
         state = define_hidden_network(state_hidden_units, dtype)(state)
     
     action_input = layers.Input((action_size,), dtype=dtype)
-    action = layers.Dense(action_input_units, use_bias=False, kernel_initializer=HE_INIT, dtype=dtype)(action_input)
+    action = layers.Dense(action_input_units, use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)(action_input)
     action = layers.LeakyReLU(negative_slope=0.3)(action)
 
     if action_hidden_units:
