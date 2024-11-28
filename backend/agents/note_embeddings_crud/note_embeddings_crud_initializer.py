@@ -3,7 +3,7 @@
 import chromadb
 from backend.agents.note_embeddings_crud.note_embeddings_crud_agent import NoteEmbeddingsCRUD
 
-if LandmarkEmbeddingsCRUD.embeddings_crud_exists():
+if NoteEmbeddingsCRUD.embeddings_crud_exists():
     NOTE_EMBEDDINGS_CRUD_AGENT = NoteEmbeddingsCRUD.get_embeddings_crud()
     print("Embeddings crud is already exists")
 else:

@@ -24,32 +24,27 @@ def get_critic_model(
     Check https://drive.google.com/file/d/1GQIfN6j1q9uASHh9LYubgxs5XPQtwQyy/view?usp=sharing to understand structure of Critic model.
     """
     def define_hidden_network(hidden_units: List[int], dtype: tf.DType):
-        hidden_layers = [
-            None for _ in range(3 * len(hidden_units))
-        ]
-        i = 0
-        while i < len(hidden_units):
-            hidden_layers[3 * i] = layers.Dense(
-                hidden_units[i], use_bias=False, kernel_initializer=HE_INIT, dtype=dtype
+        hidden_layers = []
+        for i in range(len(hidden_units)):
+            hidden_layers.append(
+                layers.Dense(hidden_units[i], use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)
             )
-            hidden_layers[3 * i + 1] = layers.BatchNormalization(dtype=dtype)
-            hidden_layers[3 * i + 2] = layers.LeakyReLU(negative_slope=0.3)
-
-            i += 1
+            hidden_layers.append(layers.LeakyReLU(negative_slope=0.3))
         
         return keras.Sequential(hidden_layers)
 
+
     state_input = layers.Input((state_size,), dtype=dtype)
-    state = layers.Dense(state_input_units, use_bias=False, kernel_initializer=HE_INIT, dtype=dtype)(state_input)
-    state = layers.BatchNormalization(dtype=dtype)(state)
+    state = layers.Dense(state_input_units, use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)(state_input)
     state = layers.LeakyReLU(negative_slope=0.3)(state)
+
     if state_hidden_units:
         state = define_hidden_network(state_hidden_units, dtype)(state)
     
     action_input = layers.Input((action_size,), dtype=dtype)
-    action = layers.Dense(action_input_units, use_bias=False, kernel_initializer=HE_INIT, dtype=dtype)(action_input)
-    action = layers.BatchNormalization(dtype=dtype)(action)
+    action = layers.Dense(action_input_units, use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)(action_input)
     action = layers.LeakyReLU(negative_slope=0.3)(action)
+
     if action_hidden_units:
         action = define_hidden_network(action_hidden_units, dtype)(action)
     

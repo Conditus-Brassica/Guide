@@ -171,7 +171,7 @@ class NoteTrainer:
 
 
     async def _get_nearest_one_for_notes_batch(self, proto_action):
-        json_params = {"note_embedding": proto_action.numpy().tolist()}
+        json_params = {"notes_embeddings": proto_action.numpy().tolist()}
         embeddings = await AbstractAgentsBroker.call_agent_task(get_nearest_one_for_notes_batch, json_params)
         embeddings = embeddings.return_value
 

@@ -31,7 +31,6 @@ const Profile = () => {
 			.then(() => router.replace("/login"))
 			.catch((error: Error): void => alert(error.message));
 	};
-
 	return (
 		<View style={{ flex: 1 }}>
 			<View style={styles.emailContainer}>

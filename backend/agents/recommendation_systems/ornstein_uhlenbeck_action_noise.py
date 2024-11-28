@@ -27,7 +27,7 @@ class OrnsteinUhlenbeckNoise:
             self.theta * (self.mean - self.x_prev) * self.dt +
             self.std_dev * np.sqrt(self.dt) * 
             np.random.normal(size=self.mean.shape, loc=0.0, scale=1.0).astype(self.dtype)
-        )
+        ).astype(self.dtype)
         self._after_last_reinit += 1
         if self._after_last_reinit == self._reinit_x_prev_period:
             self.x_prev = self._x_initial

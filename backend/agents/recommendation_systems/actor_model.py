@@ -22,20 +22,16 @@ def get_actor_model(
     """
 
     def init_hidden_layers(hidden_units: List[int], dtype: tf.DType):
-        hidden_layers = [
-            None for _ in range(2 * len(hidden_units))
-        ]
-        
-        i = 0
-        while i < len(hidden_units):
-            hidden_layers[2 * i] = layers.Dense(
-                hidden_units[i], use_bias=True, kernel_initializer=HE_INIT, dtype=dtype
-            )
-            hidden_layers[2 * i + 1] = layers.LeakyReLU(negative_slope=0.3)
+        hidden_layers = []
 
-            i += 1
+        for i in range(len(hidden_units)):
+            hidden_layers.append(
+                layers.Dense(hidden_units[i], use_bias=True, kernel_initializer=HE_INIT, dtype=dtype)
+            )
+            hidden_layers.append(layers.LeakyReLU(negative_slope=0.3))
 
         return keras.Sequential(hidden_layers)
+
 
     input_state = layers.Input((state_size,), dtype=dtype)
     

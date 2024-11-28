@@ -206,14 +206,6 @@ class NoteRecAgent(PureNoteRecAgent):
 
 
     @staticmethod
-    def _interactions_with_note_finished(json_params):
-        """This method checks values only of special params. Other values will be checked in target agent."""
-        validate(json_params, json_validation.interaction_with_note_finished)
-        if json_params["relative_interaction_time"] < 0 or json_params["relative_interaction_time"] > 1:
-            raise ValidationError("relative_interaction_time must be value in range [0, 1]")
-
-
-    @staticmethod
     def _max_critic_values_indexes(critic_values, recommendations_amount: int):
         # Finds indexes of recommendations with the highest Critic value
         max_critic_values_list = []
@@ -266,14 +258,14 @@ class NoteRecAgent(PureNoteRecAgent):
         
         proto_action = tf.squeeze(proto_action, [0])  # actor_model returns shape (1, action_dim), but shape (action_dim) is needed
 
-        embeddings_note_titles = await self._get_nearest_notes(proto_action, recommendations_amount * 4)  # TODO Check if 400% is good
-
-        real_actions = tf.convert_to_tensor(embeddings_note_titles["embeddings"])
+        embeddings_note_titles = await self._get_nearest_notes(
+            proto_action.numpy().tolist(), recommendations_amount * 4
+        )  # TODO Check if 400% is good
+        real_actions = tf.convert_to_tensor(embeddings_note_titles["embeddings"], dtype=self._tf_dtype)
         recommendations = embeddings_note_titles["note_titles"]
 
         # state_for_actions shape is [n, state_dim]. The same state is copied for multiple actions
         state_for_actions = tf.tile(state, [real_actions.shape[0], 1])
-
         critic_values = self._critic_model([state_for_actions, real_actions])  # critic_values shape is [n, 1]
 
         max_critic_value_index_list = self._max_critic_values_indexes(critic_values, recommendations_amount)
@@ -288,9 +280,9 @@ class NoteRecAgent(PureNoteRecAgent):
             AbstractAgentsBroker.call_agent_task(
                 partial_record_with_next_state,
                 json_params={
-                    "state": state.tolist(),
-                    "action": action.numpy().tolist(),
-                    "next_state": next_state.numpy().tolist()
+                    "state": state,
+                    "action": action,
+                    "next_state": next_state
                 }
             )
         )
@@ -299,7 +291,7 @@ class NoteRecAgent(PureNoteRecAgent):
 
 
     async def _make_recommendations(self, state: np.ndarray, maximum_amount_of_recommendations):
-        recommendations = self._wolpertinger_policy(
+        recommendations = await self._wolpertinger_policy(
             tf.expand_dims(
                 tf.convert_to_tensor(state, dtype=self._tf_dtype), axis=0
             ),  # expands state shape to [1, state_dim]
@@ -382,7 +374,8 @@ class NoteRecAgent(PureNoteRecAgent):
         state = np.asarray(json_params["state"], dtype=self._np_dtype)
 
         note_embedding = await self._embeddings_for_notes([json_params["note_title"]])
-        note_embedding = np.asarray(note_embedding[json_params["note_title"]], dtype=self._np_dtype)
+        note_embedding = note_embedding["notes"][json_params["note_title"]]
+        note_embedding = np.asarray(note_embedding, dtype=self._np_dtype)
 
         next_state = self._new_state_formula(state, note_embedding)
         index, uuid = await self._partial_record_with_next_state_task(
@@ -458,4 +451,4 @@ class NoteRecAgent(PureNoteRecAgent):
             await logger.error(f"interactions_with_notes_finished, ValidationError({ex.args[0]})")
             return  # raise ValidationError
 
-        self._interactions_with_note_finished(json_params)
+        await self._interactions_with_notes_finished(json_params)
