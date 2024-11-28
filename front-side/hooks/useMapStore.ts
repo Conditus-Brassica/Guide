@@ -4,7 +4,7 @@ import { create } from "zustand";
 type MapStore = {
 	initialPosition: Region;
 	activeRoute: RouteType | null;
-	setInitialCoords: (coords: Region) => void;
+	setInitialCoords: (coords: LatLng) => void;
 	setActiveRoute: (coords: RouteType) => void;
 };
 
@@ -21,6 +21,13 @@ export const useMapStore = create<MapStore>((set) => ({
 		longitudeDelta: 0.2,
 	},
 	activeRoute: null,
-	setInitialCoords: (coords) => set(() => ({ initialPosition: coords })),
+	setInitialCoords: (coords) =>
+		set((state) => ({
+			initialPosition: {
+				...state.initialPosition, // Keep existing `latitudeDelta` and `longitudeDelta`
+				latitude: coords.latitude,
+				longitude: coords.longitude,
+			},
+		})),
 	setActiveRoute: (coords) => set(() => ({ activeRoute: coords })),
 }));

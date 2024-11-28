@@ -1,12 +1,51 @@
-import MapView, { PROVIDER_GOOGLE, Region } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
 import { useMapStore } from "@/hooks/useMapStore";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
+import * as Location from "expo-location";
+import { landmarkInfo } from "@/types/landmarks-types";
 
-export const MapGuide: FC = () => {
+type PropsType = {
+	landmarks: landmarkInfo[] | null;
+};
+
+export const MapGuide: FC<PropsType> = ({ landmarks }) => {
+	const [location, setLocation] = useState<Location.LocationObject | null>(
+		null
+	);
+	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [markers, setMarkes] = useState<landmarkInfo[] | null>(landmarks); //maybe only coords and name?
+
 	const mapInitialPosition = useMapStore((state) => state.initialPosition);
 	const routeCoords = useMapStore((state) => state.activeRoute);
+
+	const setInitialPosition = useMapStore((state) => state.setInitialCoords);
+
+	let text = "Waiting...";
+	if (errorMsg) {
+		text = errorMsg;
+	} else if (location) {
+		text = JSON.stringify(location);
+	}
+
+	useEffect(() => {
+		async function getCurrentLocation() {
+			let { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== "granted") {
+				setErrorMsg("Permission to access location was denied");
+				return;
+			}
+
+			let location = await Location.getCurrentPositionAsync({});
+			setLocation(location);
+		}
+
+		getCurrentLocation();
+		setInitialPosition(location!.coords);
+	}, []);
+
+	console.log(location);
 	return (
 		<MapView
 			style={styles.map}
@@ -20,6 +59,10 @@ export const MapGuide: FC = () => {
 					apiKey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""}
 				/>
 			)}
+			{!!markers &&
+				markers.map((marker) => (
+					<Marker coordinate={marker._source.coordinates} />
+				))}
 		</MapView>
 	);
 };
