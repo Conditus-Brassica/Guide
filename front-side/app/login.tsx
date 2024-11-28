@@ -3,7 +3,6 @@ import { BASE_URL } from "@/constants/request-api-constants";
 import { FirebaseAuth } from "@/FirebaseConfig";
 import axios from "axios";
 import { router } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
@@ -76,13 +75,14 @@ const LoginScreen = () => {
 			return () => unsubscribe();
 		});
 	});
-
 	return (
 		<KeyboardAvoidingView behavior="padding" style={styles.container}>
 			<View style={styles.inputContainer}>
 				<TextInput
-					placeholder="Email"
+					label="Email"
+					placeholder="Enter email"
 					value={form.email}
+					mode="flat"
 					style={styles.input}
 					onChangeText={(text) => {
 						handleFormChange("email", text);
@@ -97,21 +97,23 @@ const LoginScreen = () => {
 					{errors.email}
 				</HelperText>
 				<TextInput
-					placeholder="Password"
+					label="Password"
+					mode="flat"
+					placeholder="Enter password"
 					value={form.password}
+					style={styles.input}
 					onChangeText={(text) => {
 						handleFormChange("password", text);
 						setErrors({});
 					}}
-					style={styles.input}
 					secureTextEntry
 				/>
 				<HelperText
 					style={{ color: "red" }}
 					type="error"
-					visible={!!errors.password}
+					visible={!!errors.general || !!errors.password}
 				>
-					{errors.password}
+					{errors.general ?? errors.password}
 				</HelperText>
 			</View>
 			<View style={styles.buttonContainter}>
@@ -137,13 +139,6 @@ const styles = StyleSheet.create({
 	},
 	inputContainer: { width: "80%" },
 	input: {
-		backgroundColor: "white",
-		paddingHorizontal: 15,
-		paddingVertical: 10,
-		borderTopLeftRadius: 15,
-		borderTopRightRadius: 15,
-		borderBottomLeftRadius: 15,
-		borderBottomRightRadius: 15,
 		marginTop: 5,
 		borderWidth: 1,
 		borderColor: Colors.standartAppColor,
@@ -156,7 +151,7 @@ const styles = StyleSheet.create({
 		marginTop: 40,
 	},
 	button: {
-		backgroundColor: "#44c1ff",
+		backgroundColor: Colors.standartAppColor,
 		width: "100%",
 		padding: 15,
 		borderRadius: 10,
@@ -165,7 +160,7 @@ const styles = StyleSheet.create({
 	buttonOutline: {
 		backgroundColor: "white",
 		marginTop: 5,
-		borderColor: "#44c1ff",
+		borderColor: Colors.standartAppColor,
 		borderWidth: 2,
 		padding: 10,
 	},

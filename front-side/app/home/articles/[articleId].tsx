@@ -8,7 +8,7 @@ import React, { FC, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { ArticlesInfo } from "../(tabs)/articles";
-import Icon from "react-native-ionicons";
+import { Icon } from "@rneui/themed";
 
 type ArticleInfo = {
 	content: string;
