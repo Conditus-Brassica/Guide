@@ -1,21 +1,52 @@
 import { FirebaseAuth } from "@/FirebaseConfig";
 import { router } from "expo-router";
-import { signOut } from "firebase/auth";
+import { signOut, updateProfile } from "firebase/auth";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Avatar } from "@rneui/themed";
+import { Colors } from "@/constants/Colors";
+import { useEffect, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
 //Rewrute this element completely
 const Profile = () => {
 	const user = FirebaseAuth.currentUser;
+	const [image, setImage] = useState<string | null>(user?.photoURL ?? null);
+
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images", "videos"],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+			await updateProfile(user!!, { photoURL: result.assets[0].uri });
+		}
+	};
 
 	const HandleSignOut = () => {
 		signOut(FirebaseAuth)
 			.then(() => router.replace("/login"))
 			.catch((error: Error): void => alert(error.message));
 	};
-	console.log(user);
+
 	return (
 		<View style={{ flex: 1 }}>
 			<View style={styles.emailContainer}>
-				<Text style={{ color: "white", fontSize: 24 }} children={user?.email} />
+				<Avatar
+					containerStyle={styles.avatar}
+					size={64}
+					rounded
+					source={{ uri: image ?? "" }}
+				>
+					<Avatar.Accessory size={23} onPress={pickImage} />
+				</Avatar>
+				<Text
+					style={{ color: "white", fontSize: 24 }}
+					children={"Email: " + user?.email}
+				/>
 			</View>
 			<View style={styles.container}>
 				<TouchableOpacity style={styles.button} onPress={HandleSignOut}>
@@ -27,12 +58,18 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
-	emailContainer: { flex: 1 },
+	emailContainer: {
+		flex: 3,
+		alignItems: "center",
+		justifyContent: "flex-start",
+		marginTop: 35,
+	},
 	container: {
-		flex: 0.3,
+		flex: 1,
 		justifyContent: "flex-end",
 		alignItems: "center",
 	},
+	avatar: { backgroundColor: Colors.standartAppColor },
 	button: {
 		backgroundColor: "grey",
 		marginTop: 5,

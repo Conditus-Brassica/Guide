@@ -12,7 +12,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { TextInput } from "react-native-paper";
 
 const URL_STRING = "";
 
@@ -99,6 +99,11 @@ const Articles = () => {
 
 	return (
 		<View style={styles.scrollView}>
+			<TextInput
+				style={styles.searchInput}
+				placeholder="Seatch for articles"
+				onChangeText={(text) => {}}
+			/>
 			{loaded ? (
 				<FlatList
 					style={styles.flatList}
@@ -123,6 +128,13 @@ const styles = StyleSheet.create({
 	title: { fontSize: 24, color: "white", fontWeight: "600" },
 	scrollView: {
 		top: 20,
+	},
+	searchInput: {
+		borderWidth: 1,
+		borderColor: Colors.standartAppColor,
+		padding: 10,
+		borderRadius: 5,
+		backgroundColor: "white",
 	},
 	flatList: {},
 });
