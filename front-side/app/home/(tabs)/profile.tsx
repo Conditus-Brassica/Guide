@@ -6,13 +6,12 @@ import { Avatar } from "@rneui/themed";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-//Rewrute this element completely
+
 const Profile = () => {
 	const user = FirebaseAuth.currentUser;
 	const [image, setImage] = useState<string | null>(user?.photoURL ?? null);
 
 	const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ["images", "videos"],
 			allowsEditing: true,
@@ -38,7 +37,7 @@ const Profile = () => {
 					containerStyle={styles.avatar}
 					size={64}
 					rounded
-					source={{ uri: image ?? "" }}
+					source={{ uri: image ?? require("@/assets/images/app-icon.png") }}
 				>
 					<Avatar.Accessory size={23} onPress={pickImage} />
 				</Avatar>
@@ -70,16 +69,16 @@ const styles = StyleSheet.create({
 	},
 	avatar: { backgroundColor: Colors.standartAppColor },
 	button: {
-		backgroundColor: "grey",
+		backgroundColor: "white",
 		marginTop: 5,
 		padding: 15,
-		borderColor: "#769dac",
+		borderColor: Colors.standartAppColor,
 		borderWidth: 2,
 		alignItems: "center",
 		justifyContent: "center",
 		width: "100%",
 	},
-	buttonText: { color: "white", fontWeight: "700", fontSize: 16 },
+	buttonText: { color: "black", fontWeight: "700", fontSize: 16 },
 });
 
 export default Profile;

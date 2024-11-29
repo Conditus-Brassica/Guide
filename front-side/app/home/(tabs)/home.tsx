@@ -6,6 +6,7 @@ import {
 	View,
 	Text,
 	TouchableOpacity,
+	Keyboard,
 } from "react-native";
 import { MapGuide } from "@/components/MapComponent/MapGuide";
 import axios from "axios";
@@ -25,6 +26,11 @@ export default function App() {
 
 	const [results, setResults] = useState<landmarkInfo[]>([]);
 	const [query, setQuery] = useState("");
+
+	const mapPress = () => {
+		setResults([]);
+		Keyboard.dismiss();
+	};
 
 	const performSearch = async (searchQuery: string) => {
 		try {
@@ -50,7 +56,7 @@ export default function App() {
 	return (
 		<View style={styles.container}>
 			<View style={styles.mapContainer}>
-				<MapGuide landmarks={results} />
+				<MapGuide mapPress={mapPress} landmarks={results} />
 			</View>
 
 			<View style={styles.overlay}>

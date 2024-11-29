@@ -8,14 +8,15 @@ import { landmarkInfo } from "@/types/landmarks-types";
 
 type PropsType = {
 	landmarks: landmarkInfo[] | null;
+	mapPress: () => void;
 };
 
-export const MapGuide: FC<PropsType> = ({ landmarks }) => {
+export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 	const [location, setLocation] = useState<Location.LocationObject | null>(
 		null
 	);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
-	const [markers, setMarkes] = useState<landmarkInfo[] | null>(landmarks); //maybe only coords and name?
+	const [markers, setMarkers] = useState<landmarkInfo[] | null>(landmarks); //maybe only coords and name?
 
 	const mapInitialPosition = useMapStore((state) => state.initialPosition);
 	const routeCoords = useMapStore((state) => state.activeRoute);
@@ -39,18 +40,21 @@ export const MapGuide: FC<PropsType> = ({ landmarks }) => {
 
 			let location = await Location.getCurrentPositionAsync({});
 			setLocation(location);
+			setInitialPosition(location.coords);
 		}
 
 		getCurrentLocation();
-		setInitialPosition(location!.coords);
 	}, []);
 
-	console.log(location);
 	return (
 		<MapView
 			style={styles.map}
 			provider={PROVIDER_GOOGLE}
 			initialRegion={mapInitialPosition}
+			showsUserLocation={true}
+			showsCompass={false}
+			showsMyLocationButton={false}
+			onPress={mapPress}
 		>
 			{routeCoords && (
 				<MapViewRoute
