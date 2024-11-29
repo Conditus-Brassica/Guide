@@ -1,0 +1,18 @@
+{
+  "mappings": {
+    "properties": {
+      "article_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "article_vector": {
+        "type": "dense_vector",
+        "dims": 768
+      }
+    }
+  }
+}
