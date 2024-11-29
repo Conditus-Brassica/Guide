@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { FirebaseAuth } from "@/FirebaseConfig";
 import {
 	FlatList,
 	StyleSheet,
@@ -7,24 +6,14 @@ import {
 	View,
 	Text,
 	TouchableOpacity,
+	Keyboard,
 } from "react-native";
 import { MapGuide } from "@/components/MapComponent/MapGuide";
 import axios from "axios";
 import { ELASTIC_URL } from "@/constants/request-api-constants";
 import { Colors } from "@/constants/Colors";
-import { LatLng } from "react-native-maps";
 import { setStatusBarHidden } from "expo-status-bar";
-import * as Location from "expo-location";
-
-type landmarkInfo = {
-	_id: string;
-	_source: LandmarkSearchDetails;
-};
-
-type LandmarkSearchDetails = {
-	name: string;
-	coordinates: LatLng;
-};
+import { landmarkInfo } from "@/types/landmarks-types";
 
 const Item = ({ item }: { item: landmarkInfo }) => (
 	<TouchableOpacity style={styles.resultText}>
@@ -33,23 +22,15 @@ const Item = ({ item }: { item: landmarkInfo }) => (
 );
 
 export default function App() {
-	const user = FirebaseAuth.currentUser;
 	setStatusBarHidden(false);
 
 	const [results, setResults] = useState<landmarkInfo[]>([]);
 	const [query, setQuery] = useState("");
 
-	const [location, setLocation] = useState<Location.LocationObject | null>(
-		null
-	);
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-	let text = "Waiting...";
-	if (errorMsg) {
-		text = errorMsg;
-	} else if (location) {
-		text = JSON.stringify(location);
-	}
+	const mapPress = () => {
+		setResults([]);
+		Keyboard.dismiss();
+	};
 
 	const performSearch = async (searchQuery: string) => {
 		try {
@@ -72,33 +53,17 @@ export default function App() {
 		}
 	};
 
-	useEffect(() => {
-		async function getCurrentLocation() {
-			let { status } = await Location.requestForegroundPermissionsAsync();
-			if (status !== "granted") {
-				setErrorMsg("Permission to access location was denied");
-				return;
-			}
-
-			let location = await Location.getCurrentPositionAsync({});
-			setLocation(location);
-		}
-
-		getCurrentLocation();
-	}, []);
-
-	console.log(location);
 	return (
 		<View style={styles.container}>
 			<View style={styles.mapContainer}>
-				<MapGuide />
+				<MapGuide mapPress={mapPress} landmarks={results} />
 			</View>
 
 			<View style={styles.overlay}>
 				<View style={styles.searchContainer}>
 					<TextInput
 						style={styles.searchInput}
-						placeholder="Seatch for destination"
+						placeholder="Search for destination"
 						onChangeText={(text) => {
 							setQuery(text);
 							performSearch(text);

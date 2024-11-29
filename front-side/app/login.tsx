@@ -88,6 +88,7 @@ const LoginScreen = () => {
 						handleFormChange("email", text);
 						setErrors({});
 					}}
+					autoComplete="email"
 				/>
 				<HelperText
 					style={{ color: "red" }}
@@ -106,6 +107,7 @@ const LoginScreen = () => {
 						handleFormChange("password", text);
 						setErrors({});
 					}}
+					autoComplete="password"
 					secureTextEntry
 				/>
 				<HelperText

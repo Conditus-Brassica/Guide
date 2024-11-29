@@ -2,6 +2,16 @@
   "mappings": {
     "properties": {
       "name": {
+        "type": "text",
+        "analyzer": "russian",
+	      "fields" : {
+              "suggest" : {
+              "type" : "search_as_you_type",
+              "max_shingle_size" : 3
+              }
+            }
+      },
+      "name_suggestion": {
         "type": "completion",
         "analyzer": "russian"
       },
