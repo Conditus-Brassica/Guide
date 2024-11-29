@@ -1,0 +1,22 @@
+{
+  "mappings": {
+    "properties": {
+      "article_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "snippet": {
+        "type": "text",
+        "analyzer": "russian"
+      },
+      "snippet_vector": {
+        "type": "dense_vector",
+        "dims": 768
+      }
+    }
+  }
+}
