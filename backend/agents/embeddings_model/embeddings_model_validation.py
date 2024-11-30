@@ -9,9 +9,7 @@ make_snippet_embedding = \
             "window_size": {"type": "number"},
             "intersection_with_prev_window": {"type": "number"}
         },
-        "required": [
-            "text"
-        ],
+        "required": ["text"],
         "additionalProperties": False
  }
 
@@ -27,9 +25,23 @@ make_recommendation_embedding = \
             "window_size": {"type": "number"},
             "intersection_with_prev_window": {"type": "number"}
         },
-        "required": [
-            "text"
-        ],
+        "required": ["text"],
+        "additionalProperties": False
+ }
+
+
+"""
+make_user_query_embedding
+"""
+make_user_query_embedding = \
+ {
+        "type": "object",
+        "properties": {
+            "text": {"type": "string"},
+            "window_size": {"type": "number"},
+            "intersection_with_prev_window": {"type": "number"}
+        },
+        "required": ["text"],
         "additionalProperties": False
  }
 

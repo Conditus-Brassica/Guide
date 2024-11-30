@@ -161,6 +161,41 @@ class EmbeddingsModel(PureEmbeddingsModel):
         return self._make_recommendation_embedding(json_params)
 
 
+    def _make_user_query_embedding(self, json_params: Dict):
+        with torch.no_grad():
+            input_ids, token_type_ids, attention_mask = self._tokenize_text(
+                json_params["text"], json_params["window_size"], json_params["intersection_with_prev_window"],
+                return_offset_mapping=False
+            )
+            input_ids = input_ids.to(self._device)
+            token_type_ids = token_type_ids.to(self._device)
+            attention_mask = attention_mask.to(self._device)
+
+            embedding = self._model(input_ids, token_type_ids, attention_mask)
+            embedding = embedding.last_hidden_state.mean(
+                dim=-2)  # mean embeddings for every token (doesn't mix snippets)
+            embedding = embedding.mean(
+                dim=-2)  # mean window embedding of text (window1 + window2 + ... + window-n)/window_amount
+
+            return {"embedding": embedding.cpu().squeeze().tolist()}
+
+
+    async def make_user_query_embedding(self, json_params: Dict):
+        try:
+            validate(json_params, json_validation.make_user_query_embedding)
+        except ValidationError as ex:
+            await logger.error(f"make_user_query_embedding, ValidationError({ex.args[0]})")
+            return {}  # raise ValidationError
+
+        if not json_params.get("window_size", False):
+            json_params["window_size"] = self.snippet_window_size
+
+        if not json_params.get("intersection_with_prev_window", False):
+            json_params["intersection_with_prev_window"] = self.snippet_intersection_with_prev_window
+
+        return self._make_user_query_embedding
+
+
 
 
 if __name__ == "__main__":

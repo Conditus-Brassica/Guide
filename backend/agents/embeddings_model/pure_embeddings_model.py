@@ -17,8 +17,8 @@ class PureEmbeddingsModel(ABC):
 
         :param json_params: Dict[
             "text": str,
-            "window_size": int,
-            "intersection_with_prev_window: int"
+            Optional["window_size": int],
+            Optional["intersection_with_prev_window": int]
         ]
 
         :return: Coroutine
@@ -40,8 +40,28 @@ class PureEmbeddingsModel(ABC):
 
         :param json_params: Dict[
             "text": str,
-            "window_size": int,
-            "intersection_with_prev_window: int"
+            Optional["window_size": int,]
+            Optional["intersection_with_prev_window": int]
+        ]
+
+        :returns: Coroutine
+            Dict[
+                "embedding": List[float]
+            ]
+        """
+        raise NotImplementedError
+
+
+    @abstractmethod
+    async def make_user_query_embedding(self, json_params: Dict):
+        """
+        Method to make embedding for user query. Full text will be processed with usage of sliding window.
+        Works asynchronously.
+
+        :param json_params: Dict[
+            "text": str,
+            Optional["window_size": int,]
+            Optional["intersection_with_prev_window": int]
         ]
 
         :returns: Coroutine
