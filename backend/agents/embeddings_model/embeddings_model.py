@@ -77,7 +77,7 @@ class EmbeddingsModel(PureEmbeddingsModel):
     def _tokenize_text(self, text, window_size, intersection_with_prev_window, return_offset_mapping):
         tokenized_text = self._tokenizer(
             text,
-            padding="max_length", truncation=True, max_length=window_size, stride=intersection_with_prev_window,
+            padding="longest", truncation=True, max_length=window_size, stride=intersection_with_prev_window,
             return_tensors='pt', return_overflowing_tokens=True, return_offsets_mapping=return_offset_mapping
         )
         input_ids = tokenized_text["input_ids"]
@@ -220,6 +220,16 @@ if __name__ == "__main__":
         print(len(snippets))
         print(len(snippets[0]["embedding"]))
 
+        query = txt1[:150]
+        print(query)
+
+        tokenized_text = tokenizer(
+            query,
+            padding="longest", truncation=True, max_length=30, stride=10,
+            return_tensors='pt', return_overflowing_tokens=True
+        )
+        print(tokenized_text.input_ids.shape)
+        print(tokenized_text.input_ids)
 
     asyncio.run(main())
 
