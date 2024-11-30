@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { FirebaseAuth } from "@/FirebaseConfig";
+import React, { useState } from "react";
 import {
 	FlatList,
 	StyleSheet,
@@ -7,49 +6,44 @@ import {
 	View,
 	Text,
 	TouchableOpacity,
+	Keyboard,
 } from "react-native";
 import { MapGuide } from "@/components/MapComponent/MapGuide";
 import axios from "axios";
 import { ELASTIC_URL } from "@/constants/request-api-constants";
 import { Colors } from "@/constants/Colors";
-import { LatLng } from "react-native-maps";
 import { setStatusBarHidden } from "expo-status-bar";
-import * as Location from "expo-location";
+import { landmarkInfo } from "@/types/landmarks-types";
 
-type landmarkInfo = {
-	_id: string;
-	_source: LandmarkSearchDetails;
-};
-
-type LandmarkSearchDetails = {
-	name: string;
-	coordinates: LatLng;
-};
-
-const Item = ({ item }: { item: landmarkInfo }) => (
-	<TouchableOpacity style={styles.resultText}>
+const Item = ({
+	item,
+	onPress,
+}: {
+	item: landmarkInfo;
+	onPress: (item: landmarkInfo) => void;
+}) => (
+	<TouchableOpacity style={styles.resultText} onPress={() => onPress(item)}>
 		<Text>{item._source.name}</Text>
 	</TouchableOpacity>
 );
 
 export default function App() {
-	const user = FirebaseAuth.currentUser;
+	const [results, setResults] = useState<landmarkInfo[]>([]);
+	const [activeLandmarks, setActiveLandmarks] = useState<landmarkInfo[]>([]);
+	const [query, setQuery] = useState("");
 	setStatusBarHidden(false);
 
-	const [results, setResults] = useState<landmarkInfo[]>([]);
-	const [query, setQuery] = useState("");
+	const mapPress = () => {
+		setResults([]);
+		Keyboard.dismiss();
+	};
 
-	const [location, setLocation] = useState<Location.LocationObject | null>(
-		null
-	);
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-	let text = "Waiting...";
-	if (errorMsg) {
-		text = errorMsg;
-	} else if (location) {
-		text = JSON.stringify(location);
-	}
+	const onLandmarkPress = (item: landmarkInfo) => {
+		setActiveLandmarks([item]);
+		setQuery("");
+		setResults([]);
+		Keyboard.dismiss();
+	};
 
 	const performSearch = async (searchQuery: string) => {
 		try {
@@ -72,33 +66,17 @@ export default function App() {
 		}
 	};
 
-	useEffect(() => {
-		async function getCurrentLocation() {
-			let { status } = await Location.requestForegroundPermissionsAsync();
-			if (status !== "granted") {
-				setErrorMsg("Permission to access location was denied");
-				return;
-			}
-
-			let location = await Location.getCurrentPositionAsync({});
-			setLocation(location);
-		}
-
-		getCurrentLocation();
-	}, []);
-
-	console.log(location);
 	return (
 		<View style={styles.container}>
 			<View style={styles.mapContainer}>
-				<MapGuide />
+				<MapGuide mapPress={mapPress} landmarks={activeLandmarks} />
 			</View>
 
 			<View style={styles.overlay}>
 				<View style={styles.searchContainer}>
 					<TextInput
 						style={styles.searchInput}
-						placeholder="Seatch for destination"
+						placeholder="Search for destination"
 						onChangeText={(text) => {
 							setQuery(text);
 							performSearch(text);
@@ -112,7 +90,9 @@ export default function App() {
 						<FlatList
 							data={results}
 							keyExtractor={(item) => item._id}
-							renderItem={({ item }) => <Item item={item}></Item>}
+							renderItem={({ item }) => (
+								<Item onPress={onLandmarkPress} item={item}></Item>
+							)}
 						/>
 					</View>
 				)}
@@ -134,6 +114,7 @@ const styles = StyleSheet.create({
 		marginTop: 30, // Adjust if necessary
 		backgroundColor: "white",
 		borderRadius: 5,
+		flex: 1,
 		padding: 10,
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },

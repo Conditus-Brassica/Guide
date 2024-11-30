@@ -1,6 +1,11 @@
+import {
+	storageUserEmailKey,
+	storageUserPasswordKey,
+} from "@/constants/async-storage-constants";
 import { Colors } from "@/constants/Colors";
 import { BASE_URL } from "@/constants/request-api-constants";
 import { FirebaseAuth } from "@/FirebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { router } from "expo-router";
 import {
@@ -46,6 +51,12 @@ const LoginScreen = () => {
 				form.password
 			);
 			postUserInfo();
+			const firstPair: [string, string] = [storageUserEmailKey, form.email];
+			const secondPair: [string, string] = [
+				storageUserPasswordKey,
+				form.password,
+			];
+			await AsyncStorage.multiSet([firstPair, secondPair]);
 			setErrors({});
 		} catch (error: any) {
 			const parsedErrors = parseFirebaseError(error);
@@ -68,6 +79,33 @@ const LoginScreen = () => {
 	};
 
 	useEffect(() => {
+		const checkStorage = async () => {
+			try {
+				const storedCredentials = await AsyncStorage.multiGet([
+					storageUserEmailKey,
+					storageUserPasswordKey,
+				]);
+
+				const email = storedCredentials.find(
+					([key]) => key === storageUserEmailKey
+				)?.[1];
+				const password = storedCredentials.find(
+					([key]) => key === storageUserPasswordKey
+				)?.[1];
+				if (email && password) {
+					setForm({ email, password });
+					await handleLogin();
+				}
+			} catch (error) {
+				console.error("Error reading AsyncStorage:", error);
+			}
+		};
+
+		checkStorage();
+	}),
+		[];
+
+	useEffect(() => {
 		const unsubscribe = FirebaseAuth.onAuthStateChanged((user) => {
 			if (user) {
 				router.replace("/home/(tabs)/home");
@@ -88,6 +126,7 @@ const LoginScreen = () => {
 						handleFormChange("email", text);
 						setErrors({});
 					}}
+					autoComplete="email"
 				/>
 				<HelperText
 					style={{ color: "red" }}
@@ -106,6 +145,7 @@ const LoginScreen = () => {
 						handleFormChange("password", text);
 						setErrors({});
 					}}
+					autoComplete="password"
 					secureTextEntry
 				/>
 				<HelperText
