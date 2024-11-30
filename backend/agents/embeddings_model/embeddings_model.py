@@ -193,7 +193,7 @@ class EmbeddingsModel(PureEmbeddingsModel):
         if not json_params.get("intersection_with_prev_window", False):
             json_params["intersection_with_prev_window"] = self.snippet_intersection_with_prev_window
 
-        return self._make_user_query_embedding
+        return self._make_user_query_embedding(json_params)
 
 
 
@@ -247,24 +247,36 @@ if __name__ == "__main__":
         print("###2@3###")
         print(cosine_dist(emb2, emb3))
 
-
-        snippets = await emb_model.make_snippet_embedding(
-            {"text": txt1, "window_size": 30, "intersection_with_prev_window": 10}
+        print("###################################")
+        print("User query embedding")
+        user_query = await emb_model.make_user_query_embedding(
+            {"text": txt1[:100]}
         )
+        print(user_query)
+        print("###################################")
 
-        print(len(snippets))
-        print(len(snippets[0]["embedding"]))
 
-        query = txt1[:150]
-        print(query)
+        print("###1###")
+        emb1 = (await emb_model.make_recommendation_embedding(
+            {"text": txt1, "intersection_with_prev_window": 256}
+        ))["embedding"]
+        print(emb1)
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-        tokenized_text = tokenizer(
-            query,
-            padding="longest", truncation=True, max_length=30, stride=10,
-            return_tensors='pt', return_overflowing_tokens=True
-        )
-        print(tokenized_text.input_ids.shape)
-        print(tokenized_text.input_ids)
+        print("###1###")
+        emb1 = (await emb_model.make_recommendation_embedding(
+            {"text": txt1, "intersection_with_prev_window": 256}
+        ))["embedding"]
+        print(emb1)
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
+        print("###1###")
+        emb1 = (await emb_model.make_recommendation_embedding(
+            {"text": txt1}
+        ))["embedding"]
+        print(emb1)
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
 
     asyncio.run(main())
 
