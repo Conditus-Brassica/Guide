@@ -5,6 +5,7 @@ import { useMapStore } from "@/hooks/useMapStore";
 import React, { FC, useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { landmarkInfo } from "@/types/landmarks-types";
+import { Colors } from "@/constants/Colors";
 
 type PropsType = {
 	landmarks: landmarkInfo[] | null;
@@ -22,6 +23,7 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 	const routeCoords = useMapStore((state) => state.activeRoute);
 
 	const setInitialPosition = useMapStore((state) => state.setInitialCoords);
+	const setRouteCoords = useMapStore((state) => state.setActiveRoute);
 
 	let text = "Waiting...";
 	if (errorMsg) {
@@ -31,16 +33,36 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 	}
 
 	useEffect(() => {
-		async function getCurrentLocation() {
-			let { status } = await Location.requestForegroundPermissionsAsync();
-			if (status !== "granted") {
-				setErrorMsg("Permission to access location was denied");
-				return;
-			}
+		if (landmarks && location) {
+			setRouteCoords({
+				origin: {
+					latitude: location.coords.latitude,
+					longitude: location.coords.longitude,
+				},
+				destination: {
+					latitude: landmarks[0]._source.coordinates.latitude,
+					longitude: landmarks[0]._source.coordinates.longitude,
+				},
+			});
+		}
+	}, [landmarks]);
 
-			let location = await Location.getCurrentPositionAsync({});
-			setLocation(location);
-			setInitialPosition(location.coords);
+	useEffect(() => {
+		async function getCurrentLocation() {
+			try {
+				let { status } = await Location.requestForegroundPermissionsAsync();
+				if (status !== "granted") {
+					setErrorMsg("Permission to access location was denied");
+					return;
+				}
+
+				let location = await Location.getCurrentPositionAsync({});
+				setLocation(location);
+				console.log(location.coords);
+				setInitialPosition(location.coords);
+			} catch (error) {
+				alert(`Failed to get location:${error}`);
+			}
 		}
 
 		getCurrentLocation();
@@ -56,16 +78,17 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 			showsMyLocationButton={false}
 			onPress={mapPress}
 		>
-			{routeCoords && (
+			{!!routeCoords && (
 				<MapViewRoute
 					origin={routeCoords.origin}
 					destination={routeCoords.destination}
 					apiKey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""}
+					strokeColor={Colors.standartAppColor}
 				/>
 			)}
 			{!!markers &&
 				markers.map((marker) => (
-					<Marker coordinate={marker._source.coordinates} />
+					<Marker id={marker._id} coordinate={marker._source.coordinates} />
 				))}
 		</MapView>
 	);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
 	FlatList,
 	StyleSheet,
@@ -15,19 +15,32 @@ import { Colors } from "@/constants/Colors";
 import { setStatusBarHidden } from "expo-status-bar";
 import { landmarkInfo } from "@/types/landmarks-types";
 
-const Item = ({ item }: { item: landmarkInfo }) => (
-	<TouchableOpacity style={styles.resultText}>
+const Item = ({
+	item,
+	onPress,
+}: {
+	item: landmarkInfo;
+	onPress: (item: landmarkInfo) => void;
+}) => (
+	<TouchableOpacity style={styles.resultText} onPress={() => onPress(item)}>
 		<Text>{item._source.name}</Text>
 	</TouchableOpacity>
 );
 
 export default function App() {
+	const [results, setResults] = useState<landmarkInfo[]>([]);
+	const [activeLandmarks, setActiveLandmarks] = useState<landmarkInfo[]>([]);
+	const [query, setQuery] = useState("");
 	setStatusBarHidden(false);
 
-	const [results, setResults] = useState<landmarkInfo[]>([]);
-	const [query, setQuery] = useState("");
-
 	const mapPress = () => {
+		setResults([]);
+		Keyboard.dismiss();
+	};
+
+	const onLandmarkPress = (item: landmarkInfo) => {
+		setActiveLandmarks([item]);
+		setQuery("");
 		setResults([]);
 		Keyboard.dismiss();
 	};
@@ -56,7 +69,7 @@ export default function App() {
 	return (
 		<View style={styles.container}>
 			<View style={styles.mapContainer}>
-				<MapGuide mapPress={mapPress} landmarks={results} />
+				<MapGuide mapPress={mapPress} landmarks={activeLandmarks} />
 			</View>
 
 			<View style={styles.overlay}>
@@ -77,7 +90,9 @@ export default function App() {
 						<FlatList
 							data={results}
 							keyExtractor={(item) => item._id}
-							renderItem={({ item }) => <Item item={item}></Item>}
+							renderItem={({ item }) => (
+								<Item onPress={onLandmarkPress} item={item}></Item>
+							)}
 						/>
 					</View>
 				)}
@@ -99,6 +114,7 @@ const styles = StyleSheet.create({
 		marginTop: 30, // Adjust if necessary
 		backgroundColor: "white",
 		borderRadius: 5,
+		flex: 1,
 		padding: 10,
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },
