@@ -35,7 +35,7 @@ export default function RootLayout() {
 
 	return (
 		<ThemeProvider value={DarkTheme}>
-			<StatusBar hidden={true} />
+			<StatusBar hidden={true} translucent backgroundColor="transparent" />
 			<Stack>
 				<Stack.Screen
 					name="home/articles/[articleId]"
