@@ -1,5 +1,5 @@
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
-import { StyleSheet } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
 import { useMapStore } from "@/hooks/useMapStore";
 import React, { FC, useEffect, useState } from "react";
@@ -16,7 +16,6 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 	const [location, setLocation] = useState<Location.LocationObject | null>(
 		null
 	);
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [markers, setMarkers] = useState<landmarkInfo[] | null>(landmarks); //maybe only coords and name?
 
 	const mapInitialPosition = useMapStore((state) => state.initialPosition);
@@ -24,13 +23,6 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 
 	const setInitialPosition = useMapStore((state) => state.setInitialCoords);
 	const setRouteCoords = useMapStore((state) => state.setActiveRoute);
-
-	let text = "Waiting...";
-	if (errorMsg) {
-		text = errorMsg;
-	} else if (location) {
-		text = JSON.stringify(location);
-	}
 
 	useEffect(() => {
 		if (landmarks && location) {
@@ -44,6 +36,7 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 					longitude: landmarks[0]._source.coordinates.longitude,
 				},
 			});
+			setMarkers(landmarks);
 		}
 	}, [landmarks]);
 
@@ -52,7 +45,7 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 			try {
 				let { status } = await Location.requestForegroundPermissionsAsync();
 				if (status !== "granted") {
-					setErrorMsg("Permission to access location was denied");
+					Alert.alert("Error", "Permission to access location was denied");
 					return;
 				}
 
@@ -88,7 +81,11 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 			)}
 			{!!markers &&
 				markers.map((marker) => (
-					<Marker id={marker._id} coordinate={marker._source.coordinates} />
+					<Marker
+						key={marker._id}
+						title={marker._source.name}
+						coordinate={marker._source.coordinates}
+					/>
 				))}
 		</MapView>
 	);

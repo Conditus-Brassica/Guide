@@ -24,7 +24,6 @@ const Article: FC = () => {
 	const [atricleDetails, setIsArticleDetails] = useState<ArticleInfo | null>(
 		null
 	);
-	const [entryTime, setEntryTime] = useState<number | null>(null); //TODO: Check if i need this
 	const [score, setScore] = useState<ArticleScore>(ArticleScore.POHUY); //TODO: Possibly this state is also not needed
 	const { id } = useLocalSearchParams();
 	const user = String(FirebaseAuth.currentUser?.uid);

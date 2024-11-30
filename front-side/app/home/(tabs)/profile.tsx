@@ -55,6 +55,8 @@ const Profile = () => {
 					containerStyle={{
 						justifyContent: "flex-start",
 						borderRadius: 15,
+						borderColor: Colors.standartAppColor,
+						borderWidth: 2,
 					}}
 				>
 					<View style={styles.cardHeader}>
