@@ -1,5 +1,5 @@
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
-import { Alert, StyleSheet } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
 import { useMapStore } from "@/hooks/useMapStore";
 import React, { FC, useEffect, useState } from "react";
@@ -16,7 +16,8 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 	const [location, setLocation] = useState<Location.LocationObject | null>(
 		null
 	);
-	const [markers, setMarkers] = useState<landmarkInfo[] | null>(landmarks); //maybe only coords and name?
+	const [markers, setMarkers] = useState<landmarkInfo[] | null>(landmarks);
+	const [loading, setLoading] = useState(false);
 
 	const mapInitialPosition = useMapStore((state) => state.initialPosition);
 	const routeCoords = useMapStore((state) => state.activeRoute);
@@ -55,11 +56,22 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 				setInitialPosition(location.coords);
 			} catch (error) {
 				alert(`Failed to get location:${error}`);
+			} finally {
+				setLoading(false);
 			}
 		}
 
 		getCurrentLocation();
 	}, []);
+
+	if (loading) {
+		// Show a loader while location is being fetched
+		return (
+			<View style={styles.loaderContainer}>
+				<ActivityIndicator size="large" color={Colors.standartAppColor} />
+			</View>
+		);
+	}
 
 	return (
 		<MapView
@@ -95,5 +107,10 @@ const styles = StyleSheet.create({
 	map: {
 		width: "100%",
 		height: "100%",
+	},
+	loaderContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });

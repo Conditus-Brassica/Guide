@@ -72,7 +72,7 @@ const LoginScreen = () => {
 		}
 	};
 
-	const handleFormChange = (key: string, value: string) => {
+	const handleFormChange = (key: "email" | "password", value: string) => {
 		setForm((prev) => ({ ...prev, [key]: value }));
 	};
 

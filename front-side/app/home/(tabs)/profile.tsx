@@ -7,6 +7,11 @@ import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { TextInput } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+	storageUserEmailKey,
+	storageUserPasswordKey,
+} from "@/constants/async-storage-constants";
 
 const Profile = () => {
 	const user = FirebaseAuth.currentUser;
@@ -44,6 +49,7 @@ const Profile = () => {
 	};
 
 	const HandleSignOut = () => {
+		AsyncStorage.multiRemove([storageUserEmailKey, storageUserPasswordKey]);
 		signOut(FirebaseAuth)
 			.then(() => router.replace("/login"))
 			.catch((error: Error): void => alert(error.message));
@@ -57,13 +63,14 @@ const Profile = () => {
 						borderRadius: 15,
 						borderColor: Colors.standartAppColor,
 						borderWidth: 2,
+						backgroundColor: "#444444",
 					}}
 				>
 					<View style={styles.cardHeader}>
 						{isEditing ? (
 							<TextInput
 								label="Name"
-								mode="outlined"
+								mode="flat"
 								value={newDisplayName}
 								onChangeText={setNewDisplayName}
 								outlineColor={Colors.standartAppColor}
@@ -76,7 +83,7 @@ const Profile = () => {
 								autoComplete="name"
 							/>
 						) : (
-							<Card.Title style={{ flex: 1, marginLeft: 20 }}>
+							<Card.Title style={{ flex: 1, marginLeft: 25, color: "white" }}>
 								{user?.displayName}
 							</Card.Title>
 						)}
@@ -103,10 +110,12 @@ const Profile = () => {
 					>
 						<Avatar.Accessory size={23} onPress={pickImage} />
 					</Avatar>
-					<ListItem>
-						<ListItem.Content style={{ color: "white" }}>
-							<ListItem.Title>Email</ListItem.Title>
-							<ListItem.Subtitle>{user?.email}</ListItem.Subtitle>
+					<ListItem containerStyle={{ backgroundColor: "#444444" }}>
+						<ListItem.Content>
+							<ListItem.Title style={{ color: "white" }}>Email</ListItem.Title>
+							<ListItem.Subtitle style={{ color: "white" }}>
+								{user?.email}
+							</ListItem.Subtitle>
 						</ListItem.Content>
 					</ListItem>
 					<TouchableOpacity style={styles.button} onPress={HandleSignOut}>
@@ -123,6 +132,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		width: "100%",
+		alignItems: "center",
 	},
 	emailContainer: {
 		flex: 1,

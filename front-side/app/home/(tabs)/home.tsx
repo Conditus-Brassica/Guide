@@ -28,7 +28,6 @@ const Item = ({
 		style={styles.resultText}
 		onPress={() => {
 			onPress(item);
-			Keyboard.dismiss();
 		}}
 	>
 		<Text>{item._source.name}</Text>
@@ -72,7 +71,7 @@ export default function App() {
 		} catch (error) {
 			console.error("Search Error:", error);
 		}
-	}, 100);
+	}, 200);
 
 	return (
 		<View style={styles.container}>
@@ -93,11 +92,12 @@ export default function App() {
 					/>
 				</View>
 
-				{!!results && (
+				{results.length > 0 && (
 					<View style={styles.resultsContainer}>
 						<FlatList
 							data={results}
 							keyExtractor={(item) => item._id}
+							keyboardShouldPersistTaps="always"
 							renderItem={({ item }) => (
 								<Item onPress={onLandmarkPress} item={item}></Item>
 							)}
@@ -121,7 +121,9 @@ const styles = StyleSheet.create({
 	searchContainer: {
 		marginTop: 30, // Adjust if necessary
 		backgroundColor: "white",
-		borderRadius: 5,
+		borderWidth: 2,
+		borderColor: Colors.standartAppColor,
+		borderRadius: 10,
 		flex: 1,
 		padding: 10,
 		shadowColor: "#000",
@@ -144,7 +146,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 	},
 	mapContainer: {
-		...StyleSheet.absoluteFillObject, // Makes the map fill the entire screen
+		...StyleSheet.absoluteFillObject,
 	},
 	itemStyle: {
 		flex: 1,

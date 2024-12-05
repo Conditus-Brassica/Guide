@@ -11,8 +11,8 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
+	TextInput,
 } from "react-native";
-import { TextInput } from "react-native-paper";
 
 const URL_STRING = "";
 
@@ -31,35 +31,35 @@ const articlesTest = [
 	{
 		id: "test1",
 		content: "haha hahahahahh",
-		title: "Ostis gavno",
+		title: "Article1",
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
 	{
 		id: "test2",
-		content: "haha hahahahahh",
-		title: "Ostis dermo",
+		content: "Article2",
+		title: "Article2",
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
 	{
 		id: "test3",
-		content: "haha hahahahahh",
-		title: "Ostis kal",
+		content: "Article3",
+		title: "Article2",
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
 	{
 		id: "test4",
 		content: "haha hahahahahh",
-		title: "Ostis kal",
+		title: "Article3",
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
 	{
 		id: "test5",
 		content: "haha hahahahahh",
-		title: "Ostis kal",
+		title: "Article3",
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
@@ -99,11 +99,13 @@ const Articles = () => {
 
 	return (
 		<View style={styles.scrollView}>
-			<TextInput
-				style={styles.searchInput}
-				placeholder="Seatch for articles"
-				onChangeText={(text) => {}}
-			/>
+			<View style={styles.searchContainer}>
+				<TextInput
+					style={styles.searchInput}
+					placeholder="Search for articles"
+					onChangeText={(text) => {}}
+				/>
+			</View>
 			{loaded ? (
 				<FlatList
 					style={styles.flatList}
@@ -120,23 +122,52 @@ const Articles = () => {
 
 const styles = StyleSheet.create({
 	item: {
-		padding: 20,
-		backgroundColor: "black",
-		borderColor: Colors.standartAppColor,
-		borderWidth: 2,
+		padding: 15,
+		marginVertical: 10,
+		marginHorizontal: 20,
+		backgroundColor: "white",
+		borderRadius: 10,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 5,
+		elevation: 2,
 	},
-	title: { fontSize: 24, color: "white", fontWeight: "600" },
+	title: {
+		fontSize: 18,
+		color: "#333",
+		fontWeight: "500",
+	},
 	scrollView: {
 		top: 20,
+		flex: 1,
+	},
+	searchContainer: {
+		backgroundColor: "white",
+		borderRadius: 10,
+		padding: 10,
+		margin: 10,
+		flex: 0,
+		borderColor: Colors.standartAppColor,
+		borderWidth: 2,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 3,
+		elevation: 3,
 	},
 	searchInput: {
 		borderWidth: 1,
 		borderColor: Colors.standartAppColor,
 		padding: 10,
-		borderRadius: 5,
+		borderRadius: 8,
 		backgroundColor: "white",
+		color: "#333",
 	},
-	flatList: {},
+	flatList: {
+		flex: 3,
+		paddingHorizontal: 10,
+	},
 });
 
 export default Articles;
