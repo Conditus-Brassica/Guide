@@ -8,30 +8,33 @@ import React, { FC, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { ArticlesInfo } from "../(tabs)/articles";
-import { Icon } from "@rneui/themed";
+import { ArticleScoreComponent } from "@/components/ArticleScoreComponent";
 
 type ArticleInfo = {
 	content: string;
 } & ArticlesInfo;
 
 type ArticleReward = {
+	articleId: string;
 	timeOnPage: number;
 	score: ArticleScore;
 } & UserInfo;
 
 const Article: FC = () => {
 	const [isLoaded, setIsLoaded] = useState(false);
-	const [atricleDetails, setIsArticleDetails] = useState<ArticleInfo | null>(
+	const [articleDetails, setIsArticleDetails] = useState<ArticleInfo | null>(
 		null
 	);
-	const [score, setScore] = useState<ArticleScore>(ArticleScore.POHUY); //TODO: Possibly this state is also not needed
-	const { id } = useLocalSearchParams();
+	const [score, setScore] = useState<ArticleScore>(
+		articleDetails?.score ?? ArticleScore.POHUY
+	);
+	const id = String(useLocalSearchParams());
 	const user = String(FirebaseAuth.currentUser?.uid);
 
 	const getArticle = async () => {
 		try {
 			const url = new URL(BASE_URL);
-			url.searchParams.set("id", String(id));
+			url.searchParams.set("id", id);
 			const response = await axios.get<ArticleInfo>(url.toString());
 			setIsArticleDetails(response.data);
 			setScore(response.data.score);
@@ -58,7 +61,12 @@ const Article: FC = () => {
 		return () => {
 			const exit = Date.now();
 			const duration = exit - entryTime;
-			postArticleReward({ timeOnPage: duration, score: score, userId: user });
+			postArticleReward({
+				articleId: id,
+				timeOnPage: duration,
+				score: score,
+				userId: user,
+			});
 		};
 	}, []);
 
@@ -67,30 +75,13 @@ const Article: FC = () => {
 			contentInsetAdjustmentBehavior="automatic"
 			style={{ height: "100%" }}
 		>
-			<Markdown>{atricleDetails?.content}</Markdown>
-			<View style={styles.userScore}>
-				{atricleDetails?.score === ArticleScore.LIKE ? (
-					<Icon name="heart" color="red" />
-				) : (
-					<Icon name="heart-outline" color="white" />
-				)}
-				{atricleDetails?.score === ArticleScore.HUYNA_EBANAYA ? (
-					<Icon name="heart-dislike" color="red" />
-				) : (
-					<Icon name="heart-dislike-outline" color="white" />
-				)}
-			</View>
+			<Markdown>{articleDetails?.content}</Markdown>
+			<ArticleScoreComponent
+				score={articleDetails?.score ?? ArticleScore.POHUY}
+				setScore={setScore}
+			/>
 		</ScrollView>
 	);
 };
-
-const styles = StyleSheet.create({
-	userScore: {
-		flexDirection: "row",
-		marginHorizontal: 10,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});
 
 export default Article;

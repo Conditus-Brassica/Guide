@@ -21,7 +21,7 @@ const Profile = () => {
 
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ["images", "videos"],
+			mediaTypes: ["images"],
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
@@ -110,7 +110,9 @@ const Profile = () => {
 					>
 						<Avatar.Accessory size={23} onPress={pickImage} />
 					</Avatar>
-					<ListItem containerStyle={{ backgroundColor: "#444444" }}>
+					<ListItem
+						containerStyle={{ backgroundColor: Colors.standartAppGrey }}
+					>
 						<ListItem.Content>
 							<ListItem.Title style={{ color: "white" }}>Email</ListItem.Title>
 							<ListItem.Subtitle style={{ color: "white" }}>
