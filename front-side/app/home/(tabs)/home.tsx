@@ -7,6 +7,7 @@ import {
 	Text,
 	TouchableOpacity,
 	Keyboard,
+	KeyboardAvoidingView,
 } from "react-native";
 import { MapGuide } from "@/components/MapComponent/MapGuide";
 import axios from "axios";
@@ -14,6 +15,7 @@ import { ELASTIC_URL } from "@/constants/request-api-constants";
 import { Colors } from "@/constants/Colors";
 import { setStatusBarHidden } from "expo-status-bar";
 import { landmarkInfo } from "@/types/landmarks-types";
+import { useDebouncedCallback } from "use-debounce";
 
 const Item = ({
 	item,
@@ -22,7 +24,12 @@ const Item = ({
 	item: landmarkInfo;
 	onPress: (item: landmarkInfo) => void;
 }) => (
-	<TouchableOpacity style={styles.resultText} onPress={() => onPress(item)}>
+	<TouchableOpacity
+		style={styles.resultText}
+		onPress={() => {
+			onPress(item);
+		}}
+	>
 		<Text>{item._source.name}</Text>
 	</TouchableOpacity>
 );
@@ -34,6 +41,7 @@ export default function App() {
 	setStatusBarHidden(false);
 
 	const mapPress = () => {
+		console.log("wow!");
 		setResults([]);
 		Keyboard.dismiss();
 	};
@@ -42,10 +50,9 @@ export default function App() {
 		setActiveLandmarks([item]);
 		setQuery("");
 		setResults([]);
-		Keyboard.dismiss();
 	};
 
-	const performSearch = async (searchQuery: string) => {
+	const performSearch = useDebouncedCallback(async (searchQuery: string) => {
 		try {
 			const response = await axios.post(
 				`${ELASTIC_URL}/landmarks_index/_search`,
@@ -64,7 +71,7 @@ export default function App() {
 		} catch (error) {
 			console.error("Search Error:", error);
 		}
-	};
+	}, 200);
 
 	return (
 		<View style={styles.container}>
@@ -72,7 +79,7 @@ export default function App() {
 				<MapGuide mapPress={mapPress} landmarks={activeLandmarks} />
 			</View>
 
-			<View style={styles.overlay}>
+			<KeyboardAvoidingView style={styles.overlay}>
 				<View style={styles.searchContainer}>
 					<TextInput
 						style={styles.searchInput}
@@ -85,18 +92,19 @@ export default function App() {
 					/>
 				</View>
 
-				{!!results && (
+				{results.length > 0 && (
 					<View style={styles.resultsContainer}>
 						<FlatList
 							data={results}
 							keyExtractor={(item) => item._id}
+							keyboardShouldPersistTaps="always"
 							renderItem={({ item }) => (
 								<Item onPress={onLandmarkPress} item={item}></Item>
 							)}
 						/>
 					</View>
 				)}
-			</View>
+			</KeyboardAvoidingView>
 		</View>
 	);
 }
@@ -113,7 +121,9 @@ const styles = StyleSheet.create({
 	searchContainer: {
 		marginTop: 30, // Adjust if necessary
 		backgroundColor: "white",
-		borderRadius: 5,
+		borderWidth: 2,
+		borderColor: Colors.standartAppColor,
+		borderRadius: 10,
 		flex: 1,
 		padding: 10,
 		shadowColor: "#000",
@@ -136,7 +146,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 	},
 	mapContainer: {
-		...StyleSheet.absoluteFillObject, // Makes the map fill the entire screen
+		...StyleSheet.absoluteFillObject,
 	},
 	itemStyle: {
 		flex: 1,

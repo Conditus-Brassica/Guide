@@ -37,7 +37,7 @@ const LoginScreen = () => {
 	const postUserInfo = () => {
 		try {
 			const user = FirebaseAuth.currentUser;
-			axios.post<UserInfo>(BASE_URL, { email: user?.uid });
+			axios.post<UserInfo>(BASE_URL, { userId: user?.uid });
 		} catch (error) {
 			console.error(`HTTP request error: ${error}`);
 		}
@@ -51,12 +51,8 @@ const LoginScreen = () => {
 				form.password
 			);
 			postUserInfo();
-			const firstPair: [string, string] = [storageUserEmailKey, form.email];
-			const secondPair: [string, string] = [
-				storageUserPasswordKey,
-				form.password,
-			];
-			await AsyncStorage.multiSet([firstPair, secondPair]);
+			await AsyncStorage.setItem(storageUserEmailKey, form.email);
+			await AsyncStorage.setItem(storageUserPasswordKey, form.password);
 			setErrors({});
 		} catch (error: any) {
 			const parsedErrors = parseFirebaseError(error);
@@ -67,6 +63,8 @@ const LoginScreen = () => {
 	const handleLogin = async () => {
 		try {
 			await signInWithEmailAndPassword(FirebaseAuth, form.email, form.password);
+			await AsyncStorage.setItem(storageUserEmailKey, form.email);
+			await AsyncStorage.setItem(storageUserPasswordKey, form.password);
 			setErrors({});
 		} catch (error: any) {
 			const parsedErrors = parseFirebaseError(error);
@@ -74,7 +72,7 @@ const LoginScreen = () => {
 		}
 	};
 
-	const handleFormChange = (key: string, value: string) => {
+	const handleFormChange = (key: "email" | "password", value: string) => {
 		setForm((prev) => ({ ...prev, [key]: value }));
 	};
 
@@ -94,7 +92,7 @@ const LoginScreen = () => {
 				)?.[1];
 				if (email && password) {
 					setForm({ email, password });
-					await handleLogin();
+					await signInWithEmailAndPassword(FirebaseAuth, email, password);
 				}
 			} catch (error) {
 				console.error("Error reading AsyncStorage:", error);
@@ -102,8 +100,7 @@ const LoginScreen = () => {
 		};
 
 		checkStorage();
-	}),
-		[];
+	}, []);
 
 	useEffect(() => {
 		const unsubscribe = FirebaseAuth.onAuthStateChanged((user) => {

@@ -1,25 +1,26 @@
+import { ArticleScoreComponent } from "@/components/ArticleScoreComponent";
 import { Colors } from "@/constants/Colors";
 import { ArticleScore } from "@/constants/enums";
+import { BASE_URL } from "@/constants/request-api-constants";
+import { ListItem } from "@rneui/base";
 import axios from "axios";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	FlatList,
-	ScrollView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
+	TextInput,
 } from "react-native";
-import { TextInput } from "react-native-paper";
-
-const URL_STRING = "";
 
 export type ArticlesInfo = {
 	id: string;
-	title: string;
+	ListItem: string;
 	author: string;
+	snippet: string;
 	score: ArticleScore;
 };
 
@@ -27,51 +28,14 @@ type ArticleResponce = {
 	articles: ArticlesInfo[];
 };
 
-const articlesTest = [
-	{
-		id: "test1",
-		content: "haha hahahahahh",
-		title: "Ostis gavno",
-		author: "Stas",
-		score: ArticleScore.POHUY,
-	},
-	{
-		id: "test2",
-		content: "haha hahahahahh",
-		title: "Ostis dermo",
-		author: "Stas",
-		score: ArticleScore.POHUY,
-	},
-	{
-		id: "test3",
-		content: "haha hahahahahh",
-		title: "Ostis kal",
-		author: "Stas",
-		score: ArticleScore.POHUY,
-	},
-	{
-		id: "test4",
-		content: "haha hahahahahh",
-		title: "Ostis kal",
-		author: "Stas",
-		score: ArticleScore.POHUY,
-	},
-	{
-		id: "test5",
-		content: "haha hahahahahh",
-		title: "Ostis kal",
-		author: "Stas",
-		score: ArticleScore.POHUY,
-	},
-];
-
 const Articles = () => {
 	const [loaded, setLoaded] = useState(true);
 	const [articles, setArticles] = useState<ArticlesInfo[]>(articlesTest);
+	const [score, setScore] = useState<ArticleScore>(ArticleScore.POHUY);
 
 	const getArticles = async () => {
 		try {
-			const url = new URL(URL_STRING);
+			const url = new URL(BASE_URL);
 			const response = await axios.get<ArticleResponce>(url.toString());
 			setArticles(response.data.articles);
 		} catch (error) {
@@ -93,17 +57,27 @@ const Articles = () => {
 			}}
 			style={styles.item}
 		>
-			<Text style={styles.title}>{article.title}</Text>
+			<ListItem containerStyle={styles.ListItem}>
+				<ListItem.Content>
+					<ListItem.Title style={styles.title}>
+						{article.ListItem}
+					</ListItem.Title>
+					<Text>{article.snippet}</Text>
+				</ListItem.Content>
+				<ArticleScoreComponent score={article.score} setScore={setScore} />
+			</ListItem>
 		</TouchableOpacity>
 	);
 
 	return (
 		<View style={styles.scrollView}>
-			<TextInput
-				style={styles.searchInput}
-				placeholder="Seatch for articles"
-				onChangeText={(text) => {}}
-			/>
+			<View style={styles.searchContainer}>
+				<TextInput
+					style={styles.searchInput}
+					placeholder="Search for articles"
+					onChangeText={(text) => {}}
+				/>
+			</View>
 			{loaded ? (
 				<FlatList
 					style={styles.flatList}
@@ -120,23 +94,105 @@ const Articles = () => {
 
 const styles = StyleSheet.create({
 	item: {
-		padding: 20,
-		backgroundColor: "black",
+		padding: 15,
+		backgroundColor: "white",
 		borderColor: Colors.standartAppColor,
 		borderWidth: 2,
+		shadowColor: "#000",
+		alignSelf: "stretch",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 5,
+		elevation: 2,
 	},
-	title: { fontSize: 24, color: "white", fontWeight: "600" },
+	ListItem: {
+		backgroundColor: "white",
+	},
+	title: {
+		color: "black",
+		fontWeight: "bold",
+		fontSize: 24,
+	},
 	scrollView: {
 		top: 20,
+		flex: 1,
+		backgroundColor: Colors.standartAppGrey,
+	},
+	searchContainer: {
+		backgroundColor: "white",
+		borderRadius: 10,
+		padding: 10,
+		margin: 10,
+		flex: 0,
+		borderColor: Colors.standartAppColor,
+		borderWidth: 2,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 3,
+		elevation: 3,
 	},
 	searchInput: {
 		borderWidth: 1,
 		borderColor: Colors.standartAppColor,
 		padding: 10,
-		borderRadius: 5,
+		borderRadius: 8,
+		alignSelf: "stretch",
 		backgroundColor: "white",
+		color: "#333",
 	},
-	flatList: {},
+	flatList: {
+		flex: 3,
+	},
+	userScore: {
+		flexDirection: "row",
+		columnGap: 10,
+		alignItems: "center",
+		justifyContent: "center",
+	},
 });
 
 export default Articles;
+
+const articlesTest = [
+	{
+		id: "test1",
+		snippet: "asaksjdasdjasl",
+		content: "haha hahahahahh",
+		ListItem: "Article1",
+		author: "Stas",
+		score: ArticleScore.POHUY,
+	},
+	{
+		id: "test2",
+		snippet: "asaksjdasdjasl",
+		content: "Article2",
+		ListItem: "Article2",
+		author: "Stas",
+		score: ArticleScore.POHUY,
+	},
+	{
+		id: "test3",
+		snippet: "asaksjdasdjasl",
+		content: "Article3",
+		ListItem: "Article2",
+		author: "Stas",
+		score: ArticleScore.POHUY,
+	},
+	{
+		id: "test4",
+		snippet: "asaksjdasdjasl",
+		content: "haha hahahahahh",
+		ListItem: "Article3",
+		author: "Stas",
+		score: ArticleScore.POHUY,
+	},
+	{
+		id: "test5",
+		snippet: "asaksjdasdjasl",
+		content: "haha hahahahahh",
+		ListItem: "Article3",
+		author: "Stas",
+		score: ArticleScore.POHUY,
+	},
+];

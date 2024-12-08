@@ -49,6 +49,7 @@
     "react-native-screens": "4.0.0",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.19.13",
+    "use-debounce": "^10.0.4",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
