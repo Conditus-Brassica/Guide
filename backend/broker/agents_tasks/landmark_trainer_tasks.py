@@ -19,20 +19,8 @@ async def get_critic_model(json_params):
     return await TRAINER_AGENT.get_critic_model()
 
 @BROKER.task
-async def set_critic_model(json_params):
-    return await TRAINER_AGENT.set_critic_model(json_params)
-
-@BROKER.task
 async def get_critic_model_config(json_params):
     return await TRAINER_AGENT.get_critic_model_config()
-
-@BROKER.task
-async def get_tau(json_params):
-    return await TRAINER_AGENT.get_tau()
-
-@BROKER.task
-async def set_tau(json_params):
-    return await TRAINER_AGENT.set_tau(json_params)
 
 @BROKER.task
 async def partial_record(json_params):

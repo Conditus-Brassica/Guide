@@ -30,6 +30,11 @@ class PureLandmarkTrainerAgent(ABC):
 
     @abstractmethod
     async def get_actor_model(self):
+        """
+        :returns: Dict[
+            "actor_model": List of weights
+        ]
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -38,6 +43,11 @@ class PureLandmarkTrainerAgent(ABC):
 
     @abstractmethod
     async def get_critic_model(self):
+        """
+        :returns: Dict[
+            "critic_model": List of weights
+        ]
+        """
         raise NotImplementedError
 
     # @abstractmethod
@@ -252,6 +262,11 @@ class PureLandmarkTrainerAgent(ABC):
         Start training process if there is any completed record in the sars buffer
 
         :repeat_amount: int > 0 - amount of repeats of training
+
+        :returns: Dict[
+            "actor_model": List of weights,
+            "critic_model": List of weights
+        ]
         """
         raise NotImplementedError
 
