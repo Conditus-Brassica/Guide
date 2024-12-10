@@ -26,6 +26,11 @@ class PureLandmarkTrainerAgent(ABC):
 
     @abstractmethod
     async def get_actor_model_config(self):
+        """
+        :returns: Dict[
+            "actor_model_config": str
+        ]
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -39,6 +44,11 @@ class PureLandmarkTrainerAgent(ABC):
 
     @abstractmethod
     async def get_critic_model_config(self):
+        """
+        :returns: Dict[
+            "critic_model_config": str
+        ]
+        """
         raise NotImplementedError
 
     @abstractmethod
