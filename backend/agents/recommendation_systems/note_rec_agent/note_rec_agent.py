@@ -124,26 +124,6 @@ class NoteRecAgent(PureNoteRecAgent):
         return 70 * min(relative_interaction_time * user_reaction.value - 1.5, 0)
 
 
-    @property
-    async def actor_model(self) -> keras.Model | None:
-        return self._actor_model
-    
-
-    @actor_model.setter
-    async def actor_model(self, actor_model: keras.Model):
-        self._actor_model.set_weights(actor_model.get_weights())
-
-
-    @property
-    async def critic_model(self) -> keras.Model | None:
-        return self._critic_model
-
-    
-    @critic_model.setter
-    async def critic_model(self, critic_model: keras.Model):
-        self._critic_model.set_weights(critic_model.get_weights())
-
-
     @staticmethod
     def _update_model(model, py_weigths, dtype):
         model.set_weights(
