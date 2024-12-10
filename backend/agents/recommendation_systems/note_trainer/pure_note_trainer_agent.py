@@ -26,34 +26,38 @@ class PureNoteTrainerAgent(ABC):
 
     @abstractmethod
     async def get_actor_model_config(self):
+        """
+        :returns: Dict[
+            "actor_model_config": str
+        ]
+        """
         raise NotImplementedError
 
     @abstractmethod
     async def get_actor_model(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def set_actor_model(self, json_params):
+        """
+        :returns: Dict[
+            "actor_model": List of weights
+        ]
+        """
         raise NotImplementedError
 
     @abstractmethod
     async def get_critic_model_config(self):
+        """
+        :returns: Dict[
+            "critic_model_config": str
+        ]
+        """
         raise NotImplementedError
 
     @abstractmethod
     async def get_critic_model(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def set_critic_model(self, json_params):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_tau(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def set_tau(self, json_params):
+        """
+        :returns: Dict[
+            "critic_model": List of weights
+        ]
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -70,35 +74,35 @@ class PureNoteTrainerAgent(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    async def partial_record_list_with_next_state(self, json_params):
-        """
-        Is used to write lists of state, action and next_state of sars tuple. This tuple will be saved, but won't be used in training samples
+    # @abstractmethod
+    # async def partial_record_list_with_next_state(self, json_params):
+    #     """
+    #     Is used to write lists of state, action and next_state of sars tuple. This tuple will be saved, but won't be used in training samples
+    #
+    #     ###
+    #     1. state_list: List[List[float]]
+    #     2. action_list: List[List[float]]
+    #     3. next_state_list: List[List[float]]
+    #
+    #     returns: Tuple[int, uuid.hex] - index of row in buffer and hex of uuid of the row.
+    #     """
+    #     raise NotImplementedError
 
-        ###
-        1. state_list: List[List[float]]
-        2. action_list: List[List[float]]
-        3. next_state_list: List[List[float]]
-
-        returns: Tuple[int, uuid.hex] - index of row in buffer and hex of uuid of the row.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def fill_up_partial_record_reward_only(self, json_params):
-        """
-        Is used to write the reward of sars tuple. If the given hex of uuid was found in buffer, reward will be saved
-            and the row may be used in training batch.
-
-        1. row_index: int
-            - index of the row in buffer (such index is returned as result of partial_record method)
-        2. row_uuid: uuid.hex
-            - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
-        3. reward: float
-
-        returns: bool - True if hex of uuid is correct, False otherwise
-        """
-        raise NotImplementedError
+    # @abstractmethod
+    # async def fill_up_partial_record_reward_only(self, json_params):
+    #     """
+    #     Is used to write the reward of sars tuple. If the given hex of uuid was found in buffer, reward will be saved
+    #         and the row may be used in training batch.
+    #
+    #     1. row_index: int
+    #         - index of the row in buffer (such index is returned as result of partial_record method)
+    #     2. row_uuid: uuid.hex
+    #         - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
+    #     3. reward: float
+    #
+    #     returns: bool - True if hex of uuid is correct, False otherwise
+    #     """
+    #     raise NotImplementedError
 
     @abstractmethod
     async def fill_up_partial_record_reward_only_list(self, json_params):
@@ -122,5 +126,10 @@ class PureNoteTrainerAgent(ABC):
         Start training process if there is any completed record in the sars buffer
 
         :repeat_amount: int > 0 - amount of repeats of training
+
+        :returns: Dict[
+            "actor_model": List of weights,
+            "critic_model": List of weights
+        ]
         """
         raise NotImplementedError

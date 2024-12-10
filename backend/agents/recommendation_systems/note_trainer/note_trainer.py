@@ -67,7 +67,7 @@ class NoteTrainer:
         
         self._target_actor_model = target_actor_model
         self._target_critic_model = target_critic_model 
-        self.tau = tau
+        self._tau = tau
 
         self._sars_buffer = sars_buffer
 
@@ -85,11 +85,6 @@ class NoteTrainer:
     @property
     def actor_model(self) -> keras.Model:
         return self._actor_model
-    
-
-    @actor_model.setter
-    def actor_model(self, actor_model: keras.Model):
-        self._actor_model.set_weights(actor_model.get_weights())
 
 
     def get_actor_model_config(self):
@@ -99,47 +94,32 @@ class NoteTrainer:
     @property
     def critic_model(self) -> keras.Model:
         return self._critic_model
-    
-    
-    @critic_model.setter
-    def critic_model(self, critic_model: keras.Model):
-        self._critic_model.set_weights(critic_model.get_weights())
 
 
     def get_critic_model_config(self):
         return self._critic_model.to_json()
 
 
-    @property
-    def tau(self) -> float:
-        return self._tau
-
-
-    @tau.setter
-    def tau(self, tau: float):
-        self._tau = tau
-
-
     def partial_record_with_next_state(self, state: np.ndarray, action: np.ndarray, next_state: np.ndarray):
         return self._sars_buffer.partial_record_with_next_state(state, action, next_state)
 
 
-    def partial_record_list_with_next_state(
-            self, state: np.ndarray, action_list: List[np.ndarray], next_state_list: List[np.ndarray]
-    ):
-        index_list = []
-        uuid_list = []
+    # def partial_record_list_with_next_state(
+    #         self, state: np.ndarray, action_list: List[np.ndarray], next_state_list: List[np.ndarray]
+    # ):
+    #     index_list = []
+    #     uuid_list = []
+    #
+    #     for i in range(len(action_list)):
+    #         index, uuid = self._sars_buffer.partial_record_with_next_state(state, action_list[i], next_state_list[i])
+    #         index_list.append(index)
+    #         uuid_list.append(uuid)
+    #
+    #     return index_list, uuid_list
 
-        for i in range(len(action_list)):
-            index, uuid = self._sars_buffer.partial_record_with_next_state(state, action_list[i], next_state_list[i])
-            index_list.append(index)
-            uuid_list.append(uuid)
 
-        return index_list, uuid_list
-
-
-    def fill_up_partial_record_reward_only(self, row_index, row_uuid, reward: np.ndarray):
-        return self._sars_buffer.fill_up_partial_record_reward_only(row_index, row_uuid, reward)
+    # def fill_up_partial_record_reward_only(self, row_index, row_uuid, reward: np.ndarray):
+    #     return self._sars_buffer.fill_up_partial_record_reward_only(row_index, row_uuid, reward)
 
 
     def fill_up_partial_record_reward_only_list(self, row_index_list, row_uuid_list, reward_list: np.ndarray):
