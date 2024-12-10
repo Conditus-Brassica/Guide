@@ -64,7 +64,7 @@ class LandmarkTrainer:
         
         self._target_actor_model = target_actor_model
         self._target_critic_model = target_critic_model 
-        self.tau = tau
+        self._tau = tau
 
         self._sars_buffer = sars_buffer
 
@@ -83,9 +83,9 @@ class LandmarkTrainer:
         return self._actor_model
     
 
-    @actor_model.setter
-    def actor_model(self, actor_model: keras.Model):
-        self._actor_model.set_weights(actor_model.get_weights())
+    # @actor_model.setter
+    # def actor_model(self, actor_model: keras.Model):
+    #     self._actor_model.set_weights(actor_model.get_weights())
 
 
     def get_actor_model_config(self):
@@ -97,105 +97,105 @@ class LandmarkTrainer:
         return self._critic_model
     
     
-    @critic_model.setter
-    def critic_model(self, critic_model: keras.Model):
-        self._critic_model.set_weights(critic_model.get_weights())
+    # @critic_model.setter
+    # def critic_model(self, critic_model: keras.Model):
+    #     self._critic_model.set_weights(critic_model.get_weights())
 
 
     def get_critic_model_config(self):
         return self._critic_model.to_json()
 
 
-    @property
-    def tau(self) -> float:
-        return self._tau
+    # @property
+    # def tau(self) -> float:
+    #     return self._tau
+    #
+    #
+    # @tau.setter
+    # def tau(self, tau: float):
+    #     self._tau = tau
 
 
-    @tau.setter
-    def tau(self, tau: float):
-        self._tau = tau
+    # def partial_record(self, state: np.ndarray, action: np.ndarray):
+    #     return self._sars_buffer.partial_record(state, action)
+    #
+    #
+    # def partial_record_list(self, state: np.ndarray, action_list: List[np.ndarray]):
+    #     """
+    #     Is used to write first part of sars tuple. This tuple will be saved, but won't be used in training samples
+    #     Common state for multiple actions
+    #
+    #     ###
+    #     1. state: numpy.ndarray
+    #     2. action_list: List[numpy.ndarray]
+    #
+    #     returns: Tuple[List[int], List[uuid.hex]] - indices of rows in buffer and hex of uuids of the rows in buffer.
+    #     """
+    #     index_list = []
+    #     uuid_list = []
+    #
+    #     for i in range(len(action_list)):
+    #         index, uuid = self._sars_buffer.partial_record(state, action_list[i])
+    #         index_list.append(index)
+    #         uuid_list.append(uuid)
+    #
+    #     return index_list, uuid_list
+    #
+    #
+    # def fill_up_partial_record(self, row_index, row_uuid, reward: np.ndarray, next_state: np.ndarray):
+    #     """
+    #     Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
+    #         and the row may be used in training batch.
+    #
+    #     1. row_index: int
+    #         - index of the row in buffer (such index is returned as result of partial_record method)
+    #     2. row_uuid: uuid.hex
+    #         - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
+    #     3. reward: numpy.ndarray
+    #     4. next_state: numpy.ndarray
+    #
+    #     returns: bool - True if hex of uuid is correct, False otherwise
+    #     """
+    #     return self._sars_buffer.fill_up_partial_record(row_index, row_uuid, reward, next_state)
+    #
+    #
+    # def fill_up_partial_record_list(
+    #     self, row_index_list, row_uuid_list, reward_list: List[np.ndarray], next_state_list: List[np.ndarray]
+    # ):
+    #     """
+    #     Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
+    #         and the row may be used in training batch.
+    #
+    #     1. row_index_list: List[int]
+    #         - indices of the rows in buffer (such indices are returned as result of partial_record method)
+    #     2. row_uuid_list: List[uuid.hex]
+    #         - hex of uuids of the rows in buffer (such hex of uuids are returned as result of partial_record method)
+    #     3. reward_list: List[numpy.ndarray]
+    #     4. next_state_list: List[numpy.ndarray]
+    #
+    #     returns: List[bool] - True if hex of uuid is correct, False otherwise
+    #     """
+    #     if (len(row_index_list) != len(row_uuid_list) or
+    #             len(row_index_list) != len(reward_list) or
+    #             len(row_index_list) != len(next_state_list)
+    #     ):
+    #         raise ValueError(
+    #             "row_index_list, row_uuid_list, reward_list and next_state_list must be lists of the same length"
+    #         )
+    #     record_filled_up_list = []
+    #
+    #     for i in range(len(row_index_list)):
+    #         record_filled_up_list.append(
+    #             self._sars_buffer.fill_up_partial_record(
+    #                 row_index_list[i], row_uuid_list[i], reward_list[i], next_state_list[i]
+    #             )
+    #         )
+    #
+    #     return record_filled_up_list
 
 
-    def partial_record(self, state: np.ndarray, action: np.ndarray):
-        return self._sars_buffer.partial_record(state, action)
-
-
-    def partial_record_list(self, state: np.ndarray, action_list: List[np.ndarray]):
-        """
-        Is used to write first part of sars tuple. This tuple will be saved, but won't be used in training samples
-        Common state for multiple actions
-
-        ###
-        1. state: numpy.ndarray
-        2. action_list: List[numpy.ndarray]
-
-        returns: Tuple[List[int], List[uuid.hex]] - indices of rows in buffer and hex of uuids of the rows in buffer.
-        """
-        index_list = []
-        uuid_list = []
-
-        for i in range(len(action_list)):
-            index, uuid = self._sars_buffer.partial_record(state, action_list[i])
-            index_list.append(index)
-            uuid_list.append(uuid)
-            
-        return index_list, uuid_list
-    
-
-    def fill_up_partial_record(self, row_index, row_uuid, reward: np.ndarray, next_state: np.ndarray):
-        """
-        Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
-            and the row may be used in training batch.
-
-        1. row_index: int
-            - index of the row in buffer (such index is returned as result of partial_record method) 
-        2. row_uuid: uuid.hex
-            - hex of uuid of the row in buffer (such hex of uuid is returned as result of partial_record method)
-        3. reward: numpy.ndarray
-        4. next_state: numpy.ndarray
-
-        returns: bool - True if hex of uuid is correct, False otherwise
-        """
-        return self._sars_buffer.fill_up_partial_record(row_index, row_uuid, reward, next_state)  
-
-
-    def fill_up_partial_record_list(
-        self, row_index_list, row_uuid_list, reward_list: List[np.ndarray], next_state_list: List[np.ndarray]
-    ):
-        """
-        Is used to write the last part of sars tuple. If the given hex of uuid was found in buffer, reward and next_state will be saved
-            and the row may be used in training batch.
-
-        1. row_index_list: List[int]
-            - indices of the rows in buffer (such indices are returned as result of partial_record method) 
-        2. row_uuid_list: List[uuid.hex]
-            - hex of uuids of the rows in buffer (such hex of uuids are returned as result of partial_record method)
-        3. reward_list: List[numpy.ndarray]
-        4. next_state_list: List[numpy.ndarray]
-
-        returns: List[bool] - True if hex of uuid is correct, False otherwise
-        """
-        if (len(row_index_list) != len(row_uuid_list) or
-                len(row_index_list) != len(reward_list) or
-                len(row_index_list) != len(next_state_list)
-        ):
-            raise ValueError(
-                "row_index_list, row_uuid_list, reward_list and next_state_list must be lists of the same length"
-            )
-        record_filled_up_list = []
-        
-        for i in range(len(row_index_list)):
-            record_filled_up_list.append(
-                self._sars_buffer.fill_up_partial_record(
-                    row_index_list[i], row_uuid_list[i], reward_list[i], next_state_list[i]
-                )
-            )
-
-        return record_filled_up_list
-
-
-    def partial_record_with_next_state(self, state: np.ndarray, action: np.ndarray, next_state: np.ndarray):
-        return self._sars_buffer.partial_record_with_next_state(state, action, next_state)
+    # def partial_record_with_next_state(self, state: np.ndarray, action: np.ndarray, next_state: np.ndarray):
+    #     return self._sars_buffer.partial_record_with_next_state(state, action, next_state)
 
 
     def partial_record_list_with_next_state(
@@ -212,8 +212,8 @@ class LandmarkTrainer:
         return index_list, uuid_list
 
 
-    def fill_up_partial_record_reward_only(self, row_index, row_uuid, reward: np.ndarray):
-        return self._sars_buffer.fill_up_partial_record_reward_only(row_index, row_uuid, reward)
+    # def fill_up_partial_record_reward_only(self, row_index, row_uuid, reward: np.ndarray):
+    #     return self._sars_buffer.fill_up_partial_record_reward_only(row_index, row_uuid, reward)
 
 
     def fill_up_partial_record_reward_only_list(self, row_index_list, row_uuid_list, reward_list: np.ndarray):
@@ -233,8 +233,8 @@ class LandmarkTrainer:
         return record_filled_up_list
 
 
-    def fill_up_partial_record_reward_only_replace_next_state(self, row_index, row_uuid, reward: np.ndarray):
-        return self._sars_buffer.fill_up_partial_record_reward_only_replace_next_state(row_index, row_uuid, reward)
+    # def fill_up_partial_record_reward_only_replace_next_state(self, row_index, row_uuid, reward: np.ndarray):
+    #     return self._sars_buffer.fill_up_partial_record_reward_only_replace_next_state(row_index, row_uuid, reward)
 
 
     def fill_up_partial_record_reward_only_replace_next_state_list(
@@ -256,8 +256,8 @@ class LandmarkTrainer:
         return record_filled_up_list
 
 
-    def record(self, sars_tuple: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
-        return self._sars_buffer.record(sars_tuple)
+    # def record(self, sars_tuple: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
+    #     return self._sars_buffer.record(sars_tuple)
     
 
     def record_list(self, sars_tuple_list: List[Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]):
@@ -272,15 +272,15 @@ class LandmarkTrainer:
         return row_index_list, row_uuid_list
 
 
-    def remove_record(self, row_index, row_uuid):
-        return self._sars_buffer.remove_record(row_index, row_uuid)
-
-
-    def remove_record_list(self, row_index_list, row_uuid_list):
-        result = []
-        for i in range(len(row_index_list)):
-            result.append(self._sars_buffer.remove_record(row_index_list[i], row_uuid_list[i]))
-        return result
+    # def remove_record(self, row_index, row_uuid):
+    #     return self._sars_buffer.remove_record(row_index, row_uuid)
+    #
+    #
+    # def remove_record_list(self, row_index_list, row_uuid_list):
+    #     result = []
+    #     for i in range(len(row_index_list)):
+    #         result.append(self._sars_buffer.remove_record(row_index_list[i], row_uuid_list[i]))
+    #     return result
 
 
     @staticmethod
