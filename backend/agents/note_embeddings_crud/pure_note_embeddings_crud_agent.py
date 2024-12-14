@@ -63,7 +63,6 @@ class PureNoteEmbeddingsCRUDAgent(ABC):
 
         :returns: Coroutine
             Dict[
-                "note_titles": List[str],
                 "embeddings": List[List[float]]
             ]
         """
