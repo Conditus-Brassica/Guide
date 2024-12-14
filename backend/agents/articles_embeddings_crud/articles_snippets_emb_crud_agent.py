@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 import elasticsearch_settings
 from elasticsearch import AsyncElasticsearch, NotFoundError, ConflictError
 from elasticsearch.helpers import async_bulk
@@ -128,12 +128,15 @@ class ArticlesSnippetsEmbCrudAgent(ArticlesCrudAgent):
         else:
             return self._process_result(resp.body)
 
-    async def search_nearest_articles(self, query_vector: List[float]):
+    async def search_nearest_articles_for_one(self, query: Dict[str, Union[int, List[float]]]):
         """
-        Search for nearest articles by embedding, return best 10 snippets.
+        Search for nearest articles by embedding, return limit snippets.
         Using score is (1.0 - cosineSimilarity(params.query_vector, 'snippet_vector')).
 
-        :param query_vector: List[float]
+        :param query: Dict[
+                            "limit" : int,
+                            "query_vector" : List[float]
+                            ]
         :return: List[
                 Dict[
                 "id" : string,
@@ -154,7 +157,7 @@ class ArticlesSnippetsEmbCrudAgent(ArticlesCrudAgent):
                               (1.0 - cosineSimilarity(params.query_vector, 'snippet_vector'))
                             """,
                             "params": {
-                                "query_vector": query_vector
+                                "query_vector": query["query_vector"]
                             }
                         }
                     }
@@ -170,7 +173,8 @@ class ArticlesSnippetsEmbCrudAgent(ArticlesCrudAgent):
                             }
                         ]
                     }
-                }
+                },
+                "size": query["limit"]
             })
 
         except Exception as e:
