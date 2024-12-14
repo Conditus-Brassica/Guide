@@ -30,6 +30,7 @@ type ArticleResponce = {
 const Articles = () => {
 	const [loaded, setLoaded] = useState(true);
 	const [articles, setArticles] = useState<ArticlesInfo[]>(articlesTest);
+	const [score, setScore] = useState<ArticleScore>(ArticleScore.POHUY);
 
 	const getArticles = async () => {
 		try {

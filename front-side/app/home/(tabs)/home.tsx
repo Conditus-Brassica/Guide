@@ -56,6 +56,7 @@ export default function App() {
 	const [loading, setLoading] = useState(false);
 
 	const mapPress = () => {
+		console.log("wow!");
 		setResults([]);
 		Keyboard.dismiss();
 	};

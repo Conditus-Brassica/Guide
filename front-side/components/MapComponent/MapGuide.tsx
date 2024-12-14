@@ -1,5 +1,5 @@
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
 import { useMapStore } from "@/hooks/useMapStore";
 import React, { FC, useEffect, useState } from "react";
@@ -56,5 +56,10 @@ const styles = StyleSheet.create({
 	map: {
 		width: "100%",
 		height: "100%",
+	},
+	loaderContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });

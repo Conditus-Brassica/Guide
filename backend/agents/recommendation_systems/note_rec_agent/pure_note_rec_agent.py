@@ -25,30 +25,9 @@ class PureNoteRecAgent(ABC):
     def recommendations_agent_exists(cls) -> bool:
         """Method to check if recommendations agent object already exists"""
         raise NotImplementedError
-      
-    @property
+
+
     @abstractmethod
-    async def actor_model(self) -> keras.Model:
-        raise NotImplementedError
-    
-
-    @actor_model.setter
-    @abstractmethod
-    async def actor_model(self, actor_model: keras.Model):
-        raise NotImplementedError
-
-
-    @property
-    @abstractmethod
-    async def critic_model(self) -> keras.Model:
-        raise NotImplementedError
-
-    
-    @critic_model.setter
-    async def critic_model(self, critic_model: keras.Model):
-        raise NotImplementedError
-
-    
     async def count_new_state(self, json_params: Dict) -> List[float]:
         """
         Counts new state using old state.

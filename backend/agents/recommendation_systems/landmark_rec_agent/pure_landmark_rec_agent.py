@@ -25,30 +25,8 @@ class PureLandmarkRecAgent(ABC):
     def recommendations_agent_exists(cls) -> bool:
         """Method to check if recommendations agent object already exists"""
         raise NotImplementedError
-      
-    @property
+
     @abstractmethod
-    async def actor_model(self) -> keras.Model:
-        raise NotImplementedError
-    
-
-    @actor_model.setter
-    @abstractmethod
-    async def actor_model(self, actor_model: keras.Model):
-        raise NotImplementedError
-
-
-    @property
-    @abstractmethod
-    async def critic_model(self) -> keras.Model:
-        raise NotImplementedError
-
-    
-    @critic_model.setter
-    async def critic_model(self, critic_model: keras.Model):
-        raise NotImplementedError
-
-    
     async def count_new_watch_state(self, json_params: Dict) -> List[float]:
         """
         Counts new watch state using old state. 
@@ -73,8 +51,9 @@ class PureLandmarkRecAgent(ABC):
         returns: List[float] - new state
         """
         raise NotImplementedError
-    
 
+
+    @abstractmethod
     async def count_new_visit_state(self, json_params: Dict) -> List[float]:
         """
         Counts new visit state using old state. 
