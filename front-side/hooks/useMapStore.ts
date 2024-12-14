@@ -5,12 +5,13 @@ type MapStore = {
 	initialPosition: Region;
 	activeRoute: RouteType | null;
 	setInitialCoords: (coords: LatLng) => void;
-	setActiveRoute: (coords: RouteType) => void;
+	setRouteOrigin: (coords: LatLng | undefined) => void;
+	setRouteDestination: (coords: LatLng | undefined) => void;
 };
 
 type RouteType = {
-	origin: LatLng;
-	destination: LatLng;
+	origin: LatLng | undefined;
+	destination: LatLng | undefined;
 };
 
 export const useMapStore = create<MapStore>((set) => ({
@@ -29,5 +30,18 @@ export const useMapStore = create<MapStore>((set) => ({
 				longitude: coords.longitude,
 			},
 		})),
-	setActiveRoute: (coords) => set(() => ({ activeRoute: coords })),
+	setRouteOrigin: (coords) =>
+		set((state) => ({
+			activeRoute: {
+				destination: state.activeRoute?.destination,
+				origin: coords,
+			},
+		})),
+	setRouteDestination: (coords) =>
+		set((state) => ({
+			activeRoute: {
+				origin: state.activeRoute?.origin,
+				destination: coords,
+			},
+		})),
 }));

@@ -18,7 +18,7 @@ export const ArticleScoreComponent: FC<PropsType> = ({
 			{score === ArticleScore.LIKE ? (
 				<Icon
 					name="heart"
-					size={30}
+					size={40}
 					type="ionicon"
 					color="red"
 					onPress={() => setScore(ArticleScore.POHUY)}
@@ -26,7 +26,7 @@ export const ArticleScoreComponent: FC<PropsType> = ({
 			) : (
 				<Icon
 					name="heart-outline"
-					size={30}
+					size={40}
 					type="ionicon"
 					color="black"
 					onPress={() => setScore(ArticleScore.LIKE)}
@@ -35,7 +35,7 @@ export const ArticleScoreComponent: FC<PropsType> = ({
 			{score === ArticleScore.HUYNA_EBANAYA ? (
 				<Icon
 					name="heart-dislike"
-					size={30}
+					size={40}
 					type="ionicon"
 					color="red"
 					onPress={() => setScore(ArticleScore.POHUY)}
@@ -43,7 +43,7 @@ export const ArticleScoreComponent: FC<PropsType> = ({
 			) : (
 				<Icon
 					name="heart-dislike-outline"
-					size={30}
+					size={40}
 					type="ionicon"
 					color="black"
 					onPress={() => setScore(ArticleScore.HUYNA_EBANAYA)}

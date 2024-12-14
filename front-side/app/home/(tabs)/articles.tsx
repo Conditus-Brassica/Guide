@@ -2,7 +2,6 @@ import { ArticleScoreComponent } from "@/components/ArticleScoreComponent";
 import { Colors } from "@/constants/Colors";
 import { ArticleScore } from "@/constants/enums";
 import { BASE_URL } from "@/constants/request-api-constants";
-import { ListItem } from "@rneui/base";
 import axios from "axios";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -45,6 +44,10 @@ const Articles = () => {
 		}
 	};
 
+	useEffect(() => {
+		setArticles(articlesTest);
+	}, []);
+
 	//TODO: Remove commenting when API will be ready
 	// useEffect(() => {
 	// 	getArticles();
@@ -57,15 +60,12 @@ const Articles = () => {
 			}}
 			style={styles.item}
 		>
-			<ListItem containerStyle={styles.ListItem}>
-				<ListItem.Content>
-					<ListItem.Title style={styles.title}>
-						{article.ListItem}
-					</ListItem.Title>
-					<Text>{article.snippet}</Text>
-				</ListItem.Content>
+			<Text style={styles.title}>{article.ListItem}</Text>
+			<Text>{article.snippet}</Text>
+			{/* TODO: for the near bright future */}
+			{/* <View style={styles.userScore}>
 				<ArticleScoreComponent score={article.score} setScore={setScore} />
-			</ListItem>
+			</View> */}
 		</TouchableOpacity>
 	);
 
@@ -82,6 +82,7 @@ const Articles = () => {
 				<FlatList
 					style={styles.flatList}
 					data={articles}
+					keyboardShouldPersistTaps="always"
 					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => <Item article={item} />}
 				/>
@@ -96,8 +97,7 @@ const styles = StyleSheet.create({
 	item: {
 		padding: 15,
 		backgroundColor: "white",
-		borderColor: Colors.standartAppColor,
-		borderWidth: 2,
+		marginTop: 10,
 		shadowColor: "#000",
 		alignSelf: "stretch",
 		shadowOffset: { width: 0, height: 2 },
@@ -143,10 +143,14 @@ const styles = StyleSheet.create({
 	},
 	flatList: {
 		flex: 3,
+		paddingHorizontal: 10,
+	},
+	pressedListItem: {
+		opacity: 0.2,
 	},
 	userScore: {
+		marginTop: 15,
 		flexDirection: "row",
-		columnGap: 10,
 		alignItems: "center",
 		justifyContent: "center",
 	},
@@ -157,11 +161,12 @@ export default Articles;
 const articlesTest = [
 	{
 		id: "test1",
-		snippet: "asaksjdasdjasl",
+		snippet:
+			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
 		content: "haha hahahahahh",
 		ListItem: "Article1",
 		author: "Stas",
-		score: ArticleScore.POHUY,
+		score: ArticleScore.HUYNA_EBANAYA,
 	},
 	{
 		id: "test2",
@@ -169,7 +174,7 @@ const articlesTest = [
 		content: "Article2",
 		ListItem: "Article2",
 		author: "Stas",
-		score: ArticleScore.POHUY,
+		score: ArticleScore.LIKE,
 	},
 	{
 		id: "test3",
@@ -177,7 +182,7 @@ const articlesTest = [
 		content: "Article3",
 		ListItem: "Article2",
 		author: "Stas",
-		score: ArticleScore.POHUY,
+		score: ArticleScore.LIKE,
 	},
 	{
 		id: "test4",

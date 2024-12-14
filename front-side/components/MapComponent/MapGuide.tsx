@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
 import { useMapStore } from "@/hooks/useMapStore";
 import React, { FC, useEffect, useState } from "react";
-import * as Location from "expo-location";
+
 import { landmarkInfo } from "@/types/landmarks-types";
 import { Colors } from "@/constants/Colors";
 
@@ -13,65 +13,14 @@ type PropsType = {
 };
 
 export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
-	const [location, setLocation] = useState<Location.LocationObject | null>(
-		null
-	);
 	const [markers, setMarkers] = useState<landmarkInfo[] | null>(landmarks);
-	const [loading, setLoading] = useState(false);
 
 	const mapInitialPosition = useMapStore((state) => state.initialPosition);
 	const routeCoords = useMapStore((state) => state.activeRoute);
 
-	const setInitialPosition = useMapStore((state) => state.setInitialCoords);
-	const setRouteCoords = useMapStore((state) => state.setActiveRoute);
-
 	useEffect(() => {
-		if (landmarks && location) {
-			setRouteCoords({
-				origin: {
-					latitude: location.coords.latitude,
-					longitude: location.coords.longitude,
-				},
-				destination: {
-					latitude: landmarks[0]._source.coordinates.latitude,
-					longitude: landmarks[0]._source.coordinates.longitude,
-				},
-			});
-			setMarkers(landmarks);
-		}
+		setMarkers(landmarks);
 	}, [landmarks]);
-
-	useEffect(() => {
-		async function getCurrentLocation() {
-			try {
-				let { status } = await Location.requestForegroundPermissionsAsync();
-				if (status !== "granted") {
-					Alert.alert("Error", "Permission to access location was denied");
-					return;
-				}
-
-				let location = await Location.getCurrentPositionAsync({});
-				setLocation(location);
-				console.log(location.coords);
-				setInitialPosition(location.coords);
-			} catch (error) {
-				alert(`Failed to get location:${error}`);
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		getCurrentLocation();
-	}, []);
-
-	if (loading) {
-		// Show a loader while location is being fetched
-		return (
-			<View style={styles.loaderContainer}>
-				<ActivityIndicator size="large" color={Colors.standartAppColor} />
-			</View>
-		);
-	}
 
 	return (
 		<MapView
@@ -83,7 +32,7 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 			showsMyLocationButton={false}
 			onPress={mapPress}
 		>
-			{!!routeCoords && (
+			{routeCoords?.origin && routeCoords?.destination && (
 				<MapViewRoute
 					origin={routeCoords.origin}
 					destination={routeCoords.destination}
