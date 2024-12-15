@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	FlatList,
 	StyleSheet,
@@ -10,14 +10,20 @@ import {
 	KeyboardAvoidingView,
 	Alert,
 	ActivityIndicator,
+	Modal,
 } from "react-native";
+import StarRating from "react-native-star-rating-widget";
 import * as Location from "expo-location";
 import { MapGuide } from "@/components/MapComponent/MapGuide";
 import axios from "axios";
-import { ELASTIC_URL } from "@/constants/request-api-constants";
+import { BASE_URL, ELASTIC_URL } from "@/constants/request-api-constants";
 import { Colors } from "@/constants/Colors";
 import { setStatusBarHidden } from "expo-status-bar";
-import { landmarkInfo } from "@/types/landmarks-types";
+import {
+	landmarkInfo,
+	Recommendation,
+	RecommendationInfo,
+} from "@/types/landmarks-types";
 import { useDebouncedCallback } from "use-debounce";
 import { useMapStore } from "@/hooks/useMapStore";
 
@@ -45,18 +51,41 @@ export default function App() {
 	const [location, setLocation] = useState<Location.LocationObject | null>(
 		null
 	);
+
+	const [originSearch, setOriginSearch] = useState(false);
+	const [rating, setRating] = useState(2.5);
+	const primaryRecommendation = useRef<Recommendation[]>([]);
+	const [recommendation, setRecommendation] = useState<Recommendation[]>([]);
 	const [results, setResults] = useState<landmarkInfo[]>([]);
 	const [activeLandmarks, setActiveLandmarks] = useState<landmarkInfo[]>([]);
 	const [originValue, setOriginValue] = useState("");
 	const [destinationValue, setDestinationValue] = useState("");
+
 	const activeRoute = useMapStore((state) => state.activeRoute);
 	const setRouteOrigin = useMapStore((state) => state.setRouteOrigin);
 	const setRouteDestination = useMapStore((state) => state.setRouteDestination);
 	const setInitialPosition = useMapStore((state) => state.setInitialCoords);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [modalVisible, setModalVisible] = useState(false);
+
+	const resetAll = () => {
+		// Reset component states
+		setOriginSearch(false);
+		setRating(2.5);
+		primaryRecommendation.current = [];
+		setRecommendation([]);
+		setResults([]);
+		setActiveLandmarks([]);
+		setOriginValue("");
+		setDestinationValue("");
+
+		// Reset global store states
+		setInitialPosition(location!.coords);
+		setRouteOrigin(undefined);
+		setRouteDestination(undefined);
+	};
 
 	const mapPress = () => {
-		console.log("wow!");
 		setResults([]);
 		Keyboard.dismiss();
 	};
@@ -64,13 +93,22 @@ export default function App() {
 	const onLandmarkPress = (item: landmarkInfo, field: string) => {
 		if (field === "origin") {
 			setRouteOrigin(item._source.coordinates);
-			setOriginValue("");
+			setOriginValue(item._source.name);
 		} else {
 			setRouteDestination(item._source.coordinates);
-			setRouteOrigin(location?.coords);
-			setDestinationValue("");
+			setRouteOrigin({
+				latitude: location!.coords.latitude,
+				longitude: location!.coords.longitude,
+			});
+			setDestinationValue(item._source.name);
 		}
-		setActiveLandmarks([...activeLandmarks, item]);
+		if (!activeLandmarks.some((landmark) => landmark._id === item._id)) {
+			if (activeLandmarks.length === 0) {
+				setActiveLandmarks([item]);
+			} else {
+				setActiveLandmarks([activeLandmarks[activeLandmarks.length - 1], item]);
+			}
+		}
 		setResults([]);
 	};
 
@@ -95,6 +133,44 @@ export default function App() {
 		}
 	}, 200);
 
+	const getRecommendations = async () => {
+		try {
+			const response = await axios.post<RecommendationInfo>(
+				`${BASE_URL}/route/find_recommendations_by_coordinates`,
+				{
+					coordinates_of_points: [
+						{
+							latitude: activeRoute?.origin!.latitude,
+							longitude: activeRoute?.origin!.longitude,
+						},
+						{
+							latitude: activeRoute?.destination!.latitude,
+							longitude: activeRoute?.destination!.longitude,
+						},
+					],
+					maximum_amount_of_recommendations: 5,
+				}
+			);
+			setRecommendation(response.data.recommendation);
+			primaryRecommendation.current = response.data.recommendation;
+		} catch (error) {
+			console.error("Search Error:", error);
+		}
+	};
+
+	const sendRating = async () => {
+		try {
+			await axios.post(`${BASE_URL}/route/post_result_of_recommendations`, {
+				user_reward: rating,
+				primary_Recommendation: primaryRecommendation.current,
+				result_recommendations: recommendation,
+			});
+			setModalVisible(false);
+		} catch (error) {
+			console.error("Search Error:", error);
+		}
+	};
+
 	useEffect(() => {
 		async function getCurrentLocation() {
 			try {
@@ -118,7 +194,6 @@ export default function App() {
 	}, []);
 
 	if (loading) {
-		// Show a loader while location is being fetched
 		return (
 			<View style={styles.loaderContainer}>
 				<ActivityIndicator size="large" color={Colors.standartAppColor} />
@@ -129,7 +204,12 @@ export default function App() {
 	return (
 		<View style={styles.container}>
 			<View style={styles.mapContainer}>
-				<MapGuide mapPress={mapPress} landmarks={activeLandmarks} />
+				<MapGuide
+					mapPress={mapPress}
+					landmarks={activeLandmarks.map((landmark) => landmark._source)}
+					recommendations={recommendation}
+					setRecommendations={setRecommendation}
+				/>
 			</View>
 
 			<KeyboardAvoidingView style={styles.overlay}>
@@ -139,6 +219,7 @@ export default function App() {
 							style={styles.searchInput}
 							placeholder="Start point"
 							onChangeText={(text) => {
+								setOriginSearch(true);
 								setOriginValue(text);
 								performSearch(text);
 							}}
@@ -149,6 +230,7 @@ export default function App() {
 						style={styles.searchInput}
 						placeholder="Search for destination"
 						onChangeText={(text) => {
+							setOriginSearch(false);
 							setDestinationValue(text);
 							performSearch(text);
 						}}
@@ -166,13 +248,69 @@ export default function App() {
 								<Item
 									onPress={onLandmarkPress}
 									item={item}
-									field={activeRoute?.destination ? "origin" : "destination"}
+									field={originSearch ? "origin" : "destination"}
 								></Item>
 							)}
 						/>
 					</View>
 				)}
 			</KeyboardAvoidingView>
+			{activeRoute?.origin &&
+				activeRoute?.destination &&
+				recommendation.length === 0 && (
+					<TouchableOpacity
+						style={styles.recommendationButton}
+						onPress={() => {
+							//Dont forget to remove modal visibility
+							setModalVisible(true);
+							// getRecommendations();
+						}}
+					>
+						<Text style={styles.recommendationButtonText}>
+							Get recommendations
+						</Text>
+					</TouchableOpacity>
+				)}
+			{recommendation.length > 0 && (
+				<TouchableOpacity
+					style={styles.recommendationButton}
+					onPress={() => {
+						setModalVisible(true);
+					}}
+				>
+					<Text style={styles.recommendationButtonText}>End the Journey</Text>
+				</TouchableOpacity>
+			)}
+			<Modal
+				animationType="slide"
+				transparent={true}
+				visible={modalVisible}
+				onRequestClose={() => setModalVisible(false)}
+			>
+				<View style={styles.modalContainer}>
+					<View style={styles.modalContent}>
+						<Text style={styles.modalTitle}>Rate Your Journey</Text>
+						<StarRating
+							rating={rating}
+							maxStars={5}
+							onChange={setRating}
+							starSize={40}
+							color={Colors.standartAppColor}
+						/>
+						<Text style={styles.ratingText}>Your rating: {rating} stars</Text>
+						<TouchableOpacity
+							style={styles.closeButton}
+							onPress={() => {
+								setModalVisible(false);
+								sendRating();
+								resetAll();
+							}}
+						>
+							<Text style={styles.closeButtonText}>Close</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
 		</View>
 	);
 }
@@ -239,5 +377,57 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	recommendationButton: {
+		position: "absolute",
+		bottom: 10, // Adjust this value to control the distance from the bottom
+		alignSelf: "center",
+		backgroundColor: Colors.standartAppColor,
+		paddingVertical: 15,
+		paddingHorizontal: 20,
+		borderRadius: 30,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5,
+	},
+	recommendationButtonText: {
+		color: "white",
+		fontSize: 16,
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	modalContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "rgba(0, 0, 0, 0)",
+	},
+	modalContent: {
+		width: "80%",
+		backgroundColor: "white",
+		padding: 20,
+		borderRadius: 10,
+		alignItems: "center",
+	},
+	modalTitle: {
+		fontSize: 18,
+		fontWeight: "bold",
+		marginBottom: 10,
+	},
+	ratingText: {
+		marginTop: 10,
+		fontSize: 16,
+	},
+	closeButton: {
+		marginTop: 20,
+		padding: 10,
+		backgroundColor: Colors.standartAppColor,
+		borderRadius: 5,
+	},
+	closeButtonText: {
+		color: "white",
+		fontWeight: "bold",
 	},
 });
