@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Union
 
 
 class ArticlesCrudAgent(ABC):
@@ -90,12 +90,15 @@ class ArticlesCrudAgent(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def search_nearest_articles(self, query_vector: List[float]):
+    async def search_nearest_articles_for_one(self, query: Dict[str, Union[int, List[float]]]):
         """
-        Search for nearest articles by embedding.
+        Search for nearest articles by embedding. Return limit nums of documents.
         Using score is (1.0 - (cosineSimilarity(query_vector, 'snippet_vector') + 1.0) / 2.0).
 
-        :param query_vector: List[float]
+        :param query: Dict[
+                                List[float],
+                                int
+                            ]
         :return: List[
                     Dict[]
                     ], if error or 0 documents return List[].

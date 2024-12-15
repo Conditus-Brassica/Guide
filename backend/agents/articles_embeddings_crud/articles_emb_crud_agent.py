@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 import elasticsearch_settings
 from elasticsearch import AsyncElasticsearch, NotFoundError, ConflictError
 from elasticsearch.helpers import async_bulk
@@ -124,12 +124,46 @@ class ArticlesEmbCrudAgent(ArticlesCrudAgent):
         else:
             return self._process_result(resp.body)
 
-    async def search_nearest_articles(self, query_vector: List[float]):
+    async def get_documents_by_names(self, article_names: List[str]):
         """
-        Search for nearest articles by embedding, return best 10 articles.
+        Get article's embeddings by its names.
+
+        :param article_names: List[str]
+        :return: List[
+            List[float]
+            ]
+        """
+        try:
+            resp = await self.__client.search(index=elasticsearch_settings.ARTICLES_EMB_IND, body={
+                "query": {
+                    "bool": {
+                        "should": [
+                            {"match_phrase": {"article_name": name}} for name in article_names
+                        ],
+                        "minimum_should_match": 1
+                    }
+                },
+                "size": len(article_names)
+            })
+
+            return [
+                hit["_source"]["article_vector"]
+                for hit in resp.body["hits"]["hits"]
+            ]
+
+        except Exception as e:
+            logger.error(f"Error searching articles by names: {str(e)}")
+            return []
+
+    async def search_nearest_articles_for_one(self, query: Dict[str, Union[int, List[float]]]):
+        """
+        Search for nearest articles by embedding, return limit articles.
         Using score is (1.0 - cosineSimilarity(params.query_vector, 'article_vector')).
 
-        :param query_vector: List[float]
+        :param query: Dict[
+                            "limit" : int,
+                            "query_vector" : List[float]
+                            ]
         :return: List[
                 Dict[
                 "id" : string,
@@ -150,11 +184,12 @@ class ArticlesEmbCrudAgent(ArticlesCrudAgent):
                               (1.0 - cosineSimilarity(params.query_vector, 'article_vector'))
                             """,
                             "params": {
-                                "query_vector": query_vector
+                                "query_vector": query["query_vector"]
                             }
                         }
                     }
-                }
+                },
+                "size": query["limit"]
             })
 
         except Exception as e:
@@ -169,6 +204,31 @@ class ArticlesEmbCrudAgent(ArticlesCrudAgent):
                     ]
             else:
                 return []
+
+    async def search_nearest_articles_for_batch(self, embeddings_list: List[float]):
+        """
+        Search for nearest articles by embedding for batch of embeddings,
+            return first nearest article for every embedding.
+        Using score is (1.0 - cosineSimilarity(params.query_vector, 'article_vector')).
+
+        :param embeddings_list:List[float]
+
+        :return: List[
+            List[float]
+            ], if error or 0 documents return List[]
+        """
+        try:
+            result = []
+            for emb in embeddings_list:
+                resp = await self.search_nearest_articles_for_one({"limit": 1, "query_vector": emb})
+                result.append(resp[0]["article_vector"])
+
+        except Exception as e:
+            logger.error(str(e))
+            return []
+
+        else:
+            return result
 
     async def create_document(self, json_params: Dict):
         """
