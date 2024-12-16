@@ -18,4 +18,6 @@ web-build/
 
 expo-env.d.ts
 FirebaseConfig.js
+.vscode
+.yarn
 # @end expo-cli

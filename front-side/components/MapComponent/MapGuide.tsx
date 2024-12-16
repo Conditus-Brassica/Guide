@@ -1,19 +1,32 @@
-import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
-import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { StyleSheet } from "react-native";
 import { MapViewRoute } from "react-native-maps-routes";
 import { useMapStore } from "@/hooks/useMapStore";
 import React, { FC, useEffect, useState } from "react";
 
-import { landmarkInfo } from "@/types/landmarks-types";
 import { Colors } from "@/constants/Colors";
+import { Recommendation } from "@/types/landmarks-types";
 
 type PropsType = {
-	landmarks: landmarkInfo[] | null;
+	landmarks: MarkerType[] | null;
 	mapPress: () => void;
+
+	recommendations: Recommendation[];
+	setRecommendations: (recommendations: Recommendation[]) => void;
 };
 
-export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
-	const [markers, setMarkers] = useState<landmarkInfo[] | null>(landmarks);
+type MarkerType = {
+	name: string;
+	coordinates: LatLng;
+};
+
+export const MapGuide: FC<PropsType> = ({
+	landmarks,
+	mapPress,
+	recommendations,
+	setRecommendations,
+}) => {
+	const [markers, setMarkers] = useState<MarkerType[] | null>(landmarks);
 
 	const mapInitialPosition = useMapStore((state) => state.initialPosition);
 	const routeCoords = useMapStore((state) => state.activeRoute);
@@ -43,9 +56,15 @@ export const MapGuide: FC<PropsType> = ({ landmarks, mapPress }) => {
 			{!!markers &&
 				markers.map((marker) => (
 					<Marker
-						key={marker._id}
-						title={marker._source.name}
-						coordinate={marker._source.coordinates}
+						key={marker.name}
+						title={marker.name}
+						coordinate={marker.coordinates}
+						onCalloutPress={() => {
+							console.log("press");
+							setRecommendations(
+								recommendations?.filter((r) => r.name !== marker.name) ?? []
+							);
+						}}
 					/>
 				))}
 		</MapView>

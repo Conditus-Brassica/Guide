@@ -1,4 +1,3 @@
-import { ArticleScoreComponent } from "@/components/ArticleScoreComponent";
 import { Colors } from "@/constants/Colors";
 import { ArticleScore } from "@/constants/enums";
 import { BASE_URL } from "@/constants/request-api-constants";
@@ -14,10 +13,11 @@ import {
 	View,
 	TextInput,
 } from "react-native";
+import { useDebouncedCallback } from "use-debounce";
 
 export type ArticlesInfo = {
 	id: string;
-	ListItem: string;
+	title: string;
 	author: string;
 	snippet: string;
 	score: ArticleScore;
@@ -30,12 +30,11 @@ type ArticleResponce = {
 const Articles = () => {
 	const [loaded, setLoaded] = useState(true);
 	const [articles, setArticles] = useState<ArticlesInfo[]>(articlesTest);
-	const [score, setScore] = useState<ArticleScore>(ArticleScore.POHUY);
 
 	const getArticles = async () => {
 		try {
-			const url = new URL(BASE_URL);
-			const response = await axios.get<ArticleResponce>(url.toString());
+			const url = BASE_URL + "/articles";
+			const response = await axios.get<ArticleResponce>(url);
 			setArticles(response.data.articles);
 		} catch (error) {
 			console.error(`Search error ${error}`);
@@ -43,6 +42,18 @@ const Articles = () => {
 			setLoaded(true);
 		}
 	};
+
+	const searchArtcles = useDebouncedCallback(async (text: string) => {
+		try {
+			const url = BASE_URL + `/articles/search/${text}`;
+			const response = await axios.post<ArticleResponce>(url);
+			setArticles(response.data.articles);
+		} catch (error) {
+			console.error(`Search error ${error}`);
+		} finally {
+			setLoaded(true);
+		}
+	});
 
 	useEffect(() => {
 		setArticles(articlesTest);
@@ -60,12 +71,14 @@ const Articles = () => {
 			}}
 			style={styles.item}
 		>
-			<Text style={styles.title}>{article.ListItem}</Text>
+			<Text style={styles.title}>{article.title}</Text>
 			<Text>{article.snippet}</Text>
-			{/* TODO: for the near bright future */}
-			{/* <View style={styles.userScore}>
+			<View style={styles.userScore}>
+				{/* TODO: for the near bright future */}
+				{/* <View style={styles.userScore}>
 				<ArticleScoreComponent score={article.score} setScore={setScore} />
 			</View> */}
+			</View>
 		</TouchableOpacity>
 	);
 
@@ -75,7 +88,9 @@ const Articles = () => {
 				<TextInput
 					style={styles.searchInput}
 					placeholder="Search for articles"
-					onChangeText={(text) => {}}
+					onChangeText={(text) => {
+						searchArtcles(text);
+					}}
 				/>
 			</View>
 			{loaded ? (
@@ -105,16 +120,12 @@ const styles = StyleSheet.create({
 		shadowRadius: 5,
 		elevation: 2,
 	},
-	ListItem: {
-		backgroundColor: "white",
-	},
 	title: {
 		color: "black",
 		fontWeight: "bold",
 		fontSize: 24,
 	},
 	scrollView: {
-		top: 20,
 		flex: 1,
 		backgroundColor: Colors.standartAppGrey,
 	},
@@ -123,6 +134,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		padding: 10,
 		margin: 10,
+		marginTop: 30,
 		flex: 0,
 		borderColor: Colors.standartAppColor,
 		borderWidth: 2,
@@ -164,7 +176,7 @@ const articlesTest = [
 		snippet:
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
 		content: "haha hahahahahh",
-		ListItem: "Article1",
+		title: "Article1",
 		author: "Stas",
 		score: ArticleScore.HUYNA_EBANAYA,
 	},
@@ -172,7 +184,7 @@ const articlesTest = [
 		id: "test2",
 		snippet: "asaksjdasdjasl",
 		content: "Article2",
-		ListItem: "Article2",
+		title: "Article2",
 		author: "Stas",
 		score: ArticleScore.LIKE,
 	},
@@ -180,7 +192,7 @@ const articlesTest = [
 		id: "test3",
 		snippet: "asaksjdasdjasl",
 		content: "Article3",
-		ListItem: "Article2",
+		title: "Article2",
 		author: "Stas",
 		score: ArticleScore.LIKE,
 	},
@@ -188,7 +200,7 @@ const articlesTest = [
 		id: "test4",
 		snippet: "asaksjdasdjasl",
 		content: "haha hahahahahh",
-		ListItem: "Article3",
+		title: "Article3",
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
@@ -196,7 +208,7 @@ const articlesTest = [
 		id: "test5",
 		snippet: "asaksjdasdjasl",
 		content: "haha hahahahahh",
-		ListItem: "Article3",
+		title: "Article3",
 		author: "Stas",
 		score: ArticleScore.POHUY,
 	},
